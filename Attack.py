@@ -13,12 +13,12 @@ class Attack(object):
 
 
 	def __init__(self, name, damage, staminaCost, healthCost, stun, poketype):
-		name = name
-		damage = damage
-		staminaCost = staminaCost
-		healthCost = healthCost
-		stun = stun
-		poketype = poketype
+		self.name = name
+		self.damage = damage
+		self.staminaCost = staminaCost
+		self.healthCost = healthCost
+		self.stun = stun
+		self.poketype = poketype
 
 	def __str__(self):
 		return name

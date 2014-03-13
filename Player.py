@@ -3,7 +3,7 @@ from Hand import *
 from Card import *
 
 
-class Card(object):
+class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player
 	graveyard 	= None		#Deck 		Graveyard, where dead cards go
@@ -11,7 +11,7 @@ class Card(object):
 	mainCard	= None		#Card		Players main card on the field
 
 	def __init__(self, name):
-		name = name
+		self.name = name
 
 	def __str__(self):
 		return name
