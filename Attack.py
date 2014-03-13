@@ -3,7 +3,7 @@
 
 
 
-class Card(object):
+class Attack(object):
 	name 		= ""		#String		Name of attack
 	damage 		= 10		#int 		Amount of damage
 	staminaCost = 10		#int 		Amount of stamina reduced (or increased if it's  less than zero)

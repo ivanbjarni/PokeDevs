@@ -33,7 +33,7 @@ class Card(object):
 	# Before: card is Card and atk is Attack
 	# After: b is true if card dies, false otherwise
 	def attack(self, atk, card):
-		if(self.stamina < atk.staminaCost or self.health < atk.healthCost)
+		if(self.stamina < atk.staminaCost or self.health < atk.healthCost):
 			return False
 		
 		self.stamina -= staminaCost
