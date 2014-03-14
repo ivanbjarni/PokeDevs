@@ -22,7 +22,7 @@ class Card(object):
 		self.poketype = poketype 
 		self.weakness =  weakness
 		self.resistance = resistance
-
+			
 	# Usage: b = c.attack(atk, card)
 	# Before: card is Card and atk is Attack
 	# After: b is true if card dies, false otherwise
