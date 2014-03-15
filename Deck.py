@@ -1,11 +1,14 @@
 from Card import *
 import random
 
+
+
+
 class Deck(object):
 	cards 		= [];		#Card[]		List of cards in the deck
 
 	def __init__(self):
-		cards = []
+		self.cards = []
 
 	def __str__(self):
 		s = ""

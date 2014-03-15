@@ -3,6 +3,7 @@ from Hand import *
 from Card import *
 
 
+
 class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player
@@ -14,4 +15,4 @@ class Player(object):
 		self.name = name
 
 	def __str__(self):
-		return name
+		return self.name

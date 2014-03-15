@@ -3,6 +3,7 @@
 
 
 
+
 class Attack(object):
 	name 		= ""		#String		Name of attack
 	damage 		= 10		#int 		Amount of damage
@@ -21,4 +22,4 @@ class Attack(object):
 		self.poketype = poketype
 
 	def __str__(self):
-		return name
+		return self.name

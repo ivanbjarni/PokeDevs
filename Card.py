@@ -3,6 +3,7 @@ from Attack import *
 
 
 
+
 class Card(object):
 	name 		= ""		#String		Name of pokemon
 	health 		= 100		#int 		Current health
@@ -27,7 +28,7 @@ class Card(object):
 	# Before: card is Card and atk is Attack
 	# After: b is true if card dies, false otherwise
 	def __str__(self):
-		return name
+		return self.name
 
 	# Usage: b = c.attack(atk, card)
 	# Before: card is Card and atk is Attack
