@@ -14,10 +14,10 @@ class Card(object):
 	weakness 	= "normal" 	#String		Type the pokemon is weak against, same format as above
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 
-	def __init__(self, name, health, healthMax, stamina, attacks, poketype, weakness, resistance):
+	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
 		self.health = health
-		self.healthMax = healthMax
+		self.healthMax = health
 		self.stamina = stamina
 		self.attacks = attacks
 		self.poketype = poketype 
