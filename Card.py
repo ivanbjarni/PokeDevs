@@ -51,9 +51,6 @@ class Card(object):
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			return False
-		if(self.health < atk.healthCost):
-			print "Not Health"
-			return False
 		
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
@@ -68,7 +65,7 @@ class Card(object):
 			damage *= resistanceMultiplier
 			message = ". It's not very effective!"
 		#weakness
-		if self.poketype == card.weakness:
+		if atk.poketype == card.weakness:
 			damage *= weaknessMultiplier
 			message = ". It's super effective!"
 		#crit
