@@ -19,7 +19,7 @@ class Player(object):
 		return self.name
 
 	# Usage: b = c.attack(atk, card)
-	# Before: card is Card and atk is Attack
+	# Before: card is Card and atk is index nr of attack on main card
 	# After: b is true if attack succeeds, false otherwise
 	def attack(self,  nr,  player):
 		atk = self.mainCard.attacks[nr]
