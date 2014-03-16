@@ -20,25 +20,43 @@ class Main(object):
 		while(not done):
 			# define new variables for short
 			t = self.turn
-			yourCard = self.players[t].mainCard
-			enemCard = self.players[(t+1)%2].mainCard
+			pYou = self.players[t]			#player you
+			pEne = self.players[(t+1)%2]	#player enemy
+			yourCard = pYou.mainCard
+			enemCard = pEne.mainCard
 
 			# print stuff about turns
 			print "\n\n\n\n"
 			print "Total turns:" + str(self.turnCount)
 			print "It's player's "+str(t+1)+" turn."
 
+			#draw a new card
+			if not pYou.hand.isFull():
+				pYou.hand.add(presets.gc(random.randrange(1, 19, 1)))
+
+			print "Your Hand: "+str(pYou.hand)
+
 			#put out a new pokemon
 			if yourCard.isDead():
-				#add card to graveyard Coming soon
-				self.players[t].mainCard = presets.gc(random.randrange(1, 19, 1))
-				print str(yourCard) + " come back, "+str(self.players[t].mainCard)+" I choose you!"
-				yourCard = self.players[t].mainCard
+				pYou.graveyard.add(yourCard)
+				hasChosen = False
+				while(not hasChosen):
+					print 'What pokemon do you want to put out',
+					x = input()
+					if(len(pYou.hand.cards)>x):
+						print len(pYou.hand.cards)
+						newCard = pYou.hand.remove(x)
+						print newCard
+						hasChosen = True
+
+				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
+				yourCard = newCard
+				pYou.mainCard = newCard
 
 
 			#Print info about what is going on on the field
-			print "Enemy pokemon is: "+str(enemCard)+" (hp:"+str(enemCard.health)+"/"+str(enemCard.healthMax)+"sta:"+str(enemCard.stamina)+"/"+str(enemCard.staminaMax)+")"
-			print "Your pokemon is:"  +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+"sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
+			print "Enemy pokemon is: "+str(enemCard)+" (hp:"+str(enemCard.health)+"/"+str(enemCard.healthMax)+" sta:"+str(enemCard.stamina)+"/"+str(enemCard.staminaMax)+")"
+			print "Your pokemon is:"  +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+" sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
 			print "Attacks:"
 			print yourCard.getAttacks()
 
@@ -51,7 +69,7 @@ class Main(object):
 					print "You passed on your turn";
 					hasAttacked = True
 				else:
-					hasAttacked = self.players[t].attack(x-1,self.players[(t+1)%2])
+					hasAttacked = pYou.attack(x-1,pEne)
 
 
 			
