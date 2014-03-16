@@ -61,7 +61,7 @@ class Presets(object):
 		114 : Attack("Haze", 0, -20, -20, 0, "water"),			
 		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 35, 0, 0, "normal"),	
-		119 : Attack("MirrorMove", 0, -25, -25, 1, "normal"),	
+		119 : Attack("MirrorMove", 0, -5, -25, 0, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
 		158 : Attack("HyperFang", 17, 30, 0, 0, "water"),	
 		210 : Attack("FuryCutter", 20, 40, 0, 0, "grass"),	
