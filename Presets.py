@@ -29,6 +29,7 @@ class Presets(object):
 		52	: Attack("Ember", 10, 10, 0, 0, "fire"),			
 		53	: Attack("Flamethrower", 26, 30, 0, 0, "fire"),			
 		55	: Attack("WaterGun", 18, 30, 0, 0, "water"),			
+		56	: Attack("HydroPump", 50, 75, 0, 0, "water"),			
 		61	: Attack("BubbleBeam", 28, 35, 0, 0, "water"),			
 		75	: Attack("RazorLeaf", 18, 30, 0, 0, "grass"),			
 		76	: Attack("SolarBeam", 34, 80, 0, 0, "grass"),			
@@ -50,17 +51,18 @@ class Presets(object):
 
 	def initCards(self):
 		self.cards = {
-		1	: Card("Bulbasaur", 39, 90, [self.ga("Tackle"), self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("SolarBeam")], "grass", "fire", "water"),
+		1	: Card("Bulbasaur", 45, 90, [self.ga("Tackle"), self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("SolarBeam")], "grass", "fire", "water"),
 		2   : Card("Ivysaur", 60, 80, [self.ga("TakeDown"), self.ga("RazorLeaf"), self.ga("DoubleEdge"), self.ga("SolarBeam")], "grass", "fire", "water"),
 		3   : Card("Venusaur", 80, 82, [self.ga("VineWhip"), self.ga("PetalDance"), self.ga("SolarBeam"), self.ga("PetalBlizzard")], "grass", "fire", "water"),
 		4	: Card("Charmander", 39, 100, [self.ga("Tackle"), self.ga("Growl"), self.ga("Flamethrower"), self.ga("Ember")], "fire", "water", "grass"),
 		5	: Card("Charmeleon", 58, 90, [self.ga("Scratch"), self.ga("FireFang"), self.ga("Flamethrower"), self.ga("FireSpin")], "fire", "water", "grass"),
 		6	: Card("Charizard", 78, 85, [self.ga("Ember"), self.ga("FireFang"), self.ga("Inferno"), self.ga("FlareBlitz")], "fire", "water", "grass"),
-		7	: Card("Squirtle", 39, 90, [self.ga("Tackle"), self.ga("BubbleBeam"), self.ga("Withdraw"), self.ga("WaterGun")], "water", "grass", "fire"),
+		7	: Card("Squirtle", 44, 90, [self.ga("Tackle"), self.ga("BubbleBeam"), self.ga("Withdraw"), self.ga("WaterGun")], "water", "grass", "fire"),
 		8	: Card("Wartotle", 59, 100, [self.ga("Tackle"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "electric", "fire"),
-		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "electric", "fire"),
+		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("WaterPulse"), self.ga("WaterGun"), self.ga("HydroPump")], "water", "electric", "fire"),
+		10	: Card("Caterpie", 45, 100, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "electric", "grass"),
 		25	: Card("Pikachu", 35, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("ElectroBall"), self.ga("Thunder")], "electric", "ground", "electric"),
-		133	: Card("Eevee", 40, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
+		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
 		
 
 
