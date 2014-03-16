@@ -53,6 +53,4 @@ class Deck(object):
 	# Before: Nothing
 	# After: bool is true if deck is empty else false
 	def isEmpty(self):
-		if not self.cards:
-			return True
-		return False
+		return not self.cards

@@ -31,8 +31,8 @@ class Main(object):
 			print "It's player's "+str(t+1)+" turn."
 
 			#draw a new card if you can
-			if not pYou.hand.isFull():
-				pYou.hand.add(presets.gc(random.randrange(1, 40, 1)))
+			if not pYou.hand.isFull() and not pYou.deck.isEmpty():
+				pYou.hand.add(pYou.deck.draw())
 
 			print "Your Hand: "+str(pYou.hand)
 
@@ -45,7 +45,6 @@ class Main(object):
 					inp = raw_input()
 					ind = pYou.hand.getIndexOf(inp)
 					if ind != -1:
-
 						newCard = pYou.hand.remove(ind)
 						hasChosen = True
 					else:
@@ -77,7 +76,7 @@ class Main(object):
 				else:
 					hasAttacked = pYou.attack(x-1,pEne)
 
-
+			yourCard.applyEffects()
 			
 			# update turns and stuff afterwards
 			self.turn = (t+1)%2
