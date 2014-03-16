@@ -32,7 +32,7 @@ class Main(object):
 
 			#draw a new card if you can
 			if not pYou.hand.isFull():
-				pYou.hand.add(presets.gc(random.randrange(1, 19, 1)))
+				pYou.hand.add(presets.gc(random.randrange(1, 40, 1)))
 
 			print "Your Hand: "+str(pYou.hand)
 
