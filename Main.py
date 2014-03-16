@@ -31,7 +31,7 @@ class Main(object):
 			#put out a new pokemon
 			if yourCard.isDead():
 				#add card to graveyard Coming soon
-				self.players[t].mainCard = presets.gc(random.randrange(1, 11, 1))
+				self.players[t].mainCard = presets.gc(random.randrange(1, 19, 1))
 				print str(yourCard) + " come back, "+str(self.players[t].mainCard)+" I choose you!"
 				yourCard = self.players[t].mainCard
 

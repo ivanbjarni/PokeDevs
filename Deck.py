@@ -21,3 +21,31 @@ class Deck(object):
 	# After: deck has been shuffled
 	def shuffle(self):
 		random.shuffle(self.cards)
+
+	# Usage: card = deck.draw()
+	# Before: deck not empty
+	# After: card is the top card of the deck
+	def draw(self):
+		return self.cards.pop()
+
+	# Usage: card = deck.remove()
+	# Before: deck not empty
+	# After: card is the top card of the deck
+	def remove(self, index):
+		self.cards.pop(index)
+
+	# Usage: deck.add(card)
+	# Before: Nothing 
+	# After: Card has been added to the deck
+	def add(self, card):
+		self.cards.append(card)
+
+	# Usage: i=deck.getIndexOf(name)
+	# Before: Nothing
+	# After: i is the index of name if name is not in the deck then i=-1
+	def getIndexOf(self,name):
+		for i in range(0,len(self.cards)):
+			if(self.cards[i] == name):
+				return i
+		return -1
+
