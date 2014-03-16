@@ -5,7 +5,7 @@ import random
 
 
 class Deck(object):
-	cards 		= [];		#Card[]		List of cards in the deck
+	cards 		= []		#Card[]		List of cards in the deck
 
 	def __init__(self):
 		self.cards = []
@@ -24,13 +24,13 @@ class Deck(object):
 
 	# Usage: card = deck.draw()
 	# Before: deck not empty
-	# After: card is the top card of the deck
+	# After: card is the top card of the deck which has been removed
 	def draw(self):
 		return self.cards.pop()
 
-	# Usage: card = deck.remove(index)
+	# Usage: card = deck.remove()
 	# Before: index is a valid index in deck.cards
-	# After: card is the card in the deck where index = index.
+	# After: card is the card with the given index which has been removed from the deck
 	def remove(self, index):
 		return self.cards.pop(index)
 
@@ -45,7 +45,7 @@ class Deck(object):
 	# After: i is the index of name if name is not in the deck then i=-1
 	def getIndexOf(self,name):
 		for i in range(0,len(self.cards)):
-			if(self.cards[i] == name):
+			if(self.cards[i].name == name):
 				return i
 		return -1
 
