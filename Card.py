@@ -46,6 +46,10 @@ class Card(object):
 	# After: b is true if attack succeeds, false otherwise.
 	#		 Also prints out on console what happens.
 	def attack(self, atk, card):
+		if(atk.name == "Metronome"):
+			atk.staminaCost = round(random.random()*metronomeAmount+metronomeBase)
+			atk.damage 		= round(random.random()*metronomeAmount+metronomeBase)
+			atk.healthCost 	= round(random.random()*metronomeAmount+metronomeBase)
 		if(self.stamina < atk.staminaCost):
 			print "Not Enough Stamina"
 			return False
@@ -83,10 +87,10 @@ class Card(object):
 		
 		if(atk.stun!=0 and random.random() < stunChance):
 			card.stun = atk.stun
-			message "(Stun Applied for "+atk.stun+" turns)"
+			message += "(Stun Applied for "+str(atk.stun)+" turns)"
 
 		print str(self)+" used "+str(atk)+message
-
+		print "Damage done: "+str(damage)
 		card.health  -= damage
 		
 		return True

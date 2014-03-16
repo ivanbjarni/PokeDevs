@@ -2,7 +2,7 @@ from Deck import *
 from Hand import *
 from Card import *
 from util import *
-
+import random
 
 class Presets(object):
 	decks		= []		#Decks		Predefined cecks of cards to be used
@@ -178,3 +178,6 @@ class Presets(object):
 				return val
 		print "card not found: getCardByName"
 		return -1
+
+	def getRandomAttack(self, string):
+		return random.choice(attaks.values())
