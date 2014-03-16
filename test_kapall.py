@@ -54,7 +54,13 @@ class TestDeck(unittest.TestCase):
 		with self.assertRaises(IndexError):
 			# Index = -100 not valid
 			deck.remove(-100)
-
+			
+	def test_deckgetIndexOf(self):
+		deck = Deck()
+		pre = Presets()
+		deck.cards = [pre.gc("Bulbasaur")]
+		self.assertEqual(deck.getIndexOf("Bulbasaur"), 0)
+		self.assertEqual(deck.getIndexOf("Gamli"), -1)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestDeck)
 unittest.TextTestRunner(verbosity=2).run(suite)
@@ -105,22 +111,41 @@ class TestPresets(unittest.TestCase):
 suite = unittest.TestLoader().loadTestsFromTestCase(TestCard)
 unittest.TextTestRunner(verbosity=2).run(suite)
 
-'''
-class TestAttack(unittest.TestCase):
-	def test_validateStringToNumber(self):
-		self.assertTrue(not validateStringToNumber("asd"))
-	def test_higher(self):
-		self.assertTrue(higher("blabla") == "villa")
-
-suite = unittest.TestLoader().loadTestsFromTestCase(TestFoll)
-unittest.TextTestRunner(verbosity=2).run(suite)
-
+# -----------------------------------------------------------------------
+# Testing the hand class
+# -----------------------------------------------------------------------
 class TestHand(unittest.TestCase):
-	def test_validateStringToNumber(self):
-		self.assertTrue(not validateStringToNumber("asd"))
-	def test_higher(self):
-		self.assertTrue(higher("blabla") == "villa")
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestFoll)
+	# Checking if the remove method returns the correct value and 
+	# checking if it removes the item from the list. Checks also what 
+	# happens if you put a negative index as an argument.
+	def test_handRemove(self):
+		hand = Hand()
+		hand.cards = [0,1,2,3]
+		i = 0
+		self.assertEqual(hand.remove(0), i)
+		i += 1
+		# To check if a card was acctually removed
+		self.assertEqual(hand.remove(0), i)
+		with self.assertRaises(IndexError):
+			# Index = -100 not valid
+			hand.remove(-100)
+
+	# Testing the isFull method
+	def test_handisFull(self):
+		hand = Hand()
+		hand2 = Hand()
+		hand.cards = [1,2,3,4,5,6]
+		hand2.cards = [1,2,3]
+		self.assertTrue(hand.isFull())
+		self.assertFalse(hand2.isFull())
+
+	def test_handgetIndexOf(self):
+		hand = Hand()
+		pre = Presets()
+		hand.cards = [pre.gc("Bulbasaur")]
+		self.assertEqual(hand.getIndexOf("Bulbasaur"), 0)
+		self.assertEqual(hand.getIndexOf("Hundur"), -1)
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestHand)
 unittest.TextTestRunner(verbosity=2).run(suite)
-'''
