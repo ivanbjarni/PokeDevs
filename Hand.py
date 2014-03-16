@@ -14,7 +14,7 @@ class Hand(object):
 	def __str__(self):
 		s = ""
 		for c in self.cards:
-			s = s +", "+ str(c)
+			s +=  str(c) + ", "
 		return s
 
 	# Usage: card = hand.remove()
@@ -24,7 +24,7 @@ class Hand(object):
 		return self.cards.pop(index)
 
 	# Usage: hand.add(card)
-	# Before: Nothing 
+	# Before: Nothing
 	# After: Card has been added to the hand
 	def add(self, card):
 		self.cards.append(card)
@@ -34,7 +34,7 @@ class Hand(object):
 	# After: i is the index of name if name is not in the hand then i=-1
 	def getIndexOf(self,name):
 		for i in range(0,len(self.cards)):
-			if(self.cards[i] == name):
+			if(self.cards[i].name == name):
 				return i
 		return -1
 
