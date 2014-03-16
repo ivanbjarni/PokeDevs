@@ -49,7 +49,7 @@ class Presets(object):
 		63	: Attack("HyperBeam", 58, 75, 12, 0, "psychic"),			
 		64	: Attack("Peck", 12, 20, 0, 0, "normal"),			
 		65	: Attack("DrillPeck", 32, 75, 0, 1, "normal"),			
-		67	: Attack("Low Kick", 15, 15, 0, 0, "ground"),			
+		67	: Attack("LowKick", 15, 15, 0, 0, "ground"),			
 		71	: Attack("Absorb", 15, 20, -15, 0, "grass"),			
 		72	: Attack("MegaDrain", 22, 25, -22, 0, "grass"),			
 		75	: Attack("RazorLeaf", 18, 30, 0, 0, "grass"),			
@@ -63,6 +63,7 @@ class Presets(object):
 		89	: Attack("Earthquake", 50, 90, 0, 0, "ground"),				
 		90	: Attack("Fissure", 40, 100, 0, 1, "ground"),				
 		91	: Attack("Dig", 0, -25, -20, 1, "ground"),							
+		94	: Attack("Hypnosis", 0, 20, 0, 2, "psychic"),				
 		95	: Attack("Psychic", 40, 30, 0, 0, "psychic"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, -20, -20, 2, "normal"),	
@@ -120,7 +121,7 @@ class Presets(object):
 		491	: Attack("AcidSpray", 25, 50, 0, 0, "grass"),			
 		495	: Attack("AfterYou", 0, 0, 0, 0, "normal"),			
 		512	: Attack("Acrobatics", 20, 45, 0, 0, "normal"),			
-		512	: Attack("FinalGambit", 40, 0, 25, 0, "normal"),			
+		515	: Attack("FinalGambit", 40, 0, 25, 0, "normal"),			
 		517	: Attack("Inferno", 25, 50, 0, 0, "fire"),				
 		542	: Attack("Hurricane", 35, 60, 0, 1, "normal"),				
 		565	: Attack("FellStinger", 30, 40, 10, 0, "grass"),				
@@ -199,7 +200,7 @@ class Presets(object):
 		62	: Card("Poliwrath", 90, 100, [self.ga("DoubleSlap"), self.ga("RainDance"), self.ga("Hypnosis"), self.ga("WaterGun")], "water", "grass", "water"),
 		63	: Card("Abra", 25, 70, [self.ga("Psyshock"), self.ga("RainDance"), self.ga("Hypnosis"), self.ga("LightScreen")], "psychic", "fire", "psychic"),
 		64	: Card("Kadabra", 40, 100, [self.ga("Psychic"), self.ga("Recover"), self.ga("Hypnosis"), self.ga("LightScreen")], "psychic", "fire", "psychic"),
-		65	: Card("Alakazam", 55, 100, [self.ga("Psychic"), self.ga("Recover"), self.ga("HyperBeam"), self.ga("LightScreen")], "psychic", "fire", "psychic"),
+		65	: Card("Alakazam", 55, 130, [self.ga("Psychic"), self.ga("Recover"), self.ga("HyperBeam"), self.ga("LightScreen")], "psychic", "fire", "psychic"),
 
 
 
