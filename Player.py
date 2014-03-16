@@ -13,10 +13,14 @@ class Player(object):
 
 	def __init__(self, name):
 		self.name = name
+		self.graveyard = Deck()
 
 	def __str__(self):
 		return self.name
 
+	# Usage: b = c.attack(atk, card)
+	# Before: card is Card and atk is Attack
+	# After: b is true if attack succeeds, false otherwise
 	def attack(self,  nr,  player):
 		atk = self.mainCard.attacks[nr]
 		return self.mainCard.attack(atk, player.mainCard)

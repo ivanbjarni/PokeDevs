@@ -10,7 +10,7 @@ from Main import *
 presets = Presets()
 
 p1 = Player("p1")
-p1.mainCard = presets.gc("Charmander")
+p1.mainCard = presets.gc("Bulbasaur")
 p2 = Player("p2")
 p2.mainCard = presets.gc("Blastoise")
 

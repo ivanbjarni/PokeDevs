@@ -2,7 +2,7 @@ from Card import *
 from Player import *
 from Attack import *
 import random
-
+from Presets import *
 
 class Main(object):	
 	players = None			#Player[]	a list keeping track og the 2 players
@@ -16,16 +16,27 @@ class Main(object):
 
 	def gameLoop(self):
 		done = False
+		presets = Presets()
 		while(not done):
 			# define new variables for short
 			t = self.turn
 			yourCard = self.players[t].mainCard
 			enemCard = self.players[(t+1)%2].mainCard
 
-			# print ALL the things
+			# print stuff about turns
 			print "\n\n\n\n"
 			print "Total turns:" + str(self.turnCount)
-			print "It's player's "+str(t)+" turn."
+			print "It's player's "+str(t+1)+" turn."
+
+			#put out a new pokemon
+			if yourCard.isDead():
+				#add card to graveyard Coming soon
+				self.players[t].mainCard = presets.gc(random.randrange(1, 11, 1))
+				print str(yourCard) + " come back, "+str(self.players[t].mainCard)+" I choose you!"
+				yourCard = self.players[t].mainCard
+
+
+			#Print info about what is going on on the field
 			print "Enemy pokemon is: "+str(enemCard)+" (hp:"+str(enemCard.health)+"/"+str(enemCard.healthMax)+"sta:"+str(enemCard.stamina)+"/"+str(enemCard.staminaMax)+")"
 			print "Your pokemon is:"  +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+"sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
 			print "Attacks:"
@@ -36,7 +47,12 @@ class Main(object):
 			while(not hasAttacked):
 				print 'What attack do you want to do',
 				x = input()
-				hasAttacked = self.players[t].attack(x,self.players[(t+1)%2])
+				if x == 0:
+					print "You passed on your turn";
+					hasAttacked = True
+				else:
+					hasAttacked = self.players[t].attack(x-1,self.players[(t+1)%2])
+
 
 			
 			# update turns and stuff afterwards
