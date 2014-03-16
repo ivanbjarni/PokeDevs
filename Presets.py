@@ -179,5 +179,8 @@ class Presets(object):
 		print "card not found: getCardByName"
 		return -1
 
-	def getRandomAttack(self, string):
-		return random.choice(attaks.values())
+	def getRandomAttack(self):
+		return random.choice(self.attaks.values())
+
+	def getRandomCard(self):
+		return random.choice(self.cards.values())
