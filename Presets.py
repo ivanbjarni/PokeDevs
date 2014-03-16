@@ -18,33 +18,68 @@ class Presets(object):
 
 	def initAttacks(self):
 		self.attacks ={
-		0	: Attack("Empty", 0, 0, 0, 0, "normal"),				# Empty Attack
-		22	: Attack("VineWhip", 7, 10, 0, 0, "grass"),				# VineWhip
-		33	: Attack("Tackle", 7, 10, 0, 0, "normal"),				# Tackle
-		44	: Attack("Bite", 15, 20, 0, 0, "normal"),				# Bite
-		45	: Attack("Growl", 5, 5, 0, 0, "normal"),				# Growl
-		52	: Attack("Ember", 10, 10, 0, 0, "fire"),				# Ember
-		53	: Attack("Flamethrower", 18, 30, 0, 0, "fire"),			# Flamethrower
-		55	: Attack("WaterGun", 18, 30, 0, 0, "water"),			# WaterGun
-		61	: Attack("BubbleBeam", 28, 34, 0, 0, "water"),			# BubbleBeam
-		75	: Attack("RazorLeaf", 18, 30, 0, 0, "grass"),			# RazorLeaf
-		76	: Attack("SolarBeam", 34, 80, 0, 0, "grass"),			# SolarBeam
-		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),		# QuickAttack
-		116 : Attack("Withdraw",0,-17,-5,0,"water"),				# Withdraw
-		116 : Attack("FocusEnergy",0,-25,0,0,"normal"),				# FocusEnergy
-		424 : Attack("FireFang", 10, 12, 0, 2, "fire"),				# FireFang
-		486	: Attack("Thunder", 30, 50, 10, 0, "electric"),			# Thunder
-		517	: Attack("Inferno", 25, 50, 0, 0, "fire"),				# Inferno
-		678	: Attack("ElectroBall", 18, 30, 0, 0, "electric")		# ElectroBall
+		0	: Attack("Empty", 0, 0, 0, 0, "normal"),				
+		10	: Attack("Scratch", 10, 10, 0, 0, "normal"),			
+		16	: Attack("Gust", 10, 10, 0, 0, "normal"),			
+		22	: Attack("VineWhip", 7, 10, 0, 0, "grass"),				
+		33	: Attack("Tackle", 7, 10, 0, 0, "normal"),				
+		36	: Attack("TakeDown", 10, 15, 0, 0, "normal"),			
+		38	: Attack("DoubleEdge", 17, 22, 0, 0, "normal"),			
+		38	: Attack("PoisonSting", 15, 15, 0, 1, "normal"),			
+		44	: Attack("Bite", 15, 20, 0, 0, "normal"),				
+		45	: Attack("Growl", 5, 5, 0, 0, "normal"),				
+		48	: Attack("Supersonic", 5, 30, 0, 2, "normal"),				
+		52	: Attack("Ember", 10, 10, 0, 0, "fire"),			
+		53	: Attack("Flamethrower", 26, 30, 0, 0, "fire"),			
+		55	: Attack("WaterGun", 18, 30, 0, 0, "water"),			
+		56	: Attack("HydroPump", 50, 75, 0, 0, "water"),			
+		61	: Attack("BubbleBeam", 28, 35, 0, 0, "water"),			
+		75	: Attack("RazorLeaf", 18, 30, 0, 0, "grass"),			
+		76	: Attack("SolarBeam", 34, 80, 0, 0, "grass"),			
+		80	: Attack("PetalDance", 15, 30, 0, 0, "grass"),			
+		81	: Attack("StringShot", 10, 15, 0, 1, "grass"),			
+		83	: Attack("FireSpin", 28, 30, 0, 0, "fire"),				
+		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
+		106	: Attack("Harden", 0, -20, -30, 0, "normal"),	
+		110 : Attack("Withdraw",0, -17, -5, 0, "normal"),			
+		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
+		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
+		229 : Attack("RapidSpin", 7, 23, 0, 2,"normal"),			
+		318 : Attack("SilverWind", 20, 20, -10, 0,"grass"),			
+		352 : Attack("WaterPulse", 30, 30, 0, 0,"water"),			
+		394 : Attack("FlareBlitz", 40, 50 ,0,0,"fire"),				
+		405 : Attack("BugBuzz", 35, 50 , 0, 0, "grass"),				
+		424 : Attack("FireFang", 15, 12, 0, 2, "fire"),				
+		450 : Attack("BugBite", 15, 15, 0, 2, "grass"),				
+		486	: Attack("Thunder", 30, 50, 10, 0, "electric"),			
+		517	: Attack("Inferno", 25, 50, 0, 0, "fire"),				
+		572	: Attack("PetalBlizzard", 35, 60, 0, 0, "grass"),
+		678	: Attack("ElectroBall", 18, 30, 0, 0, "electric")
 		}
 
 	def initCards(self):
 		self.cards = {
-		1	: Card("Bulbasaur", 39, 90, [self.ga("Tackle"), self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("SolarBeam")], "grass", "fire", "water"),
-		4	: Card("Charmander", 39, 90, [self.ga("Tackle"), self.ga("Growl"), self.ga("Flamethrower"), self.ga("Ember")], "fire", "water", "grass"),
-		7	: Card("Squirtle", 39, 90, [self.ga("Tackle"), self.ga("BubbleBeam"), self.ga("Withdraw"), self.ga("WaterGun")], "water", "grass", "fire"),
+		1	: Card("Bulbasaur", 45, 90, [self.ga("Tackle"), self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("SolarBeam")], "grass", "fire", "water"),
+		2   : Card("Ivysaur", 60, 80, [self.ga("TakeDown"), self.ga("RazorLeaf"), self.ga("DoubleEdge"), self.ga("SolarBeam")], "grass", "fire", "water"),
+		3   : Card("Venusaur", 80, 82, [self.ga("VineWhip"), self.ga("PetalDance"), self.ga("SolarBeam"), self.ga("PetalBlizzard")], "grass", "fire", "water"),
+		4	: Card("Charmander", 39, 100, [self.ga("Tackle"), self.ga("Growl"), self.ga("Flamethrower"), self.ga("Ember")], "fire", "water", "grass"),
+		5	: Card("Charmeleon", 58, 90, [self.ga("Scratch"), self.ga("FireFang"), self.ga("Flamethrower"), self.ga("FireSpin")], "fire", "water", "grass"),
+		6	: Card("Charizard", 78, 85, [self.ga("Ember"), self.ga("FireFang"), self.ga("Inferno"), self.ga("FlareBlitz")], "fire", "water", "grass"),
+		7	: Card("Squirtle", 44, 90, [self.ga("Tackle"), self.ga("BubbleBeam"), self.ga("Withdraw"), self.ga("WaterGun")], "water", "grass", "fire"),
+		8	: Card("Wartotle", 59, 100, [self.ga("Tackle"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "grass", "fire"),
+		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("WaterPulse"), self.ga("WaterGun"), self.ga("HydroPump")], "water", "grass", "fire"),
+		10	: Card("Caterpie", 45, 100, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
+		11	: Card("Metapod", 50, 120, [self.ga("Tackle"), self.ga("Harden"), self.ga("Harden"), self.ga("Harden")], "grass", "ground", "grass"),
+		12	: Card("Butterfree", 60, 110, [self.ga("Gust"), self.ga("Supersonic"), self.ga("SilverWind"), self.ga("BugBuzz")], "grass", "fire", "grass"),
+		13	: Card("Weedle", 40, 60, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
+		
+
 		25	: Card("Pikachu", 35, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("ElectroBall"), self.ga("Thunder")], "electric", "ground", "electric"),
-		133	: Card("Eevee", 40, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
+		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
+		
+
+
+
 		}
 
 	#Short for get attack
@@ -58,7 +93,7 @@ class Presets(object):
 		for key, val in self.attacks.iteritems():
 			if val.name == string:
 				return val
-		print "Attack not found: getAttackByName"
+		print "Attack not found: getAttackByName. attack: "+string
 		return -1
 
 
