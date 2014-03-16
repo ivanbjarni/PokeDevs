@@ -4,6 +4,7 @@ from Card import *
 
 
 
+
 class Hand(object):
 	cards 		= []		#Card[]		List of cards in the hand
 	cardsMax	= 6			#int 		Maximum amount of cards a player can hold	

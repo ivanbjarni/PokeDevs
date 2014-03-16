@@ -4,6 +4,7 @@ import random
 
 
 
+
 class Deck(object):
 	cards 		= []		#Card[]		List of cards in the deck
 

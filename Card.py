@@ -4,6 +4,7 @@ from constants import *
 
 
 
+
 class Card(object):
 	name 		= ""		#String		Name of pokemon
 	health 		= 100		#int 		Current health

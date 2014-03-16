@@ -4,6 +4,7 @@ from Card import *
 
 
 
+
 class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player

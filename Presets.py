@@ -3,6 +3,7 @@ from Hand import *
 from Card import *
 from util import *
 import random
+import copy
 
 class Presets(object):
 	decks		= []		#Decks		Predefined cecks of cards to be used
@@ -199,14 +200,14 @@ class Presets(object):
 	#Short for get Card
 	def gc(self, card):
 		if isNumber(card):
-			return self.cards[card]
+			return copy.deepcopy(self.cards[card])
 		else:
 			return self.getCardByName(card)
 
 	def getCardByName(self, string):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
-				return val
+				return copy.deepcopy(val)
 		print "card not found: getCardByName"
 		return -1
 
@@ -214,4 +215,4 @@ class Presets(object):
 		return random.choice(self.attaks.values())
 
 	def getRandomCard(self):
-		return random.choice(self.cards.values())
+		return copy.deepcopy(random.choice(self.cards.values()))

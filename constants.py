@@ -6,4 +6,5 @@ missChance = 0.1				#chance that a move misses
 typeEffectiveness = 0.7			#how much % of damage a move does if the pokemon is not that type, normal moves excluded
 stunChance = 0.7				#chance that attacks with stun apply stun
 metronomeAmount = 42			#Amount that metronome can range
-metronomeBase = -20				#Starting amount for metronome 
+metronomeBase = -20				#Starting amount for metronome
+pointsToWin = 6					#points needed to win
