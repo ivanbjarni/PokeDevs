@@ -23,3 +23,20 @@ class Attack(object):
 
 	def __str__(self):
 		return self.name
+
+	# Usage: s=atk.info()
+	# Before: nothing
+	# After: s is a string that describes the attack
+	def info(self):
+		s = ""
+		s+= self.name +" is a "+self.poketype+" type move that does "+str(self.damage)+" damage. "
+		if(self.healthCost<0):
+			s+="It heals you for "+str(-self.healthCost)+" hp. "
+		elif(self.healthCost>0):
+			s+="It drains your own life for "+str(self.healthCost)+" hp. "
+
+		if(self.staminaCost<0):
+			s+="Using this move will recover "+str(-self.staminaCost)+" stamina. "
+		elif(self.staminaCost>0):
+			s+="This move uses "+str(self.staminaCost)+" stamina. "
+		return s

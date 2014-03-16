@@ -8,7 +8,7 @@ from Presets import *
 
 presets = Presets()
 
-Charmander = presets.gc("Charmander")
+Charmander = presets.gc("Eevee")
 Pikachu = presets.gc("Pikachu")
 
 
@@ -19,7 +19,7 @@ def main():
 	print Charmander.health
 	print Charmander.stamina
 	for atk in Charmander.attacks:
-		print " -"+str(atk)
+		print " -"+atk.info()
 	print Charmander.poketype
 	print Charmander.weakness
 	print Charmander.resistance

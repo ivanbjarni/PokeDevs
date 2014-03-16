@@ -5,8 +5,9 @@ from util import *
 
 
 class Presets(object):
-	cards		= []		#Deck		Deck of player
-	attacks 	= []		#Deck 		Graveyard, where dead cards go
+	decks		= []		#Decks		Predefined cecks of cards to be used
+	cards		= []		#Cards		Predefined cards to be used
+	attacks 	= []		#Attacks 	Predefined attacks to be used
 
 	def __init__(self):
 		self.initAttacks()

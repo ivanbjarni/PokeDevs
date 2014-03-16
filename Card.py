@@ -9,16 +9,19 @@ class Card(object):
 	health 		= 100		#int 		Current health
 	healthMax 	= 100		#int 		Maximum health
 	stamina 	= 100		#int 		Current stamina used for attacks
+	staminaMax 	= 100		#int 		Maximum stamina used for attacks
 	attacks 	= []		#Attack[] 	List of attacks the pokemon/card has
 	poketype 	= "normal" 	#String		Type the pokemon has, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
 	weakness 	= "normal" 	#String		Type the pokemon is weak against, same format as above
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
+	#Vantar bitmap breytu
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
 		self.health = health
 		self.healthMax = health
 		self.stamina = stamina
+		self.staminaMax = stamina
 		self.attacks = attacks
 		self.poketype = poketype 
 		self.weakness =  weakness
@@ -40,6 +43,7 @@ class Card(object):
 		self.stamina -= staminaCost
 		self.health  -= healthCost
 		self.health   = max(self.health , self.healthMax)
+		self.stamina = max(self.stamina, self.staminaMax)
 
 		card.health  -= damage
 		
