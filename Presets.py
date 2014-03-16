@@ -2,19 +2,45 @@ from Deck import *
 from Hand import *
 from Card import *
 from util import *
+from InvCard import *
 
 
 class Presets(object):
-	decks		= []		#Decks		Predefined cecks of cards to be used
+	invDecks	= []		#invDecks 	Predefined InvDecks of Invcards to be used
+	invCards	= []		#
+	decks		= []		#Decks		Predefined decks of cards to be used
 	cards		= []		#Cards		Predefined cards to be used
 	attacks 	= []		#Attacks 	Predefined attacks to be used
 
+
 	def __init__(self):
+		self.initInvCards()
 		self.initAttacks()
 		self.initCards()
 
 	def __str__(self):
 		return "presets"
+
+	def initInvCards(self):
+		self.invCards = {
+		0	: InvCard("StaminaBoost1", 0, 15, False, 1),
+		1	: InvCard("StaminaBoost2", 0, 25, False, 1),
+		2	: InvCard("StaminaBoost3", 0, 35, False, 1),
+		3	: InvCard("StaminaBoost4", 0, 45, False, 1),
+		4	: InvCard("HealthPotion1", 10, 0, False, 1),
+		5	: InvCard("HealthPotion2", 25, 0, False, 1),
+		6	: InvCard("HealthPotion3", 40, 0, False, 1),
+		7	: InvCard("HealthPotion4", 65, 0, False, 1),
+		9	: InvCard("DamageBoost1", 0, 0, False, 1.2),
+		10	: InvCard("DamageBoost2", 0, 0, False, 1.4),
+		11	: InvCard("DamageBoost3", 0, 0, False, 1.6),
+		12	: InvCard("DamageBoost4", 0, 0, False, 1.8),
+		13	: InvCard("DoubleDamage", 0, 0, False, 2),
+		14	: InvCard("LooseStun", 0, 0, True, 1),
+		15	: InvCard("HealthAndStun", 20, 0, True, 1),
+		16	: InvCard("StaminaAndStun", 0, 25, True, 1),
+		17	: InvCard("TheWholePackage", 20, 20, True, 1.4)
+		}
 
 	def initAttacks(self):
 		self.attacks ={
@@ -174,6 +200,20 @@ class Presets(object):
 
 	def getCardByName(self, string):
 		for key, val in self.cards.iteritems():
+			if val.name == string:
+				return val
+		print "card not found: getCardByName"
+		return -1
+
+	#Short for get invCard (short for inventory card)
+	def gic(self, invCard):
+		if isNumber(invCard):
+			return self.invCards[invCard]
+		else:
+			return self.getInvCardByName(invCard)
+
+	def getInvCardByName(self, string):
+		for key, val in self.invCards.iteritems():
 			if val.name == string:
 				return val
 		print "card not found: getCardByName"
