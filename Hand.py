@@ -2,8 +2,6 @@ from Card import *
 
 
 
-
-
 class Hand(object):
 	cards 		= [];		#Card[]		List of cards in the hand
 
