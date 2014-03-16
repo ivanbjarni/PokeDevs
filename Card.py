@@ -14,7 +14,7 @@ class Card(object):
 	poketype 	= "normal" 	#String		Type the pokemon has, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
 	weakness 	= "normal" 	#String		Type the pokemon is weak against, same format as above
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
-	#Vantar bitmap breytu
+	# Vantar bitmap breytu
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -42,7 +42,7 @@ class Card(object):
 
 	# Usage: b = c.attack(atk, card)
 	# Before: card is Card and atk is Attack
-	# After: b is true if attack succeeds, false otherwise. 
+	# After: b is true if attack succeeds, false otherwise.
 	#		 Also prints out on console what happens.
 	def attack(self, atk, card):
 		if(self.stamina < atk.staminaCost):

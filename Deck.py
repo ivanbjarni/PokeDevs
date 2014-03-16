@@ -28,11 +28,11 @@ class Deck(object):
 	def draw(self):
 		return self.cards.pop()
 
-	# Usage: card = deck.remove()
-	# Before: deck not empty
-	# After: card is the top card of the deck
+	# Usage: card = deck.remove(index)
+	# Before: index is a valid index in deck.cards
+	# After: card is the card in the deck where index = index.
 	def remove(self, index):
-		self.cards.pop(index)
+		return self.cards.pop(index)
 
 	# Usage: deck.add(card)
 	# Before: Nothing 
@@ -49,3 +49,10 @@ class Deck(object):
 				return i
 		return -1
 
+	# Usage: bool=deck.isEmpty()
+	# Before: Nothing
+	# After: bool is true if deck is empty else false
+	def isEmpty(self):
+		if not self.cards:
+			return True
+		return False
