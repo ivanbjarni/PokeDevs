@@ -7,7 +7,7 @@ from Presets import *
 class Main(object):	
 	players = None			#Player[]	a list keeping track og the 2 players
 	playerMode = "vs"		#String	 	player mode "vs" for 2 human players / "ai" for 1 human player and 1 computer
-	turn = 1				#int 		states whether it is player's 0 turn or player's 1
+	turn = 0				#int 		states whether it is player's 0 turn or player's 1
 	turnCount = 1			#int 		total number of turns passed
 
 	def __init__(self, players):
@@ -30,7 +30,7 @@ class Main(object):
 			print "Total turns:" + str(self.turnCount)
 			print "It's player's "+str(t+1)+" turn."
 
-			#draw a new card
+			#draw a new card if you can
 			if not pYou.hand.isFull():
 				pYou.hand.add(presets.gc(random.randrange(1, 19, 1)))
 
@@ -45,9 +45,12 @@ class Main(object):
 					inp = raw_input()
 					ind = pYou.hand.getIndexOf(inp)
 					if ind != -1:
+
 						newCard = pYou.hand.remove(ind)
 						hasChosen = True
-
+					else:
+						print "You don't have a pokemon named "+inp+" in your hand."
+				#Tell player a pokemon is being swithced and switch pokemons
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
 				yourCard = newCard
 				pYou.mainCard = newCard
@@ -68,8 +71,9 @@ class Main(object):
 					print "You passed on your turn"
 					hasAttacked = True
 				elif x==9:
-					yourCard.health -9000
-					print "You chose self inflected damage "++str(yourCard)+" loses 9000hp"
+					yourCard.health -= 9000
+					print "You chose self inflected damage "+str(yourCard)+" loses 9000hp"
+					hasAttacked = True
 				else:
 					hasAttacked = pYou.attack(x-1,pEne)
 
