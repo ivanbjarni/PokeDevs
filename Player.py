@@ -17,4 +17,6 @@ class Player(object):
 	def __str__(self):
 		return self.name
 
-	def attack()
+	def attack(self,  nr,  player):
+		atk = self.mainCard.attacks[nr]
+		return self.mainCard.attack(atk, player.mainCard)

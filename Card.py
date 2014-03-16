@@ -1,6 +1,6 @@
 from Attack import *
-
-
+import random
+from constants import *
 
 
 
@@ -33,6 +33,13 @@ class Card(object):
 	def __str__(self):
 		return self.name
 
+	def getAttacks(self):
+		s=""
+		for a in self.attacks:
+			s += " - "
+			s += str(a) + "\n"
+		return s
+
 	# Usage: b = c.attack(atk, card)
 	# Before: card is Card and atk is Attack
 	# After: b is true if card dies, false otherwise
@@ -40,10 +47,24 @@ class Card(object):
 		if(self.stamina < atk.staminaCost or self.health < atk.healthCost):
 			return False
 		
-		self.stamina -= staminaCost
-		self.health  -= healthCost
-		self.health   = max(self.health , self.healthMax)
-		self.stamina = max(self.stamina, self.staminaMax)
+		self.stamina -= atk.staminaCost
+		self.health  -= atk.healthCost
+		self.health   = min(self.health , self.healthMax)
+		self.stamina = min(self.stamina, self.staminaMax)
+
+		damage = atk.damage
+		#miss
+		if random.random()<missChance:
+			damage = 0
+		#crit
+		if random.random() < critChance:
+			damage *= critMultiplier
+		#resistance
+		if self.poketype == card.resistance:
+			damage *= resistanceMultiplier
+		#weakness
+		if self.poketype == card.weakness:
+			damage *= weaknessMultiplier
 
 		card.health  -= damage
 		
