@@ -5,7 +5,7 @@ import random
 
 
 class Deck(object):
-	cards 		= [];		#Card[]		List of cards in the deck
+	cards 		= []		#Card[]		List of cards in the deck
 
 	def __init__(self):
 		self.cards = []
@@ -45,7 +45,7 @@ class Deck(object):
 	# After: i is the index of name if name is not in the deck then i=-1
 	def getIndexOf(self,name):
 		for i in range(0,len(self.cards)):
-			if(self.cards[i] == name):
+			if(self.cards[i].name == name):
 				return i
 		return -1
 

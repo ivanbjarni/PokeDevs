@@ -41,12 +41,11 @@ class Main(object):
 				pYou.graveyard.add(yourCard)
 				hasChosen = False
 				while(not hasChosen):
-					print 'What pokemon do you want to put out',
-					x = input()
-					if(len(pYou.hand.cards)>x):
-						print len(pYou.hand.cards)
-						newCard = pYou.hand.remove(x)
-						print newCard
+					print 'What pokemon do you want to put out:',
+					inp = raw_input()
+					ind = pYou.hand.getIndexOf(inp)
+					if ind != -1:
+						newCard = pYou.hand.remove(ind)
 						hasChosen = True
 
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
@@ -63,11 +62,14 @@ class Main(object):
 			# Let player choose attack
 			hasAttacked = False
 			while(not hasAttacked):
-				print 'What attack do you want to do',
+				print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
 				x = input()
 				if x == 0:
-					print "You passed on your turn";
+					print "You passed on your turn"
 					hasAttacked = True
+				elif x==9:
+					yourCard.health -9000
+					print "You chose self inflected damage "++str(yourCard)+" loses 9000hp"
 				else:
 					hasAttacked = pYou.attack(x-1,pEne)
 
