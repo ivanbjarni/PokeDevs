@@ -24,7 +24,7 @@ class Hand(object):
 		return self.cards.pop(index)
 
 	# Usage: hand.add(card)
-	# Before: Nothing 
+	# Before: Nothing
 	# After: Card has been added to the hand
 	def add(self, card):
 		self.cards.append(card)
