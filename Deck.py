@@ -24,13 +24,13 @@ class Deck(object):
 
 	# Usage: card = deck.draw()
 	# Before: deck not empty
-	# After: card is the top card of the deck
+	# After: card is the top card of the deck which has been removed
 	def draw(self):
 		return self.cards.pop()
 
 	# Usage: card = deck.remove()
 	# Before: deck not empty
-	# After: card is the top card of the deck
+	# After: card is the card with the given index which has been removed from the deck
 	def remove(self, index):
 		self.cards.pop(index)
 
