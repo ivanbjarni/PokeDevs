@@ -58,7 +58,7 @@ class Presets(object):
 		for key, val in self.attacks.iteritems():
 			if val.name == string:
 				return val
-		print "Attack not found: getAttackByName"
+		print "Attack not found: getAttackByName. attack: "+string
 		return -1
 
 
