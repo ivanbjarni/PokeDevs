@@ -15,6 +15,3 @@ class Hand(object):
 		for c in cards:
 			s = s + c
 		return s
-
-
-	

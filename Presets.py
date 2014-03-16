@@ -26,7 +26,7 @@ class Presets(object):
 		33	: Attack("Tackle", 7, 10, 0, 0, "normal"),				
 		36	: Attack("TakeDown", 10, 15, 0, 0, "normal"),			
 		38	: Attack("DoubleEdge", 17, 22, 0, 0, "normal"),			
-		38	: Attack("PoisonSting", 15, 15, 0, 1, "normal"),			
+		40	: Attack("PoisonSting", 15, 15, 0, 1, "normal"),			
 		41	: Attack("Twineedle", 13, 20, 0, 0, "grass"),			
 		44	: Attack("Bite", 15, 20, 0, 0, "normal"),				
 		45	: Attack("Growl", 5, 5, 0, 0, "normal"),				
@@ -36,20 +36,24 @@ class Presets(object):
 		55	: Attack("WaterGun", 18, 30, 0, 0, "water"),			
 		56	: Attack("HydroPump", 50, 75, 0, 0, "water"),			
 		61	: Attack("BubbleBeam", 28, 35, 0, 0, "water"),			
+		64	: Attack("Peck", 12, 35, 0, 0, "water"),			
 		75	: Attack("RazorLeaf", 18, 30, 0, 0, "grass"),			
 		76	: Attack("SolarBeam", 34, 80, 0, 0, "grass"),			
 		80	: Attack("PetalDance", 15, 30, 0, 0, "grass"),			
 		81	: Attack("StringShot", 10, 15, 0, 1, "grass"),			
 		83	: Attack("FireSpin", 28, 30, 0, 0, "fire"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
-		98	: Attack("Rage", 0, -20, -20, 2, "normal"),	
+		99	: Attack("Rage", 0, -20, -20, 2, "normal"),	
 		106	: Attack("Harden", 0, -20, -30, 0, "normal"),	
 		110 : Attack("Withdraw",0, -17, -5, 0, "normal"),			
 		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
+		119 : Attack("MirrorMove", 0, -25, -25, 1, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
+		158 : Attack("HyperFang", 17, 30, 0, 0, "water"),	
 		229 : Attack("RapidSpin", 7, 23, 0, 2,"normal"),			
-		318 : Attack("SilverWind", 20, 20, -10, 0,"grass"),			
-		352 : Attack("WaterPulse", 30, 30, 0, 0,"water"),			
+		229 : Attack("Endeavor", 15, -20, -10, 2, "normal"),			
+		318 : Attack("SilverWind", 20, 20, -10, 0, "grass"),			
+		352 : Attack("WaterPulse", 30, 30, 0, 0, "water"),			
 		394 : Attack("FlareBlitz", 40, 50, 0, 0, "fire"),				
 		403 : Attack("AirSlash", 25, 45, 0, 0, "normal"),				
 		405 : Attack("BugBuzz", 35, 50, 0, 0, "grass"),				
@@ -61,6 +65,8 @@ class Presets(object):
 		565	: Attack("FellStinger", 30, 40, 10, 0, "grass"),				
 		572	: Attack("PetalBlizzard", 35, 60, 0, 0, "grass"),
 		678	: Attack("ElectroBall", 18, 30, 0, 0, "electric")
+		
+
 		}
 
 	def initCards(self):
@@ -82,7 +88,10 @@ class Presets(object):
 		15	: Card("Beedrill", 65, 110, [self.ga("FocusEnergy"), self.ga("Twineedle"), self.ga("Rage"), self.ga("FellStinger")], "grass", "fire", "grass"),
 		16	: Card("Pidgey", 40, 100, [self.ga("Tackle"), self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash")], "normal", "electric", "grass"),
 		17	: Card("Pidgeotto", 63, 105, [self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash"), self.ga("Hurricane")], "normal", "electric", "grass"),
-		18	: Card("Pidgeot", 83, 110, [self.ga("Gust"), self.ga("MirrorMove"), self.ga("AirSlash"), self.ga("Hurricane")], "normal", "electric", "grass"),
+		18	: Card("Pidgeot", 83, 110, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("MirrorMove"), self.ga("Hurricane")], "normal", "electric", "grass"),
+		19	: Card("Rattata", 30, 75, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("HyperFang"), self.ga("DoubleEdge")], "normal", "ground", "psychic"),
+		20	: Card("Raticate", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("DoubleEdge"), self.ga("Endeavor")], "normal", "ground", "psychic"),
+		21	: Card("Spearow", 40, 85, [self.ga("Peck"), self.ga("Growl"), self.ga("FuryAttack"), self.ga("AerialAce")], "normal", "ground", "psychic"),
 		
 
 		25	: Card("Pikachu", 35, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("ElectroBall"), self.ga("Thunder")], "electric", "ground", "electric"),
