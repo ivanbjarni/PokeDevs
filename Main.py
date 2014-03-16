@@ -77,7 +77,7 @@ class Main(object):
 				else:
 					hasAttacked = pYou.attack(x-1,pEne)
 
-
+			yourCard.applyEffects()
 			
 			# update turns and stuff afterwards
 			self.turn = (t+1)%2
