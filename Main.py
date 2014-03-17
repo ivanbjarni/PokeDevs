@@ -14,6 +14,22 @@ class Main(object):
 	def __init__(self, players):
 		self.players = players
 		
+	def draw(self,pYou):
+		#draw a new card if you can
+		if not pYou.hand.isFull() and not pYou.deck.isEmpty():
+			newCard = pYou.deck.draw()
+			pYou.hand.add(newCard)				
+			print "You draw a card. It's a "+str(newCard)
+
+	def chooseCard(self,pYou):
+		while(True):
+			print 'What pokemon do you want to put out:',
+			inp = raw_input()
+			ind = pYou.hand.getIndexOf(inp)
+			if ind != -1:
+				return pYou.hand.remove(ind)
+			else:
+				print "You don't have a pokemon named "+inp+" in your hand."
 
 	def gameLoop(self):
 		done = False
@@ -35,27 +51,15 @@ class Main(object):
 			print "Total turns:" + str(self.turnCount)
 			print "It's player's "+str(t+1)+" turn."
 
-			#draw a new card if you can
-			if not pYou.hand.isFull() and not pYou.deck.isEmpty():
-				newCard = pYou.deck.draw()
-				pYou.hand.add(newCard)
-				print "You draw a card. It's a "+str(newCard)
-
+			#Draw a new card in the start of your turn
+			self.draw(pYou)
+			
 			print "Your Hand: "+str(pYou.hand)
 
 			#put out a new pokemon
 			if yourCard.isDead():
 				pYou.graveyard.add(yourCard)
-				hasChosen = False
-				while(not hasChosen):
-					print 'What pokemon do you want to put out:',
-					inp = raw_input()
-					ind = pYou.hand.getIndexOf(inp)
-					if ind != -1:
-						newCard = pYou.hand.remove(ind)
-						hasChosen = True
-					else:
-						print "You don't have a pokemon named "+inp+" in your hand."
+				newCard = self.chooseCard(pYou)
 				#Tell player a pokemon is being swithced and switch pokemons
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
 				yourCard = newCard

@@ -100,7 +100,7 @@ class Presets(object):
 		93	: Attack("Confusion", 0, 25, 0, 2, "psychic"),							
 		94	: Attack("Hypnosis", 0, 20, 0, 2, "psychic"),				
 		95	: Attack("Psychic", 40, 30, 0, 0, "psychic"),				
-		95	: Attack("Meditate", 0, -20, -20, 0, "psychic"),				
+		96	: Attack("Meditate", 0, -20, -20, 0, "psychic"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 20, -20, 2, "normal"),	
 		105	: Attack("Recover", 0, 50, 50, 0, "normal"),	
