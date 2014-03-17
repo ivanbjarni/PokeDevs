@@ -4,12 +4,14 @@ from Card import *
 
 
 
+
 class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player
 	graveyard 	= None		#Deck 		Graveyard, where dead cards go
 	hand		= None		#Hand 		Cards that player has in his hand
 	mainCard	= None		#Card		Players main card on the field
+	points		= 0			#int 		how many pokemon's in you have slain! (jk they don't die, they just faint.)
 
 	def __init__(self, name):
 		self.name = name

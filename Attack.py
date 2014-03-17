@@ -4,6 +4,7 @@
 
 
 
+
 class Attack(object):
 	name 		= ""		#String		Name of attack
 	damage 		= 10		#int 		Amount of damage
