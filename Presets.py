@@ -67,6 +67,7 @@ class Presets(object):
 		89	: Attack("Earthquake", 50, 90, 0, 0, "ground"),				
 		90	: Attack("Fissure", 40, 100, 0, 1, "ground"),				
 		91	: Attack("Dig", 0, -25, -20, 1, "ground"),							
+		93	: Attack("Confusion", 0, 25, 0, 2, "psychic"),							
 		94	: Attack("Hypnosis", 0, 20, 0, 2, "psychic"),				
 		95	: Attack("Psychic", 40, 30, 0, 0, "psychic"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
@@ -80,6 +81,7 @@ class Presets(object):
 		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 0, 0, 0, "normal"),	
 		119 : Attack("MirrorMove", 0, -5, -25, 0, "normal"),	
+		120 : Attack("SelfDestruct", 80, 50, 60, 0, "normal"),	
 		141 : Attack("LeechLife", 15, 30, -15, 0, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
 		158 : Attack("HyperFang", 17, 30, 0, 0, "water"),	
@@ -88,6 +90,7 @@ class Presets(object):
 		184 : Attack("ScaryFace", 5, 20, 5, 1, "normal"),	
 		202 : Attack("GigaDrain", 30, 60, -30, 0, "grass"),	
 		207 : Attack("Swagger", 0, -50, 0, 0, "normal"),	
+		209 : Attack("Spark", 15, 30, 0, 0, "electric"),	
 		210 : Attack("FuryCutter", 20, 40, 0, 0, "grass"),	
 		219 : Attack("Safeguard", 0, 0, -25, 1, "normal"),	
 		222 : Attack("Magnitude", 18, 30, 0, 1, "ground"),	
@@ -97,6 +100,7 @@ class Presets(object):
 		238 : Attack("CrossChop", 33, 60, 0, 1, "ground"),			
 		240 : Attack("RainDance", 5, -10, -5, 0, "water"),			
 		252 : Attack("FakeOut", 12, 14, 0, 0, "normal"),			
+		268 : Attack("Charge", 0, -30, 0, 0, "electric"),			
 		270 : Attack("HelpingHand", -30, 50, 0, 2, "normal"),			
 		276 : Attack("Superpower", 7, -30, -20, 0, "normal"),			
 		283 : Attack("Endeavor", 15, -20, -10, 2, "normal"),			
@@ -104,12 +108,14 @@ class Presets(object):
 		305 : Attack("PoisonFang", 20, 40, 0, 2, "normal"),			
 		318 : Attack("SilverWind", 20, 20, -10, 0, "grass"),			
 		324 : Attack("SignalBeam", 15, 28, 0, 0, "grass"),			
+		331 : Attack("BulletSeed", 12, 25, 0, 0, "grass"),			
 		332 : Attack("AerialAce", 30, 0, 25, 0, "normal"),			
 		346 : Attack("WaterSport", 12, 20, 25, 0, "normal"),			
 		352 : Attack("WaterPulse", 30, 30, 0, 0, "water"),			
 		364 : Attack("Feint", 0, -15, -30, 0, "normal"),			
 		370 : Attack("CloseCombat", 30, 50, 0, 0, "normal"),			
 		394 : Attack("FlareBlitz", 40, 50, 0, 0, "fire"),				
+		402 : Attack("SeedBomb", 25, 50, 0, 0, "grass"),				
 		403 : Attack("AirSlash", 25, 45, 0, 0, "normal"),				
 		404 : Attack("X-Scissor", 30, 50, 0, 0, "grass"),				
 		405 : Attack("BugBuzz", 35, 50, 0, 0, "grass"),				
@@ -118,9 +124,12 @@ class Presets(object):
 		424 : Attack("FireFang", 15, 12, 0, 1, "fire"),				
 		426 : Attack("MudBomb", 20, 40, 0, 0, "normal"),				
 		428 : Attack("ZenHeadbutt", 10, -30, 0, 0, "psychic"),				
+		437 : Attack("LeafStorm", 35, 70, 0, 0, "grass"),				
 		441 : Attack("GunkShot", 20, 60, 0, 2, "grass"),				
 		445 : Attack("Captivate", 30, 60, 0, 0, "normal"),				
 		450 : Attack("BugBite", 15, 15, 0, 2, "grass"),				
+		451 : Attack("ChargeBeam", 25, 20, 10, 0, "electric"),				
+		452 : Attack("WoodHammer", 25, 60, 0, 1, "grass"),				
 		472 : Attack("WonderRoom", 0, 15, -10, 1, "psychic"),				
 		473 : Attack("Psyshock", 30, 25, 0, 0, "psychic"),				
 		486	: Attack("Thunder", 30, 50, 10, 0, "electric"),			
@@ -215,7 +224,17 @@ class Presets(object):
 		70	: Card("Weepinbell", 65, 95, [self.ga("Slam"), self.ga("RazorLeaf"), self.ga("Acid"), self.ga("StunSpore")], "grass", "fire", "grass"),
 		71	: Card("Victreebel", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
 		72	: Card("Tentacool", 40, 80, [self.ga("PoisonSting"), self.ga("Acid"), self.ga("BubbleBeam"), self.ga("AcidSpray")], "water", "psychic", "fire"),
-		72	: Card("Tentacruel", 80, 95, [self.ga("PoisonSting"), self.ga("BubbleBeam"), self.ga("HydroPump"), self.ga("Acid")], "water", "psychic", "fire"),
+		73	: Card("Tentacruel", 80, 95, [self.ga("PoisonSting"), self.ga("BubbleBeam"), self.ga("HydroPump"), self.ga("Acid")], "water", "psychic", "fire"),
+		
+
+
+
+		100	: Card("Voltorb", 40, 80, [self.ga("Tackle"), self.ga("Spark"), self.ga("ChargeBeam"), self.ga("ElectroBall")], "electric", "ground", "electric"),
+		101	: Card("Electrode", 60, 110, [self.ga("Spark"), self.ga("ElectroBall"), self.ga("Charge"), self.ga("SelfDestruct")], "electric", "ground", "electric"),
+		102	: Card("Exeggcute", 60, 70, [self.ga("BulletSeed"), self.ga("StunSpore"), self.ga("Confusion"), self.ga("SolarBeam")], "grass", "fire", "psychic"),
+		103	: Card("Exeggutor", 95, 100, [self.ga("SeedBomb"), self.ga("WoodHammer"), self.ga("Confusion"), self.ga("LeafStorm")], "grass", "fire", "psychic"),
+
+
 
 
 
