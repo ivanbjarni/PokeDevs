@@ -148,6 +148,7 @@ class Presets(object):
 		332 : Attack("AerialAce", 30, 0, 25, 0, "normal"),			
 		346 : Attack("WaterSport", 12, 20, 25, 0, "normal"),			
 		352 : Attack("WaterPulse", 30, 30, 0, 0, "water"),			
+		361 : Attack("HealingWish", -5, 10, -20, 0, "normal"),			
 		364 : Attack("Feint", 0, -15, -30, 0, "normal"),			
 		370 : Attack("CloseCombat", 30, 50, 0, 0, "normal"),			
 		394 : Attack("FlareBlitz", 40, 50, 0, 0, "fire"),				
@@ -262,6 +263,9 @@ class Presets(object):
 		71	: Card("Victreebel", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
 		72	: Card("Tentacool", 40, 80, [self.ga("PoisonSting"), self.ga("Acid"), self.ga("BubbleBeam"), self.ga("AcidSpray")], "water", "psychic", "fire"),
 		73	: Card("Tentacruel", 80, 95, [self.ga("PoisonSting"), self.ga("BubbleBeam"), self.ga("HydroPump"), self.ga("Acid")], "water", "psychic", "fire"),
+		74	: Card("Geodude", 40, 95, [self.ga("Tackle"), self.ga("SelfDestruct"), self.ga("DoubleEdge"), self.ga("Magnitude")], "ground", "water", "electric"),
+		75	: Card("Graveler", 55, 95, [self.ga("Tackle"), self.ga("SelfDestruct"), self.ga("Earthquake"), self.ga("Magnitude")], "ground", "water", "electric"),
+		76	: Card("Golem", 55, 95, [self.ga("Tackle"), self.ga("SelfDestruct"), self.ga("Earthquake"), self.ga("Magnitude")], "ground", "water", "electric"),
 		
 
 
@@ -277,6 +281,10 @@ class Presets(object):
 		108	: Card("Lickitung", 90, 80, [self.ga("Lick"), self.ga("Supersonic"), self.ga("Slam"), self.ga("ChipAway")], "normal", "ground", "psychic"),
 		109	: Card("Koffing", 40, 80, [self.ga("Tackle"), self.ga("Smog"), self.ga("Sludge"), self.ga("Haze")], "grass", "psychic", "grass"),
 		110	: Card("Weezing", 65, 100, [self.ga("Smog"), self.ga("SludgeBomb"), self.ga("Haze"), self.ga("SelfDestruct")], "grass", "psychic", "grass"),
+		111	: Card("Rhyhorn", 80, 80, [self.ga("HornDrill"), self.ga("Earthquake"), self.ga("ScaryFace"), self.ga("TakeDown")], "ground", "grass", "normal"),
+		112	: Card("Rhydon", 105, 100, [self.ga("Megahorn"), self.ga("Earthquake"), self.ga("ScaryFace"), self.ga("TakeDown")], "ground", "grass", "normal"),
+		113	: Card("Chansey", 250, 120, [self.ga("DoubleSlap"), self.ga("LightScreen"), self.ga("HealingWish"), self.ga("TakeDown")], "normal", "ground", "none"),
+		114	: Card("Tangela", 65, 120, [self.ga("MegaDrain"), self.ga("StunSpore"), self.ga("VineWhip"), self.ga("Slam")], "grass", "fire", "water"),
 
 
 
