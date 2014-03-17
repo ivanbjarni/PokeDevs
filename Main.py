@@ -64,7 +64,7 @@ class Main(object):
 
 			#Print info about what is going on on the field
 			print "Enemy pokemon is: "+str(enemCard)+" (hp:"+str(enemCard.health)+"/"+str(enemCard.healthMax)+" sta:"+str(enemCard.stamina)+"/"+str(enemCard.staminaMax)+")"
-			print "Your pokemon is:"  +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+" sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
+			print "Your pokemon is: " +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+" sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
 			print "Attacks:"
 			print yourCard.getAttacks()
 
