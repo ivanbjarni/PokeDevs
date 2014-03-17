@@ -2,13 +2,9 @@ from Deck import *
 from Hand import *
 from Card import *
 from util import *
-<<<<<<< HEAD
 from InvCard import *
-
-=======
 import random
 import copy
->>>>>>> 6ec4ad54a4665e5e21c4063c51f57cfbefb39989
 
 class Presets(object):
 	invDecks	= []		#invDecks 	Predefined InvDecks of Invcards to be used
@@ -322,7 +318,6 @@ class Presets(object):
 		print "card not found: getCardByName"
 		return -1
 
-<<<<<<< HEAD
 	#Short for get invCard (short for inventory card)
 	def gic(self, invCard):
 		if isNumber(invCard):
@@ -336,10 +331,9 @@ class Presets(object):
 				return val
 		print "card not found: getCardByName"
 		return -1
-=======
+
 	def getRandomAttack(self):
 		return random.choice(self.attaks.values())
 
 	def getRandomCard(self):
 		return copy.deepcopy(random.choice(self.cards.values()))
->>>>>>> 6ec4ad54a4665e5e21c4063c51f57cfbefb39989
