@@ -328,7 +328,7 @@ class Presets(object):
 		112	: Card("Rhydon", 105, 100, [self.ga("Megahorn"), self.ga("Earthquake"), self.ga("ScaryFace"), self.ga("TakeDown")], "ground", "grass", "normal"),
 		113	: Card("Chansey", 250, 120, [self.ga("DoubleSlap"), self.ga("LightScreen"), self.ga("HealingWish"), self.ga("TakeDown")], "normal", "ground", "none"),
 		114	: Card("Tangela", 65, 120, [self.ga("MegaDrain"), self.ga("StunSpore"), self.ga("VineWhip"), self.ga("Slam")], "grass", "fire", "water"),
-
+		
 
 
 
