@@ -48,6 +48,7 @@ class Presets(object):
 		0	: Attack("Empty", 0, 0, 0, 0, "normal"),				
 		2	: Attack("KarateChop", 25, 25, 0, 0, "ground"),				
 		3	: Attack("DoubleSlap", 20, 40, 0, 0, "normal"),				
+		5	: Attack("MegaPunch", 20, 40, 0, 0, "normal"),				
 		10	: Attack("Scratch", 10, 10, 0, 0, "normal"),			
 		16	: Attack("Gust", 10, 10, 0, 0, "normal"),			
 		17	: Attack("WingAttack", 15, 20, 0, 1, "normal"),	
@@ -125,6 +126,7 @@ class Presets(object):
 		126 : Attack("FireBlast", 18, 35, 0, 1, "fire"),	
 		127 : Attack("Waterfall", 25, 55, 0, 0, "water"),	
 		141 : Attack("LeechLife", 15, 30, -15, 0, "normal"),	
+		143 : Attack("SkyAttack", 15, 30, 0, 0, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
 		146 : Attack("DizzyPunch", 22, 44, 0, 0, "ground"),	
 		150 : Attack("Splash", 7, 15, 0, 0, "water"),	
@@ -142,6 +144,7 @@ class Presets(object):
 		192 : Attack("ZapCannon", 30, 50, 0, 1, "electric"),	
 		196 : Attack("IcyWind", 15, 30, 0, 1, "water"),	
 		198 : Attack("BoneRush", 35, 65, 5, 0, "ground"),	
+		200 : Attack("Outrage", 25, -15, 15, 0, "normal"),	
 		201 : Attack("Sandstorm", 40, 50, 0, 0, "ground"),	
 		202 : Attack("GigaDrain", 30, 60, -30, 0, "grass"),	
 		203 : Attack("Endure", 0, 50, -40, 0, "normal"),	
@@ -176,6 +179,7 @@ class Presets(object):
 		331 : Attack("BulletSeed", 12, 25, 0, 0, "grass"),			
 		332 : Attack("AerialAce", 30, 0, 25, 0, "normal"),			
 		346 : Attack("WaterSport", 12, 20, -25, 0, "normal"),			
+		349 : Attack("DragonDance", 0, 30, -30, 0, "normal"),			
 		350 : Attack("RockBlast", 20, 28, 0, 0, "ground"),			
 		352 : Attack("WaterPulse", 30, 30, 0, 0, "water"),			
 		361 : Attack("HealingWish", -5, 10, -20, 0, "normal"),			
@@ -194,6 +198,7 @@ class Presets(object):
 		422 : Attack("ThunderFang", 15, 12, 0, 1, "electric"),				
 		424 : Attack("FireFang", 15, 12, 0, 1, "fire"),				
 		426 : Attack("MudBomb", 20, 40, 0, 0, "normal"),				
+		427 : Attack("PsychoCut", 20, 40, 0, 0, "psychic"),				
 		428 : Attack("ZenHeadbutt", 10, -30, 0, 0, "psychic"),				
 		435 : Attack("Discharge", 0, 65, -65, 0, "electric"),				
 		436 : Attack("LavaPlume", 25, 45, -10, 0, "fire"),				
@@ -219,6 +224,7 @@ class Presets(object):
 		515	: Attack("FinalGambit", 40, 0, 25, 0, "normal"),			
 		517	: Attack("Inferno", 25, 50, 0, 0, "fire"),				
 		531	: Attack("HeartStamp", 25, 50, 0, 0, "psychic"),				
+		540	: Attack("Psystrike", 15, 40, 0, 1, "psychic"),				
 		542	: Attack("Hurricane", 35, 60, 0, 1, "normal"),				
 		562	: Attack("Belch", 35, 60, 0, 1, "grass"),				
 		565	: Attack("FellStinger", 30, 40, 10, 0, "grass"),				
@@ -369,19 +375,22 @@ class Presets(object):
 		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
 		134	: Card("Vaporeon", 130, 90, [self.ga("WaterGun"), self.ga("HelpingHand"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "electric", "fire")
 		135	: Card("Jolteon", 65, 120, [self.ga("ThunderShock"), self.ga("HelpingHand"), self.ga("ThunderFang"), self.ga("Thunder")], "electric", "ground", "normal")
-		136	: Card("Flareon", 65, 120, [self.ga("Ember"), self.ga("HelpingHand"), self.ga("LavaPlume"), self.ga("FireFang")], "fire", "ground", "grass")
-		137	: Card("Porygon", 65, 85, [self.ga("Tackle"), self.ga("Psybeam"), self.ga("Recover"), self.ga("TriAttack")], "normal", "ground", "psychic")
-		138	: Card("Omanyte", 35, 75, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("RockBlast")], "ground", "ground", "normal")
-		139	: Card("Omastar", 70, 90, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("HydroPump")], "ground", "grass", "normal")
-		140	: Card("Kabuto", 30, 75, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("Harden")], "ground", "ground", "normal")
-		141	: Card("Kabutops", 60, 95, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("AncientPower")], "ground", "grass", "normal")
-		142	: Card("Aerodactyl", 80, 100, [self.ga("WingAttack"), self.ga("Roar"), self.ga("HyperBeam"), self.ga("AncientPower")], "ground", "electric", "ground")
-		143	: Card("Snorlax", 160, 80, [self.ga("Tackle"), self.ga("ChipAway"), self.ga("GigaImpact"), self.ga("Snore")], "normal", "ground", "psychic")
-		144	: Card("Articuno", 90, 90, [self.ga("IceBeam"), self.ga("Blizzard"), self.ga("Gust"), self.ga("AncientPower")], "water", "grass", "ground")
-		
-
-
-
+		136	: Card("Flareon", 65, 120, [self.ga("Ember"), self.ga("HelpingHand"), self.ga("LavaPlume"), self.ga("FireFang")], "fire", "ground", "grass"),
+		137	: Card("Porygon", 65, 85, [self.ga("Tackle"), self.ga("Psybeam"), self.ga("Recover"), self.ga("TriAttack")], "normal", "ground", "psychic"),
+		138	: Card("Omanyte", 35, 75, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("RockBlast")], "ground", "ground", "normal"),
+		139	: Card("Omastar", 70, 90, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("HydroPump")], "ground", "grass", "normal"),
+		140	: Card("Kabuto", 30, 75, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("Harden")], "ground", "ground", "normal"),
+		141	: Card("Kabutops", 60, 95, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("AncientPower")], "ground", "grass", "normal"),
+		142	: Card("Aerodactyl", 80, 100, [self.ga("WingAttack"), self.ga("Roar"), self.ga("HyperBeam"), self.ga("AncientPower")], "ground", "electric", "ground"),
+		143	: Card("Snorlax", 160, 80, [self.ga("Tackle"), self.ga("ChipAway"), self.ga("GigaImpact"), self.ga("Snore")], "normal", "ground", "psychic"),
+		144	: Card("Articuno", 90, 90, [self.ga("IceBeam"), self.ga("Blizzard"), self.ga("Gust"), self.ga("AncientPower")], "water", "grass", "ground"),
+		145	: Card("Zapdos", 90, 90, [self.ga("ThunderShock"), self.ga("DrillPeck"), self.ga("Discharge"), self.ga("ZapCannon")], "electric", "water", "ground"),
+		146	: Card("Moltres", 90, 100, [self.ga("Ember"), self.ga("Flamethrower"), self.ga("SkyAttack"), self.ga("AncientPower")], "electric", "water", "ground"),
+		147	: Card("Dratini", 41, 85, [self.ga("Safeguard"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
+		148	: Card("Dragonair", 61, 95, [self.ga("Outrage"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
+		149	: Card("Dragonite", 91, 110, [self.ga("Outrage"), self.ga("Hurricane"), self.ga("DragonDance"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
+		150	: Card("Mewtwo", 106, 150, [self.ga("Recover"), self.ga("PsychoCut"), self.ga("Psystrike"), self.ga("MeFirst")], "psychic", "none", "normal"),
+		151	: Card("Mew", 100, 150, [self.ga("Recover"), self.ga("MegaPunch"), self.ga("AncientPower"), self.ga("MeFirst")], "psychic", "none", "normal")
 		}
 
 	#Short for get attack
