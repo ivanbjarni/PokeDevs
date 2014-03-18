@@ -39,5 +39,38 @@ class Hand(object):
 				return i
 		return -1
 
+	# Usage: b=h.isFull()
+	# Before: Nothing
+	# After: returns true if hand you can't have more cards in your hand
 	def isFull(self):
 		return len(self.cards)>= self.cardsMax
+
+	# Usage: i=h.getNameOfType(type)
+	# Before: type is string
+	# After: i is the name of a card with type type if it exists in hand
+	#			"none" if that card doesn't exist
+	def getNameOfType(self, poketype):
+		for a in self.cards:
+			if a.poketype == poketype:
+				return str(a)
+		return "none"
+
+	# Usage: i=h.getNameOfNotWeakness(type)
+	# Before: type is string
+	# After: i is the name of a card not with weakness type if it exists in hand
+	#			"none" if that card doesn't exist
+	def getNameOfNotWeakness(self, poketype):
+		for a in self.cards:
+			if a.weakness != poketype:
+				return str(a)
+		return "none"
+
+	# Usage: i=h.getNameOfType(type)
+	# Before: type is string
+	# After: i is the name of a card with resistance type if it exists in hand
+	#			"none" if that card doesn't exist
+	def getNameOfResistance(self, poketype):
+		for a in self.cards:
+			if a.resistance == poketype:
+				return str(a)
+		return "none"

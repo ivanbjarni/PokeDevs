@@ -21,7 +21,13 @@ class Main(object):
 			pYou.hand.add(newCard)				
 			print "You draw a card. It's a "+str(newCard)
 
-	def chooseCard(self,pYou):
+	def chooseCard(self,pYou, pEne):
+		if pYou.isAI():
+			return self.chooseCardAI(pYou, pEne)
+		else:
+			return self.chooseCardPlayer(pYou, pEne)
+
+	def chooseCardPlayer(self,pYou, pEne):
 		while(True):
 			print 'What pokemon do you want to put out:',
 			inp = raw_input()
@@ -30,6 +36,27 @@ class Main(object):
 				return pYou.hand.remove(ind)
 			else:
 				print "You don't have a pokemon named "+inp+" in your hand."
+
+	# Usage: p = main.getNewPokemonName(pYou,pEne):
+	# Before: pYou and pEne are players
+	# After: p is the pokemon pYou chooses (automatic if pYou is AI, player input otherwise)
+	def chooseCardAI(self,pYou, pEne):
+		 chosen = str(pYou.hand.cards[0])
+		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
+		 if(pokemon!="none"):
+		 	chosen = pokemon
+		 pokemon = pYou.hand.getNameOfResistance(pEne.mainCard.poketype)
+		 if(pokemon!="none"):
+		 	chosen = pokemon
+		 pokemon = pYou.hand.getNameOfType(pEne.mainCard.weakness)
+		 if(pokemon!="none"):
+		 	chosen = pokemon
+		 
+		 ind = pYou.hand.getIndexOf(chosen)
+		 
+		 return pYou.hand.remove(ind)
+			
+
 
 	def gameLoop(self):
 		done = False
@@ -44,7 +71,7 @@ class Main(object):
 
 			#remove 1 point so you don't get an extra point if the enemy was already dead
 			if pEne.mainCard.isDead():
-				pYou.points += 1
+				pYou.points -= 1
 
 			# print stuff about turns
 			print "\n\n\n\n"
@@ -59,7 +86,7 @@ class Main(object):
 			#put out a new pokemon
 			if yourCard.isDead():
 				pYou.graveyard.add(yourCard)
-				newCard = self.chooseCard(pYou)
+				newCard = self.chooseCard(pYou,pEne)
 				#Tell player a pokemon is being swithced and switch pokemons
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
 				yourCard = newCard
@@ -102,9 +129,9 @@ class Main(object):
 			if(pYou.points>=pointsToWin):
 				break
 
-		if(players[0].points>players[1].points):
-			print "Player 1 wins! "
-		elif(players[0].points<players[1].points):
-			print "Player 2 wins! "
+		if(self.players[0].points>self.players[1].points):
+			print "Player 1 wins! With "+str(self.players[0].points)+" against "+str(self.players[1].points)
+		elif(self.players[0].points<self.players[1].points):
+			print "Player 2 wins! With "+str(self.players[1].points)+" against "+str(self.players[0].points)
 		else:
 			print "It's a draw, which basically means that Panda wins and both players lose!"
