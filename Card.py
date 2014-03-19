@@ -16,7 +16,7 @@ class Card(object):
 	weakness 	= "normal" 	#String		Type the pokemon is weak against, same format as above
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
-	# Vantar bitmap breytu
+	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
