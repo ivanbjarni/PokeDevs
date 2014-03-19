@@ -1,6 +1,8 @@
 import unittest
 from Player import *
 from Presets import *
+from InvDeck import *
+from Inventory import *
 
 #--------------------------------------------------------------------
 # Testing the player class
@@ -70,13 +72,13 @@ unittest.TextTestRunner(verbosity=2).run(suite)
 #----------------------------------------------------------------------
 class TestCard(unittest.TestCase):
 	# Checks if if isdead is returning the correct value
-	def test_isDead(self):
+	def test_CardisDead(self):
 		card = Card('arni', -15, 100, ["bla","attack"], "grass", "fire", "water")
 		self.assertTrue(card.isDead())
 		card2 = Card('arni', 14, 100, ["bla","attack"], "grass", "fire", "water")
 		self.assertTrue(not card2.isDead())
 
-	def test_attack(self):
+	def test_Cardattack(self):
 		pre = Presets()
 		card = pre.gc("Bulbasaur")
 		card2 = pre.gc("Charizard")
@@ -95,18 +97,17 @@ unittest.TextTestRunner(verbosity=2).run(suite)
 #----------------------------------------------------------------------
 class TestPresets(unittest.TestCase):
 	# Checks if gc is working correctly
-	def test_gc(self):
+	def test_Presetsgc(self):
 		pre = Presets()
 		self.assertEqual(str(pre.gc("Pikachu")), "Pikachu")
 		self.assertEqual(str(pre.gc(4)), "Charmander")
 		
 		
 	# Checks if ga is working correctly
-	def test_ga(self):
+	def test_Presetsga(self):
 		pre = Presets()
 		self.assertEqual(str(pre.ga("MudBomb")), "MudBomb")
 		self.assertEqual(str(pre.ga(517)), "Inferno")
-
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestCard)
 unittest.TextTestRunner(verbosity=2).run(suite)
@@ -147,5 +148,100 @@ class TestHand(unittest.TestCase):
 		self.assertEqual(hand.getIndexOf("Bulbasaur"), 0)
 		self.assertEqual(hand.getIndexOf("Hundur"), -1)
 
+	def test_handgetNameOfType(self):
+		hand = Hand()
+		pre = Presets()
+		# Bulbasaur is of type "grass" and Charicard of type "fire"
+		hand.cards = [pre.gc("Bulbasaur"), pre.gc("Charizard")]
+		self.assertEqual(hand.getNameOfType("grass"), "Bulbasaur")
+		self.assertEqual(hand.getNameOfType("fire"), "Charizard")
+		# No one in hand is of type "water" so the method should return "none"
+		self.assertEqual(hand.getNameOfType("water"), "none")
+
 suite = unittest.TestLoader().loadTestsFromTestCase(TestHand)
+unittest.TextTestRunner(verbosity=2).run(suite)
+
+# -----------------------------------------------------------------------
+# Testing the InvDeck class
+# -----------------------------------------------------------------------
+class TestinvDeck(unittest.TestCase):
+
+	# Checks if shuffle changes a list.
+	def test_invDeckShuffle(self):
+		invDeck = InvDeck()
+		invDeck.invCards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+		invDeck.shuffle()
+		self.assertFalse(invDeck.invCards == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+	# Tests if the draw method is drawing the correct card
+	def test_invDeckDraw(self):
+		invDeck = InvDeck()
+		invDeck.invCards = [1,2,3,4,5,2,6,54,4,2]
+		self.assertEqual(invDeck.draw(), 2)
+
+	# Checking if the remove method returns the correct value and 
+	# checking if it removes the item from the list. Checks also what 
+	# happens if you put a negative index as an argument.
+	def test_invDeckRemove(self):
+		invDeck = InvDeck()
+		invDeck.invCards = [0,1,2,3,4,5,6,7,8,9]
+		i = 0
+		self.assertEqual(invDeck.remove(0), i)
+		i += 1
+		# To check if a card was acctually removed
+		self.assertEqual(invDeck.remove(0), i)
+		with self.assertRaises(IndexError):
+			# Index = -100 not valid
+			invDeck.remove(-100)
+			
+	def test_invDeckgetIndexOf(self):
+		invDeck = InvDeck()
+		pre = Presets()
+		invDeck.invCards = [pre.gic("StaminaBoost1")]
+		self.assertEqual(invDeck.getIndexOf("StaminaBoost1"), 0)
+		self.assertEqual(invDeck.getIndexOf("Gamli"), -1)
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestinvDeck)
+unittest.TextTestRunner(verbosity=2).run(suite)
+
+# -----------------------------------------------------------------------
+# Testing the inventory class
+# -----------------------------------------------------------------------
+class Testinventory(unittest.TestCase):
+
+	# Checking if the remove method returns the correct value and 
+	# checking if it removes the item from the list. Checks also what 
+	# happens if you put a negative index as an argument.
+	def test_inventoryRemove(self):
+		inventory = Inventory()
+		inventory.invCards = [0,1,2,3]
+		i = 0
+		self.assertEqual(inventory.remove(0), i)
+		i += 1
+		# To check if a card was acctually removed
+		self.assertEqual(inventory.remove(0), i)
+		with self.assertRaises(IndexError):
+			# Index = -100 not valid
+			inventory.remove(-100)
+
+	# Testing the isFull method
+	def test_inventoryisFull(self):
+		inventory = Inventory()
+		inventory2 = Inventory()
+		inventory.invCards = [1,2,3,4,5,6]
+		inventory2.invCards = [1,2,3]
+		self.assertTrue(inventory.isFull())
+		self.assertFalse(inventory2.isFull())
+
+	# Testing the getIndexOf method
+	def test_inventorygetIndexOf(self):
+		inventory = Inventory()
+		pre = Presets()
+		inventory.invCards = [pre.gic("HealthPotion2")]
+		# healtpotion2 is in the inventory number zero
+		self.assertEqual(inventory.getIndexOf("HealthPotion2"), 0)
+		# hundur is not in the inventory
+		self.assertEqual(inventory.getIndexOf("Hundur"), -1)
+
+suite = unittest.TestLoader().loadTestsFromTestCase(Testinventory)
 unittest.TextTestRunner(verbosity=2).run(suite)
