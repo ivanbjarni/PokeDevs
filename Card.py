@@ -114,3 +114,9 @@ class Card(object):
 	def applyEffects(self):
 		if self.stun > 0:
 			self.stun -= 1
+
+	# Usage: c.shortInfo()
+	# Before: Nothing
+	# After: returns a short info about the card as string
+	def shortInfo(self):
+		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"

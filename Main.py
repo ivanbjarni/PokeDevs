@@ -21,12 +21,43 @@ class Main(object):
 			pYou.hand.add(newCard)				
 			print "You draw a card. It's a "+str(newCard)
 
+	def chooseAttack(self,pYou, pEne):
+		if pYou.isAI():
+			self.chooseAttackAI(pYou, pEne)
+		else:
+			self.chooseAttackPlayer(pYou, pEne)
+
+	def chooseAttackPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasAttacked = False
+		while(not hasAttacked):
+			print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
+			x = input()
+			if x == 0:
+				print "You passed on your turn"
+				hasAttacked = True
+			elif x==9:
+				yourCard.health -= 9000
+				print "You chose self inflected damage, "+str(yourCard)+" loses 9000hp"
+				hasAttacked = True
+			else:
+				hasAttacked = pYou.attack(x-1,pEne)
+
+	def chooseAttackAI(self, pYou, pEne):
+		return None
+
+	# Usage: p = main.chooseCardAI(pYou,pEne):
+	# Before: pYou and pEne are players
+	# After: p is the pokemon pYou chooses(automatic if pYou is AI, manual otherwise)
 	def chooseCard(self,pYou, pEne):
 		if pYou.isAI():
 			return self.chooseCardAI(pYou, pEne)
 		else:
 			return self.chooseCardPlayer(pYou, pEne)
 
+	# Usage: p = main.chooseCardAI(pYou,pEne):
+	# Before: pYou and pEne are players
+	# After: p is the pokemon pYou chooses(manual)
 	def chooseCardPlayer(self,pYou, pEne):
 		while(True):
 			print 'What pokemon do you want to put out:',
@@ -37,9 +68,9 @@ class Main(object):
 			else:
 				print "You don't have a pokemon named "+inp+" in your hand."
 
-	# Usage: p = main.getNewPokemonName(pYou,pEne):
+	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou and pEne are players
-	# After: p is the pokemon pYou chooses (automatic if pYou is AI, player input otherwise)
+	# After: p is the pokemon pYou chooses(automatic)
 	def chooseCardAI(self,pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
@@ -94,25 +125,15 @@ class Main(object):
 
 
 			#Print info about what is going on on the field
-			print "Enemy pokemon is: "+str(enemCard)+" (hp:"+str(enemCard.health)+"/"+str(enemCard.healthMax)+" sta:"+str(enemCard.stamina)+"/"+str(enemCard.staminaMax)+")"
-			print "Your pokemon is: " +str(yourCard)+" (hp:"+str(yourCard.health)+"/"+str(yourCard.healthMax)+" sta:"+str(yourCard.stamina)+"/"+str(yourCard.staminaMax)+")"
+			print "Enemy pokemon is:",
+			print yourCard.shortInfo()
+			print "Your pokemon is:",
+			print yourCard.shortInfo()
 			print "Attacks:"
 			print yourCard.getAttacks()
 
 			# Let player choose attack
-			hasAttacked = False
-			while(not hasAttacked):
-				print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
-				x = input()
-				if x == 0:
-					print "You passed on your turn"
-					hasAttacked = True
-				elif x==9:
-					yourCard.health -= 9000
-					print "You chose self inflected damage, "+str(yourCard)+" loses 9000hp"
-					hasAttacked = True
-				else:
-					hasAttacked = pYou.attack(x-1,pEne)
+			self.chooseAttack(pYou,pEne)
 
 			yourCard.applyEffects()
 			
