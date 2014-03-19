@@ -34,7 +34,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
 		self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
 
-		self.image = wx.Image('alakazam.jpg', wx.BITMAP_TYPE_ANY)
+		self.image = wx.Image('images/alakazam.jpg', wx.BITMAP_TYPE_ANY)
 		self.image = self.image.Scale(122, 175, wx.IMAGE_QUALITY_HIGH)
 		self.bitmap = self.image.ConvertToBitmap()
 
@@ -186,7 +186,7 @@ class GamePanel(wx.ScrolledWindow):
 
 	def DoDrawing(self, dc):
 		dc.BeginDrawing()
-		background = wx.Bitmap("Pokemon/pokematBasic.png")
+		background = wx.Bitmap("images/pokematBasic.png")
 		dc.DrawBitmap(background, 0, 0)
 		pen = wx.Pen('#435353', 1)
 		brush = wx.Brush('#708B8B')
@@ -269,7 +269,7 @@ class ControlPanel(wx.Panel):
 		#self.attackButton1.SetTopStartColour(wx.Colour('#A8B8B8'))
 		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton1.SetBottomStartColour(wx.Colour(66, 82, 82))
-#		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 
 		self.attackButton2 = wx.Button(self, label='Attack', size=(200, 100))
