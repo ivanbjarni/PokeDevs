@@ -88,7 +88,7 @@ class Card(object):
 		
 		if(atk.stun!=0 and random.random() < stunChance):
 			card.stun = atk.stun
-			message += "(Stun Applied for "+str(atk.stun)+" turns)"
+			message += "(Stun applied for "+str(atk.stun)+" turns)"
 
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)

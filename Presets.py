@@ -110,7 +110,7 @@ class Presets(object):
 		105	: Attack("Recover", 0, 50, 50, 0, "normal"),	
 		106	: Attack("Harden", 0, 10, -25, 0, "normal"),	
 		107	: Attack("Minimize", 0, -20, -30, 0, "normal"),	
-		107	: Attack("Smokescreen", 0, -10, -20, 1, "normal"),	
+		108	: Attack("Smokescreen", 0, -10, -20, 1, "normal"),	
 		110 : Attack("Withdraw", 0, -17, -5, 0, "normal"),			
 		112 : Attack("Barrier", 0, -25, -10, 0, "psychic"),			
 		113 : Attack("LightScreen", -5, 15, -10, 1, "normal"),			
@@ -186,6 +186,7 @@ class Presets(object):
 		362 : Attack("Brine", 15, 15, 0, 0, "water"),			
 		364 : Attack("Feint", 0, -15, -30, 0, "normal"),			
 		370 : Attack("CloseCombat", 30, 50, 0, 0, "normal"),			
+		382 : Attack("MeFirst", 0, 25, 0, 2, "normal"),			
 		390 : Attack("ToxicSpikes", 15, 30, 0, 1, "grass"),			
 		394 : Attack("FlareBlitz", 40, 50, 0, 0, "fire"),				
 		401 : Attack("AquaTail", 15, 35, 0, 0, "water"),				
@@ -372,9 +373,9 @@ class Presets(object):
 		130	: Card("Gyarados", 95, 120, [self.ga("Leer"), self.ga("AquaTail"), self.ga("HydroPump"), self.ga("HyperBeam")], "water", "electric", "ground"),
 		131	: Card("Lapras", 130, 85, [self.ga("Sing"), self.ga("WaterGun"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "ground", "water"),
 		132	: Card("Ditto", 48, 85, [self.ga("Empty"), self.ga("Empty"), self.ga("Empty"), self.ga("Empty")], "normal", "ground", "psychic"),
-		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic")
-		134	: Card("Vaporeon", 130, 90, [self.ga("WaterGun"), self.ga("HelpingHand"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "electric", "fire")
-		135	: Card("Jolteon", 65, 120, [self.ga("ThunderShock"), self.ga("HelpingHand"), self.ga("ThunderFang"), self.ga("Thunder")], "electric", "ground", "normal")
+		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic"),
+		134	: Card("Vaporeon", 130, 90, [self.ga("WaterGun"), self.ga("HelpingHand"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "electric", "fire"),
+		135	: Card("Jolteon", 65, 120, [self.ga("ThunderShock"), self.ga("HelpingHand"), self.ga("ThunderFang"), self.ga("Thunder")], "electric", "ground", "normal"),
 		136	: Card("Flareon", 65, 120, [self.ga("Ember"), self.ga("HelpingHand"), self.ga("LavaPlume"), self.ga("FireFang")], "fire", "ground", "grass"),
 		137	: Card("Porygon", 65, 85, [self.ga("Tackle"), self.ga("Psybeam"), self.ga("Recover"), self.ga("TriAttack")], "normal", "ground", "psychic"),
 		138	: Card("Omanyte", 35, 75, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("RockBlast")], "ground", "ground", "normal"),
