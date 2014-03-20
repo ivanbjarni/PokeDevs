@@ -311,7 +311,7 @@ class Presets(object):
 		68	: Card("Machamp", 90, 90, [self.ga("KarateChop"), self.ga("FocusEnergy"), self.ga("Submission"), self.ga("DynamicPunch")], "ground", "psychic", "ground"),
 		69	: Card("Bellsprout", 50, 100, [self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("Acid"), self.ga("Growth")], "grass", "fire", "grass"),
 		70	: Card("Weepinbell", 65, 95, [self.ga("Slam"), self.ga("RazorLeaf"), self.ga("Acid"), self.ga("StunSpore")], "grass", "fire", "grass"),
-		71	: Card("Victreebel", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
+		71	: Card("Victreebell", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
 		72	: Card("Tentacool", 40, 80, [self.ga("PoisonSting"), self.ga("Acid"), self.ga("BubbleBeam"), self.ga("AcidSpray")], "water", "psychic", "fire"),
 		73	: Card("Tentacruel", 80, 95, [self.ga("PoisonSting"), self.ga("BubbleBeam"), self.ga("HydroPump"), self.ga("Acid")], "water", "psychic", "fire"),
 		74	: Card("Geodude", 40, 95, [self.ga("Tackle"), self.ga("SelfDestruct"), self.ga("DoubleEdge"), self.ga("Magnitude")], "ground", "water", "electric"),

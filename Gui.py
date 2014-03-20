@@ -1,5 +1,6 @@
 #	TODO:
 #		- Add info panel, to display info on pokemon/attacks/inventory items when hovered over
+#		- Add "menubar" where you can choose help, exit, some other things maybe
 #		- Maybe add a healthbar to either drawing area(gamePanel) or the statusPanel instead of just showing numbers for HP
 #		- Choose which type of buttons to use
 #		- Maybe choose some better colors for some things
@@ -18,39 +19,38 @@ class GamePanel(wx.ScrolledWindow):
 		wx.ScrolledWindow.__init__(self, parent, id, (0, 0), size=(1200, 650), style=wx.SUNKEN_BORDER)
 		self.SetDoubleBuffered(True)
 
-#		self.x = 0 					# We probably won't need this
-#		self.y = 0 					# We probably won't need this
-#		self.drawing = False		# We probably won't need this
-		self.hitradius = 500		# How many pixels you can be "off" when trying to click on something
+		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
-
-		self.Bind(wx.EVT_PAINT, self.OnPaint)
-		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
-		self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
-
-		#---- This will be deleted ------------
-		self.image = wx.Image('images/alakazam.jpg', wx.BITMAP_TYPE_ANY)  
-		self.image = self.image.Scale(122, 175, wx.IMAGE_QUALITY_HIGH)
-		self.bitmap = self.image.ConvertToBitmap()
-		#--------------------------------------
-
-		self.pdc = wx.PseudoDC()	# For drawing to the area
-		self.DoDrawing(self.pdc)
-
+		self.pdc = wx.PseudoDC()	# For drawing to the panel
 		self.dragid = -1 			# ID of currently chosen object
 		self.lastdragid = -1 		# ID of last chosen object
-		self.lastpos = (0,0)		# Position of the mouse while dragging
+		self.origpos = {}			# Dictionary of original position of bitmaps based on id
+		self.lastpos = (0,0)		# Lates position of the mouse while dragging
 		self.startpos = (0,0)		# Position of the mouse when clicked
+
+		self.Bind(wx.EVT_PAINT, self.onPaint)
+		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
+		self.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse)
+
+	def setupPanel(self, player, CPU):
+		for card in player.deck.cards:
+			self.setImage(card)
+
+		for card in CPU.deck.cards:
+			self.setImage(card)
+
+		self.doDrawing(self.pdc, player, CPU)
 
 	# Sets the bitmap for card
 	def setImage(self, card):
-		image = wx.Image('images/' + str(card.name) + '.jpg', wx.BITMAP_TYPE_ANY)
+		name = card.name.replace(' ', '').replace('.', '')
+		image = wx.Image('images/Pokecards/' + str(card.name) + '.jpg', wx.BITMAP_TYPE_ANY)
 		image = image.Scale(122, 175, wx.IMAGE_QUALITY_HIGH)
 		card.bitmap = image.ConvertToBitmap()
 	
 	# Sets the right coordinates for a scrollable area if the area has been scrolled
 	# Our area will never scroll so this will probably be changed/deleted
-	def ConvertEventCoords(self, event):
+	def convertEventCoords(self, event):
 		xView, yView = self.GetViewStart()
 		xDelta, yDelta = self.GetScrollPixelsPerUnit()
 		return (event.GetX() + (xView * xDelta),
@@ -58,21 +58,18 @@ class GamePanel(wx.ScrolledWindow):
 
 	# Offsets a rectangle based on where you are placed on a scrollable area, 
 	# Our area will never scroll so this will probably be changed/deleted
-	def OffsetRect(self, r):
+	def offsetRect(self, r):
 		xView, yView = self.GetViewStart()
 		xDelta, yDelta = self.GetScrollPixelsPerUnit()
 		r.OffsetXY(-(xView*xDelta),-(yView*yDelta))
 
 	#Handles mouse events
 	# -------- Will be changed somewhat when it has been connected to the actual game -----
-	def OnMouse(self, event):
+	def onMouse(self, event):
 		# If the left button is pressed, grab the object that the mouse was over and
 		# save the old coordinates where it was placed
 		if event.LeftDown():
-			#x = event.GetX() 
-			#y = event.GetY()
-			#self.ConvertEventCoords(event)
-			x,y = self.ConvertEventCoords(event)
+			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
 			for id in l:
 				if not self.pdc.GetIdGreyedOut(id):
@@ -80,26 +77,23 @@ class GamePanel(wx.ScrolledWindow):
 					self.lastpos = (event.GetX(), event.GetY())
 					self.startpos = self.lastpos
 					break
+
 		# Right click is currently only used for testing purposes
 		elif event.RightDown():
-			#x = event.GetX() 
-			#y = event.GetY()
-			#self.ConvertEventCoords(event)
-			'''x,y = self.ConvertEventCoords(event)
-			l = self.pdc.FindObjects(x, y, self.hitradius)
-			if l:
-				self.pdc.SetIdGreyedOut(l[0], not self.pdc.GetIdGreyedOut(l[0]))
-				r = self.pdc.GetIdBounds(l[0])
-				r.Inflate(4, 4)
-				self.OffsetRect(r)
-				self.RefreshRect(r, False)
-			'''
+			#x,y = self.ConvertEventCoords(event)
+			#l = self.pdc.FindObjects(x, y, self.hitradius)
+			#if l:
+			#	self.pdc.SetIdGreyedOut(l[0], not self.pdc.GetIdGreyedOut(l[0]))
+			#	r = self.pdc.GetIdBounds(l[0])
+			#	r.Inflate(4, 4)
+			#	self.OffsetRect(r)
+			#	self.RefreshRect(r, False)
+			
 			dx,dy = 100, 100
 			if self.lastdragid != -1:
 #				dx,dy = 100,100
 				loopCPU = 10
 				start = time.time()
-				print self.lastpos
 
 				while(loopCPU != 0):
 					time.sleep(0.005)
@@ -107,82 +101,78 @@ class GamePanel(wx.ScrolledWindow):
 					dx = -5
 					dy = -5
 
-					print "dx" + str(dx)
-					print "dy" + str(dy)
+					self.moveItem(self.lastdragid, dx, dy)
 
-					r = self.pdc.GetIdBounds(self.lastdragid)
-					self.pdc.TranslateId(self.lastdragid, dx, dy)
-					r2 = self.pdc.GetIdBounds(self.lastdragid)
-					r = r.Union(r2)
-					r.Inflate(4, 4)
-					self.OffsetRect(r)
-					self.RefreshRect(r, False)
-				#	self.pdc.DrawToDc(self.pdc)
 					self.Update()
-
-					print loopCPU
-			#		self.OnPaint(event)
 					loopCPU -= 1
 				self.lastpos = (event.GetX(), event.GetY())
+
 		# If dragging an object, move it relative to mouse movements
 		elif event.Dragging():
 			if self.dragid != -1:
 				x,y = self.lastpos
+				
 				dx = event.GetX() - x
 				dy = event.GetY() - y
-				r = self.pdc.GetIdBounds(self.dragid)
-				self.pdc.TranslateId(self.dragid, dx, dy)
-				r2 = self.pdc.GetIdBounds(self.dragid)
-				r = r.Union(r2)
-				r.Inflate(4, 4)
-				self.OffsetRect(r)
-				self.RefreshRect(r, False)
+
+				self.moveItem(self.dragid, dx, dy)
 				self.lastpos = (event.GetX(), event.GetY())
-		# Move object back to original position
+
+		# Move object back to original position if left button is realeased or the mouse leaves the panel
 		# TODO: Move object to allowed area if dropped over that area
-		elif event.LeftUp():
+		elif event.LeftUp() or event.Leaving():
 			if self.dragid != -1:
 				self.lastdragid = self.dragid
 
-#				print self.startpos - self.lastpos
-				x = self.startpos[0] - self.lastpos[0]
-				y = self.startpos[1] - self.lastpos[1]
+				dx = event.GetX()
+				dy = event.GetY()
 
-				r = self.pdc.GetIdBounds(self.lastdragid)
-				self.pdc.TranslateId(self.lastdragid, x, y)
-				r2 = self.pdc.GetIdBounds(self.lastdragid)
-				r = r.Union(r2)
-				r.Inflate(4, 4)
-				self.OffsetRect(r)
-				self.RefreshRect(r, False)
+				if self.dropArea(dx, dy):
+					x = self.startpos[0] - self.lastpos[0] - self.origpos[self.lastdragid][0] + 321
+					y = self.startpos[1] - self.lastpos[1] - self.origpos[self.lastdragid][1] + 236
+				else:
+					x = self.startpos[0] - self.lastpos[0]
+					y = self.startpos[1] - self.lastpos[1]
+
+				self.moveItem(self.lastdragid, x, y)
 
 				self.dragid = -1
 
 		#elif event.Moving():
 		#	print 'ok'
+	
+	def moveItem(self, id, x, y):
+		r = self.pdc.GetIdBounds(id)
+		self.pdc.TranslateId(id, x, y)
+		r2 = self.pdc.GetIdBounds(id)
+		r = r.Union(r2)
+		r.Inflate(4, 4)
+		self.offsetRect(r)
+		self.RefreshRect(r, False)
+
+
+	def dropArea(self, dx, dy):
+		return  (300 < dx and dx < 465) and (435 > dy and dy > 215)
 
 	# Updates the drawing area
-	def OnPaint(self, event):
+	def onPaint(self, event):
 		dc = wx.BufferedPaintDC(self)
 		self.PrepareDC(dc)
-#		bg = wx.Brush(self.GetBackgroundColour())
-#		dc.SetBackground()
 		dc.Clear()
-
-#		xv, yv = self.GetViewStart()
 		rgn = self.GetUpdateRegion()
 		r = rgn.GetBox()
 		self.pdc.DrawToDCClipped(dc, r)
 
 	# Draws the inital drawing area
-	def DoDrawing(self, dc):
+	def doDrawing(self, dc, player, CPU):
 		dc.BeginDrawing()
 		background = wx.Bitmap("images/pokematBasic.png")
 		dc.DrawBitmap(background, 0, 0)
-		pen = wx.Pen('#435353', 1)
+		pen = wx.Pen('#435353', 2)
 		brush = wx.Brush('#708B8B')
 		dc.SetPen(pen)
 		dc.SetBrush(brush)
+
 		player1pokePanel = wx.Rect(190, 445, 805, 195)
 		player2pokePanel = wx.Rect(190, 5, 805, 195)
 		player1invPanel = wx.Rect(15, 70, 160, 570)
@@ -196,14 +186,17 @@ class GamePanel(wx.ScrolledWindow):
 		dc.DrawRoundedRectangleRect(player1chosenPanel, 10)
 		dc.DrawRoundedRectangleRect(player2chosenPanel, 10)
 
-		id = wx.NewId()
-		dc.SetId(id)
-		x = 195
-		y = 450
-		w, h = self.bitmap.GetSize()
-		dc.DrawBitmap(self.bitmap, 195, 450, True)
-		dc.SetIdBounds(id, wx.Rect(x, y, w, h))
-		self.objids.append(id)
+		w, h = player.deck.cards[0].bitmap.GetSize()
+		for i in range(0, 6):
+			id = wx.NewId()
+			dc.SetId(id)
+			x = 195 + i * 134
+			y = 452
+			dc.DrawBitmap(player.deck.cards[i].bitmap, x, y, True)
+			dc.SetIdBounds(id, wx.Rect(x, y, w, h))
+			self.origpos[id] = [x, y]
+			self.objids.append(id)
+
 		dc.EndDrawing()
 
 # A panel that holds the names and HP of currently chosen pokemon
@@ -369,9 +362,11 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
-
 if __name__=="__main__":
     app = wx.App()
-    MainFrame().Show()
+    gui = MainFrame()
+    gui.Show()
     app.MainLoop()
+#    MainFrame().Show()
+#    app.MainLoop()
 
