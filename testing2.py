@@ -9,7 +9,7 @@ from Main import *
 
 presets = Presets()
 
-p1 = Player("player")
+p1 = Player("playerb")
 p1.hand = Hand()
 p1.deck = Deck()
 for i in xrange(0,10):
