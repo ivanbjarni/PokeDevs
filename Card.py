@@ -12,9 +12,9 @@ class Card(object):
 	stamina 	= 100		#int 		Current stamina used for attacks
 	staminaMax 	= 100		#int 		Maximum stamina used for attacks
 	attacks 	= []		#Attack[] 	List of attacks the pokemon/card has
-	poketype 	= "normal" 	#String		Type the pokemon has, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
-	weakness 	= "normal" 	#String		Type the pokemon is weak against, same format as above
-	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
+	poketype 	= ["normal"]#String[]	Type the pokemon has, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
+	weakness 	= ["normal"]#String[]	Type the pokemon is weak against, same format as above
+	resistance 	= ["normal"]#String[]	Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
 	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
 
@@ -70,11 +70,11 @@ class Card(object):
 
 		damage = atk.damage
 		#resistance
-		if self.poketype == card.resistance and damage !=0:
+		if atk.poketype in card.resistance and damage !=0:
 			damage *= resistanceMultiplier
 			message = ". It's not very effective!"
 		#weakness
-		if atk.poketype == card.weakness and damage !=0:
+		if atk.poketype in card.weakness and damage !=0:
 			damage *= weaknessMultiplier
 			message = ". It's super effective!"
 		#crit
