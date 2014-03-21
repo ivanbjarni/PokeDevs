@@ -11,7 +11,7 @@ class Attack(object):
 	staminaCost = 10		#int 		Amount of stamina reduced (or increased if it's  less than zero)
 	healthCost	= 10		#int 		Amount of health reduced (or increased if it's  less than zero)
 	stun		= 0			#int 		Duration of stun inflicted on the enemy
-	poketype 	= "normal"	#String[]	The type of the attack is, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
+	poketype 	= "normal" 	#String		The type of the attack is, all lowercase ("normal", "fire", "water","psychic", "grass", "electric", "ground" ) 
 
 
 	def __init__(self, name, damage, staminaCost, healthCost, stun, poketype):

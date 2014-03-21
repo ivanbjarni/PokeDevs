@@ -51,7 +51,7 @@ class Hand(object):
 	#			"none" if that card doesn't exist
 	def getNameOfType(self, poketype):
 		for a in self.cards:
-			if a.poketype in poketype:
+			if a.poketype == poketype:
 				return str(a)
 		return "none"
 
@@ -61,7 +61,7 @@ class Hand(object):
 	#			"none" if that card doesn't exist
 	def getNameOfNotWeakness(self, poketype):
 		for a in self.cards:
-			if a.weakness not in poketype:
+			if a.weakness != poketype:
 				return str(a)
 		return "none"
 
@@ -71,6 +71,6 @@ class Hand(object):
 	#			"none" if that card doesn't exist
 	def getNameOfResistance(self, poketype):
 		for a in self.cards:
-			if a.resistance in poketype:
+			if a.resistance == poketype:
 				return str(a)
 		return "none"
