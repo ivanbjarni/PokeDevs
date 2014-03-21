@@ -44,7 +44,14 @@ class Main(object):
 				hasAttacked = pYou.attack(x-1,pEne)
 
 	def chooseAttackAI(self, pYou, pEne):
-		return None
+		AICard = pYou.mainCard
+		hasAttacked = False
+		if AICard.isStunned():
+			print str(AICard)+" is stunned"
+			hasAttacked = True
+		else:
+			hasAttacked = pYou.attack(1, pEne)
+
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou and pEne are players
@@ -126,7 +133,7 @@ class Main(object):
 
 			#Print info about what is going on on the field
 			print "Enemy pokemon is:",
-			print yourCard.shortInfo()
+			print enemCard.shortInfo()
 			print "Your pokemon is:",
 			print yourCard.shortInfo()
 			print "Attacks:"
