@@ -54,7 +54,7 @@ class Main(object):
 
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic if pYou is AI, manual otherwise)
 	def chooseCard(self, pYou, pEne):
 		if pYou.isAI():
@@ -63,7 +63,7 @@ class Main(object):
 			return self.chooseCardPlayer(pYou, pEne)
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(manual)
 	def chooseCardPlayer(self,pYou, pEne):
 		while(True):
@@ -76,7 +76,7 @@ class Main(object):
 				print "You don't have a pokemon named "+inp+" in your hand."
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
 	def chooseCardAI(self,pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
