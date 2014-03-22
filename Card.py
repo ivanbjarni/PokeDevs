@@ -64,6 +64,7 @@ class Card(object):
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
+		card.health   = min(self.health , self.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 
 		message = ""
@@ -120,3 +121,101 @@ class Card(object):
 	# After: returns a short info about the card as string
 	def shortInfo(self):
 		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"
+
+	# Usage: c.hasHeal()
+	# Before: Nothing
+	# After: Returns True if Pokemon can heal it self, else False	
+	def hasHeal(self):
+		for x in range(0,4):
+			if self.attacks[x].healthCost < 0:
+				return True
+		
+		return False
+
+	# Usage: c.needsHeal()
+	# Before: Nothing
+	# After: Returns True if pokemon needs to and can heal it self, else False 
+	def needsHeal(self):
+		needs = self.health < needsHealMark*self.healthMax
+		return(self.hasHeal() and needs)
+
+	# Usage: x = c.findHeal()
+	# Before: Nothing
+	# After: Returns the number of the attack that heals
+	def findHeal(self):
+		for x in range(0,4):
+			if self.attacks[x].healthCost < 0:
+				return x
+
+
+
+	# Usage: x = c.findHighestDamg()
+	# Before: Nothing
+	# After: Returns the number of the attack that deals most damage			
+	def findHighestDamg(self):
+		dam = self.attacks[0].damage
+		attackNum = 0
+		for x in range(1,4):
+			if self.attacks[x].damage > dam:
+				dam =  self.attacks[x].damage
+				attackNum = x
+
+		return attackNum
+
+	# Usage: x = c.findPossibleAttacks()
+	# Before: Nothing
+	# After: Returns a list with the numbers of possible attacks concerning stamina			
+	def findPossibleAttacks(self):
+		possibleAtt = []
+		for x in range(0,4):
+			if self.attacks[x].staminaCost < self.stamina:
+				possibleAtt.append(x)
+
+		return possibleAtt
+
+	
+
+	# Usage: x = c.findClosestAttack()
+	# Before: Nothing
+	# After: Returns the attack that deals closest damage to enemy HP
+	def findClosestAttack(self, eneHP):
+		attacknumberlist = self.findPossibleAttacks()
+		attackdamagelist = []
+		for x in range(0,4):
+			if x in attacknumberlist:
+				attackdamagelist.append(self.attacks[x].damage)
+		bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
+		for x in range(0,4):
+			if x in attacknumberlist and bestDamage == self.attacks[x].damage:
+				return x
+
+
+
+	# Usage: c.hasStamina()
+	# Before: Nothing
+	# After: Returns True if Pokemon can increase its stamina, else False
+	def hasStaminaBoost(self):
+		for x in range(0,4):
+			if self.attacks[x].staminaCost < 0:
+				return True
+		
+		return False
+
+	# Usage: c.needsStamina()
+	# Before: Nothing
+	# After: Returns True if pokemon needs to and can heal it self, else False 
+	def needsStamina(self):
+		needs = self.stamina < needsStaminaMark*self.staminaMax
+		return(self.hasStaminaBoost() and needs)
+
+	# Usage: x = c.findStamina()
+	# Before: Nothing
+	# After: Returns the number of the attack that increases Stamina
+	def findStamina(self):
+		for x in range(0,4):
+			if self.attacks[x].staminaCost < 0:
+				return x
+
+
+
+
