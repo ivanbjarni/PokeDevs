@@ -9,7 +9,7 @@ from Main import *
 from Gui import *
 
 #-------------------
-# Attempt to hook the Gui up to the Gameplay
+# Beginning to attempt to hook the Gui up to the Gameplay
 #-------------------
 
 if __name__=="__main__":
