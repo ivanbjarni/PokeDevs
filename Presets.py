@@ -107,7 +107,7 @@ class Presets(object):
 		96	: Attack("Meditate", 0, -20, -20, 0, "psychic"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 20, -20, 2, "normal"),	
-		105	: Attack("Recover", 0, 50, 50, 0, "normal"),	
+		105	: Attack("Recover", 0, 30, -30, 0, "normal"),	
 		106	: Attack("Harden", 0, 10, -25, 0, "normal"),	
 		107	: Attack("Minimize", 0, -20, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 1, "normal"),	

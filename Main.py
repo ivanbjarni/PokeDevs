@@ -57,7 +57,10 @@ class Main(object):
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
-		else:	
+		if pYou.mainCard.hasStun():
+			x = pYou.mainCard.findStun()
+			print x
+		elif False:	
 			#AI checks if it needs to and can heal	
 			if pYou.mainCard.needsHeal():
 				heal = pYou.mainCard.findHeal()
