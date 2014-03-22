@@ -71,7 +71,7 @@ class Card(object):
 		
 		damage = atk.damage
 		#resistance
-		if self.poketype == card.resistance and damage !=0:
+		if atk.poketype == card.resistance and damage !=0:
 			damage *= resistanceMultiplier
 			message = ". It's not very effective!"
 		#weakness
