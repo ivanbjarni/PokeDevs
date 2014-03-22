@@ -147,7 +147,17 @@ class Card(object):
 			if self.attacks[x].healthCost < 0:
 				return x
 
+	# Usage: c.hasStun()
+	# Before: Nothing
+	# After: Returns True if Pokemon can stun his enemy, else False	
+	def hasHeal(self):
+		for x in range(0,4):
+			if self.attacks[x].stun > 0:
+				return True
+		
+		return False
 
+	
 
 	# Usage: x = c.findHighestDamg()
 	# Before: Nothing

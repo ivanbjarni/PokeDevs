@@ -63,10 +63,10 @@ class Main(object):
 				heal = pYou.mainCard.findHeal()
 				hasAttacked = pYou.attack(heal, pEne)
 			#AI gets more stamina if it needs it and has the ability to
-			if pYou.mainCard.needsStamina():
+			elif pYou.mainCard.needsStamina():
 				stamina = pYou.mainCard.findStamina()
 				hasAttacked = pYou.attack(stamina, pEne) 	
-		 	if len(pYou.mainCard.findPossibleAttacks()) > 0:
+		 	elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 			 	print pEne.mainCard.health
 			 	calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)
 			 	hasAttacked = pYou.attack(calcAttack, pEne)
