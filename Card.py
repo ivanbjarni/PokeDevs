@@ -64,6 +64,7 @@ class Card(object):
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
+		card.health   = min(self.health , self.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 
 		message = ""
