@@ -8,6 +8,7 @@ from Card import *
 class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player
+	invdeck		= None		#Deck 		Inventorydeck of player
 	graveyard 	= None		#Deck 		Graveyard, where dead cards go
 	hand		= None		#Hand 		Cards that player has in his hand
 	mainCard	= None		#Card		Players main card on the field

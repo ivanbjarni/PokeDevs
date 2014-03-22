@@ -25,6 +25,13 @@ class Main(object):
 			pYou.hand.add(newCard)				
 			print "You draw a card. It's a "+str(newCard)
 
+	def drawInv(self,pYou):
+		#draw a new card if you can
+		if not pYou.inv.isFull() and not pYou.invdeck.isEmpty():
+			newCard = pYou.invdeck.draw()
+			pYou.inv.add(newCard)				
+			print "You draw a inventory card. It's a "+str(newCard)
+
 	def chooseAttack(self,pYou, pEne):
 		if pYou.isAI():
 			self.chooseAttackAI(pYou, pEne)
@@ -145,8 +152,12 @@ class Main(object):
 
 			#Draw a new card in the start of your turn
 			self.draw(pYou)
+			if self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0:
+				self.drawInv(pYou)
+		
 			
 			print "Your Hand: "+str(pYou.hand)
+			print "Your Inventory: "+str(pYou.inv)
 
 			#put out a new pokemon
 			if yourCard.isDead():
