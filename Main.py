@@ -3,6 +3,8 @@ from Player import *
 from Attack import *
 import random
 from Presets import *
+import time 
+from random import randint
 
 
 class Main(object):	
@@ -10,6 +12,8 @@ class Main(object):
 	playerMode = "vs"		#String	 	player mode "vs" for 2 human players / "ai" for 1 human player and 1 computer
 	turn = 0				#int 		states whether it is player's 0 turn or player's 1
 	turnCount = 1			#int 		total number of turns passed
+	waitingTime = 0			#int 		The time it takes the AI to choose attack each turn, random integral.
+
 
 	def __init__(self, players):
 		self.players = players
@@ -44,13 +48,31 @@ class Main(object):
 				hasAttacked = pYou.attack(x-1,pEne)
 
 	def chooseAttackAI(self, pYou, pEne):
+		global waitingTime
+		waitingTime = randint(2,8)
+		time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
+		#AI can't attack if his pokemon is stunned
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
-		else:
-			hasAttacked = pYou.attack(1, pEne)
+		else:	
+			#AI checks if it needs to and can heal	
+			if pYou.mainCard.needsHeal():
+				heal = pYou.mainCard.findHeal()
+				hasAttacked = pYou.attack(heal, pEne)
+			#AI gets more stamina if it needs it and has the ability to
+			if pYou.mainCard.needsStamina():
+				stamina = pYou.mainCard.findStamina()
+				hasAttacked = pYou.attack(stamina, pEne) 	
+		 	if len(pYou.mainCard.findPossibleAttacks()) > 0:
+			 	print pEne.mainCard.health
+			 	calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)
+			 	hasAttacked = pYou.attack(calcAttack, pEne)
+			else:
+				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
+				print "He also lacks Stamina"
 
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):

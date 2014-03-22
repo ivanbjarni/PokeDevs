@@ -8,3 +8,5 @@ stunChance = 0.7				#chance that attacks with stun apply stun
 metronomeAmount = 42			#Amount that metronome can range
 metronomeBase = -20				#Starting amount for metronome
 pointsToWin = 6					#points needed to win
+needsHealMark = 0.35			#percentage of maxHealth to decide if pokemon needs healing
+needsStaminaMark = 0.3			#percentage of maxStamina to decide if pokemon needs more stamina
