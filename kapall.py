@@ -19,7 +19,7 @@ for i in xrange(0,10):
 p1.mainCard = presets.getRandomCard()
 
 #create player 1 give him a hand, random mainCard and a random 10card deck
-p2 = Player("player2")
+p2 = Player("computer")
 p2.hand = Hand()
 p2.deck = Deck()
 for i in xrange(0,10):
