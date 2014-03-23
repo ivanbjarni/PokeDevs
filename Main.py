@@ -121,9 +121,9 @@ class Main(object):
 				hasAttacked = pYou.attack(x-1,pEne)
 
 	def chooseAttackAI(self, pYou, pEne):
-		global waitingTime
-		waitingTime = randint(2,5)
-		time.sleep(waitingTime)			
+	#	global waitingTime
+	#	waitingTime = randint(2,5)
+	#	time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
 		if len(pYou.inv.invCards) > 0:
@@ -136,7 +136,6 @@ class Main(object):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage
 		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
 			hasAttacked = pYou.attack(calcAttack, pEne)
-			print "I can kill you"
 		else:
 			while(not hasAttacked):	
 				#AI checks if it needs to and can heal
@@ -163,6 +162,9 @@ class Main(object):
 							hasAttacked = pYou.use(card)
 					hasAttacked = True
 
+		return hasAttacked
+
+
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic if pYou is AI, manual otherwise)
@@ -188,7 +190,7 @@ class Main(object):
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
-	def chooseCardAI(self,pYou, pEne):
+	def chooseCardAI(self, pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
 		 if(pokemon!="none"):

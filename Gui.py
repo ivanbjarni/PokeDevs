@@ -22,6 +22,7 @@ class GamePanel(wx.ScrolledWindow):
 		wx.ScrolledWindow.__init__(self, parent, id, (0, 0), size=(1060, 560), style=wx.SUNKEN_BORDER)
 		self.SetDoubleBuffered(True)
 
+		self.isMyTurn = True 		# Determines wheather you can move cards around
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.pdc = wx.PseudoDC()	# For drawing to the panel
@@ -35,9 +36,11 @@ class GamePanel(wx.ScrolledWindow):
 		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			# Dict of original position of bitmaps by id
 		self.cards = {}				# Dict of cards by id
+		self.cardsCPU = [] 			# List of CPU cards
 		self.cardType = {} 			# Dict of card types by id
 		self.backsides = {} 		# Dict of backside ids to link backsides to cards
-		self.backsidesInv = {} 		# Dict of invetory backside ids to link to inventory cards
+		self.backsidesInv = {} 		# Dict of inventory backside ids to link to inventory cards
+		self.backsidesCPU = {} 		# Dict of CPU backsides
 		self.slot = {} 				# Dict of slot number for cards by id 
 		self.invSlot = {} 			# Dict of slot number for inventory cards by 
 		self.anim = []				# List of moves for animations
@@ -123,11 +126,12 @@ class GamePanel(wx.ScrolledWindow):
 	def onMouse(self, event):
 		# If the left button is pressed, grab the object that the mouse was over and
 		# save the old coordinates where it was placed
+
 		if event.LeftDown():
 			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
 			for id in l:
-				if not self.pdc.GetIdGreyedOut(id) and self.movable[id]:
+				if not self.pdc.GetIdGreyedOut(id) and self.movable[id] and self.isMyTurn:
 					self.dragid = id
 					self.lastpos = (event.GetX(), event.GetY())
 					self.startpos = self.lastpos
@@ -185,19 +189,22 @@ class GamePanel(wx.ScrolledWindow):
 						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 119
 						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
 						self.GetParent().attackPanel.setLabels(self.cards[self.dragid])
-						#self.emptyslotPlayer = self.slot[self.dragid]
 						slot = self.slot[self.dragid]
 						self.slot[self.playerChosenID] = slot
 						tx = -106 + slot * 127
 						ty = 189
 						self.moveItem(self.playerChosenID, tx, ty)
+						self.moveItem(self.dragid, x, y)
 						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
 						self.playerChosenID = self.dragid
+						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
+						self.updatePlayerHp()
+						self.updatePlayerStamina()
+#						self.GetParent().infoPanel.setPokeInfo(self.cards[self.dragid])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
-					self.moveItem(self.dragid, x, y)
-					self.dragid = -1
+						self.moveItem(self.dragid, x, y)
 
 				elif self.cardType[self.dragid] == 'Backside':
 					slot = self.findEmptySlot()
@@ -209,6 +216,7 @@ class GamePanel(wx.ScrolledWindow):
 						self.origpos[id] = [x-200, y-200]
 						self.slot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
+						#self.GetParent().game.players[0].hand.cards.append(self.cards[id])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
@@ -232,9 +240,15 @@ class GamePanel(wx.ScrolledWindow):
 					if self.inPlayerChosenArea(dx, dy):
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
-
+					else:
+						x = self.startpos[0] - self.lastpos[0]
+						y = self.startpos[1] - self.lastpos[1]
+						self.moveItem(self.dragid, x, y)
+				self.dragid = -1
 		#elif event.Moving():
 		#	print 'ok'
+		#	if(self.dragid != -1):
+		#		self.GetParent().infoPanel.setPokeInfo(self.cards[101])
 
 	def inPlayerChosenArea(self, dx, dy):
 		return  (110 < dx and dx < 245) and (376 > dy and dy > 182)
@@ -269,7 +283,6 @@ class GamePanel(wx.ScrolledWindow):
 				i['0'] = False
 
 		for k in range(0, 6):
-			print k
 			if i[str(k)]:
 				return k
 		return -1
@@ -289,7 +302,6 @@ class GamePanel(wx.ScrolledWindow):
 				i['0'] = False
 
 		for k in range(0, 3):
-			print k
 			if i[str(k)]:
 				return k
 		return -1
@@ -311,6 +323,8 @@ class GamePanel(wx.ScrolledWindow):
 	def animation1(self, isPlayer):
 		if isPlayer:
 			id = self.playerChosenID
+		else:
+			id = self.CPUChosenID
 		loopCPU = 10
 		forward = True
 
@@ -348,14 +362,17 @@ class GamePanel(wx.ScrolledWindow):
 		origY = self.origpos[bar][0]
 		currentY = self.origpos[bar][1]
 
+		if hp <= 0: 
+			hp = 0
+
 		endY = origY + movement
 
 		if currentY < endY:
 			while currentY < endY:
 				time.sleep(0.01)
-				self.moveItem(bar, 0, 2)
-				self.origpos[bar][1] += 2
-				currentY += 2
+				self.moveItem(bar, 0, 1)
+				self.origpos[bar][1] += 1
+				currentY += 1
 				self.Update()
 		else:
 			while currentY > endY:
@@ -369,19 +386,20 @@ class GamePanel(wx.ScrolledWindow):
 
 	def updatePlayerHp(self):
 		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
-
+		print 'playerhp: ' + str(hp)
 		if hp == 0:
 			self.pdc.SetIdGreyedOut(self.playerChosenID)
-			self.moveItem(self.playerChosenID, 500, 100)
+			self.moveItem(self.playerChosenID, 812, 185)
 
 	def updatePlayerStamina(self):
 		stamina = self.updateBar(self.playerStaminaID, self.cards[self.playerChosenID], 'stamina')
 
 	def updateCPUHp(self):
 		hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
+		print 'CPUhp: ' + str(hp)
 		if hp == 0:
 			self.pdc.SetIdGreyedOut(self.CPUChosenID)
-			self.moveItem(self.CPUChosenID, 100, 100)
+			self.moveItem(self.CPUChosenID, 387, 185)
 
 	def updateCPUStamina(self):
 		stamina = self.updateBar(self.CPUStaminaID, self.cards[self.CPUChosenID], 'stamina')
@@ -394,6 +412,20 @@ class GamePanel(wx.ScrolledWindow):
 		rgn = self.GetUpdateRegion()
 		r = rgn.GetBox()
 		self.pdc.DrawToDCClipped(dc, r)
+
+	def addCPUpokemon(self):
+		if self.cardsCPU:
+			card = self.cardsCPU.pop()
+			self.findID(card)
+
+	def findID(self, card):
+		for id in self.cards.iteritems():
+			if(card == id[1]):
+				return id[0]
+
+#	def findBacksideCPU(self, id):
+
+#	def switchCPUpokemon(self):
 
 	def drawItem(self, dc, id, bitmap, x, y, w, h):
 		dc.DrawBitmap(bitmap, x, y, True)
@@ -541,7 +573,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
 			self.movable[id] = True
 			self.cardType[id] = 'Inventory'
-			self.cards[id] = player.invdeck.invCards[i].bitmap
+			self.cards[id] = player.invdeck.invCards[i]
 			self.invSlot[id] = -1
 
 			bid = wx.NewId()
@@ -556,12 +588,13 @@ class GamePanel(wx.ScrolledWindow):
 			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, -200, -200, w, h)
 			self.movable[id] = False
 			self.cards[id] = CPU.deck.cards[i]
+			self.cardsCPU.append(CPU.deck.cards[i])
 
 			bid = wx.NewId()
 			dc.SetId(bid)
 			self.drawItem(dc, bid, self.backsideBmp, -200, -200, w, h)
 			self.movable[bid] = False
-			self.backsides[bid] = id
+			self.backsidesCPU[bid] = [id, i]
 
 		dc.EndDrawing()		
 
@@ -606,7 +639,7 @@ class GamePanel(wx.ScrolledWindow):
 # A panel that holds the names and HP of currently chosen pokemon
 class StatusPanel(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__(self, parent, size=(1200, 30))
+		wx.Panel.__init__(self, parent, size=(1200, 100))
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
@@ -622,7 +655,7 @@ class StatusPanel(wx.Panel):
 		self.pokemon1name.SetForegroundColour('#CCCCCC')
 		self.pokemon1hp.SetForegroundColour('#CCCCCC')
 		self.vbox1.Add(self.pokemon1name, flag=wx.ALIGN_CENTER, border=10)
-#		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
+		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox1, flag=wx.ALIGN_LEFT|wx.TOP, border=10)
 
 		self.hbox1.AddSpacer((630,0))
@@ -635,7 +668,7 @@ class StatusPanel(wx.Panel):
 		self.pokemon2name.SetForegroundColour('#CCCCCC')
 		self.pokemon2hp.SetForegroundColour('#CCCCCC')
 		self.vbox2.Add(self.pokemon2name, flag=wx.ALIGN_CENTER, border=10)
-#		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
+		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox2, flag=wx.ALIGN_RIGHT|wx.TOP, border=10)
 
 		self.vbox.Add(self.hbox1, flag=wx.ALIGN_CENTER, border=10)
@@ -737,11 +770,24 @@ class AttackPanel(wx.Panel):
 		self.SetSizer(self.vbox)
 
 	def attack1(self):
+		self.disableAll()
 		main = self.GetParent()
+#		main.SetCallFilterEvent(True)
+		main.gamePanel.isMyTurn = False
 		if main.game.players[0].attack(0, main.game.players[1]):
 			main.gamePanel.animation1(True)
 			main.gamePanel.updateCPUHp()
 			main.gamePanel.updatePlayerStamina()
+		main.game.draw(main.game.players[1])
+		main.game.chooseCardAI(main.game.players[1], main.game.players[0])
+		main.gamePanel.addCPUpokemon()
+		if main.game.chooseAttackAI(main.game.players[1], main.game.players[0]):
+			main.gamePanel.animation1(False)
+			main.gamePanel.updatePlayerHp()
+			main.gamePanel.updateCPUStamina()
+		self.enableAll()
+		main.gamePanel.isMyTurn = True
+#		main.SetCallFilterEvent(False)
 
 	def attack2(self):
 		self.GetParent().gamePanel.animation1(True)
@@ -781,6 +827,144 @@ class infoPanel(wx.Panel):
 	def __init__(self, parent):
 		wx.Panel.__init__(self, parent, size=(220, 725))
 
+		self.vbox = wx.BoxSizer(wx.VERTICAL)
+		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		self.hboxHealth = wx.BoxSizer(wx.HORIZONTAL)
+		self.hboxStamina = wx.BoxSizer(wx.HORIZONTAL)
+		font = wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		fc = '#CCCCCC'
+
+		self.name = wx.StaticText(self, label='Name', style=wx.ALIGN_LEFT)
+		self.name.SetFont(font)
+		self.name.SetForegroundColour(fc)
+		self.vbox1.Add(self.name, flag=wx.ALIGN_CENTER, border=10)
+
+
+		self.currentHP =  wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
+		self.currentHP.SetFont(font)
+		self.currentHP.SetForegroundColour(fc)
+
+		self.maxHP =  wx.StaticText(self, label='maxHP', style=wx.ALIGN_LEFT)
+		self.maxHP.SetFont(font)
+		self.maxHP.SetForegroundColour(fc)
+
+		self.hboxHealth.Add(self.currentHP, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxHealth.Add(self.maxHP, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxHealth, flag=wx.ALIGN_CENTER, border=10)
+
+		self.currentStamina = wx.StaticText(self, label='currentStamina', style=wx.ALIGN_LEFT)
+		self.currentStamina.SetFont(font)
+		self.currentStamina.SetForegroundColour(fc)
+
+		self.maxStamina = wx.StaticText(self, label='maxStamina', style=wx.ALIGN_LEFT)
+		self.maxStamina.SetFont(font)
+		self.maxStamina.SetForegroundColour(fc)
+
+		self.hboxStamina.Add(self.currentStamina, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxStamina.Add(self.maxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack1 = wx.StaticText(self, label='ATTACK1', style=wx.ALIGN_LEFT)
+		self.attack1.SetFont(font)
+		self.attack1.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack1, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack2 = wx.StaticText(self, label='ATTACK2', style=wx.ALIGN_LEFT)
+		self.attack2.SetFont(font)
+		self.attack2.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack2, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack3 = wx.StaticText(self, label='ATTACK3', style=wx.ALIGN_LEFT)
+		self.attack3.SetFont(font)
+		self.attack3.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack3, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack4 = wx.StaticText(self, label='ATTACK4', style=wx.ALIGN_LEFT)
+		self.attack4.SetFont(font)
+		self.attack4.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack4, flag=wx.ALIGN_CENTER, border=10)
+
+		self.type = wx.StaticText(self, label='Type', style=wx.ALIGN_LEFT)
+		self.type.SetFont(font)
+		self.type.SetForegroundColour(fc)
+		self.vbox1.Add(self.type, flag=wx.ALIGN_CENTER, border=10)
+
+		self.weakness = wx.StaticText(self, label='Weakness', style=wx.ALIGN_LEFT)
+		self.weakness.SetFont(font)
+		self.weakness.SetForegroundColour(fc)
+		self.vbox1.Add(self.weakness, flag=wx.ALIGN_CENTER, border=10)
+
+		self.resistance = wx.StaticText(self, label='Resistance', style=wx.ALIGN_LEFT)
+		self.resistance.SetFont(font)
+		self.resistance.SetForegroundColour(fc)
+		self.vbox1.Add(self.resistance, flag=wx.ALIGN_CENTER, border=10)
+
+		self.SetSizer(self.vbox1)
+
+
+	def setPokeInfo(self, pcard):
+		self.Freeze()
+		self.name.SetLabel(str(pcard.name))
+		self.currentHP.SetLabel('HP:' + str(pcard.health) + '/')
+		self.maxHP.SetLabel(str(pcard.healthMax))
+		self.currentStamina.SetLabel('Stamina:' + str(pcard.stamina) + '/')
+		self.maxStamina.SetLabel(str(pcard.staminaMax))
+		self.attack1.SetLabel(str(pcard.attacks[0]))
+		self.attack2.SetLabel(str(pcard.attacks[1]))
+		self.attack3.SetLabel(str(pcard.attacks[2]))
+		self.attack4.SetLabel(str(pcard.attacks[3]))
+		self.type.SetLabel(str(pcard.poketype).title())
+		self.weakness.SetLabel(str(pcard.weakness).title())
+		self.resistance.SetLabel(str(pcard.resistance).title())
+		self.Layout()
+		self.Thaw()
+
+	def setAttackInfo(self, attack):
+		self.Freeze()
+		self.name.SetLabel(str(attack.name))
+		self.currentHP.SetLabel('Damage: ' + str(attack.damage))
+		self.maxHP.SetLabel('Stamina cost: ' + str(attack.staminaCost))
+		self.currentStamina.SetLabel('Health cost: ' + str(attack.healthCost))
+		self.maxStamina.SetLabel('Stun: ' + str(attack.stun))
+		self.attack1.SetLabel('Attack type: ' + str(attack.poketype))
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+		self.Layout()
+		self.Thaw()
+
+
+	def setInventoryInfo(self, icard):
+		self.Freeze()
+		self.name.SetLabel(str(icard.name))
+		self.currentHP.SetLabel('Healing power: ' + str(icard.health))
+		self.maxHP.SetLabel('Stamina boost: ' + str(icard.stamina))
+		if(icard.stun):
+			self.currentStamina.SetLabel('Stun off')
+			if(icard.damageBoost != 0):
+				self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		else:
+			if(icard.damageBoost == 0):
+				self.currentStamina.SetLabel('')
+				self.maxStamina.SetLabel('')
+			else:
+				self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+		self.Layout()
+		self.Thaw()
+
+
 class MainFrame(wx.Frame):
 	def __init__(self, game):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(1300, 725))
@@ -792,7 +976,7 @@ class MainFrame(wx.Frame):
 
 		self.menuBar = wx.MenuBar()
 		self.infoPanel = infoPanel(self)
-#		self.statusPanel = StatusPanel(self)
+		#self.statusPanel = StatusPanel(self)
 		self.gamePanel = GamePanel(self, wx.ID_ANY)
 		self.attackPanel = AttackPanel(self)
 
@@ -803,7 +987,7 @@ class MainFrame(wx.Frame):
 
 		self.SetMenuBar(self.menuBar)
 
-#		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
+		#self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.gamePanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.attackPanel, 0, flag=wx.EXPAND)
 		self.hbox.Add(self.infoPanel, 0, flag=wx.EXPAND)
