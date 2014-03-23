@@ -64,7 +64,7 @@ class Presets(object):
 		38	: Attack("DoubleEdge", 17, 12, 0, 0, "normal"),			
 		39	: Attack("TailWhip", 10, 20, 0, 1, "normal"),			
 		40	: Attack("PoisonSting", 15, 7, 0, 1, "normal"),			
-		41	: Attack("Twineedle", 13, 10, 0, 0, "grass"),			
+		41	: Attack("Twineedle", 13, 10, 0, 0, "grass"),
 		43	: Attack("Leer", 15, 20, 0, 0, "normal"),			
 		44	: Attack("Bite", 15, 10, 0, 0, "normal"),				
 		45	: Attack("Growl", 5, 3, 0, 0, "normal"),				
