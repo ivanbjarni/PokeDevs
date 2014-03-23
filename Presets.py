@@ -24,23 +24,23 @@ class Presets(object):
 
 	def initInvCards(self):
 		self.invCards = {
-		0	: InvCard("Ether", 0, 15, False, 1),
-		1	: InvCard("Elixir", 0, 25, False, 1),
-		2	: InvCard("MaxEther", 0, 35, False, 1),
-		3	: InvCard("MaxElixir", 0, 45, False, 1),
-		4	: InvCard("Potion", 10, 0, False, 1),
-		5	: InvCard("SuperPotion", 25, 0, False, 1),
-		6	: InvCard("HyperPotion", 40, 0, False, 1),
-		7	: InvCard("MaxPotion", 65, 0, False, 1),
-		9	: InvCard("XSpeed", 0, 0, False, 1.2),
-		10	: InvCard("XAccuracy", 0, 0, False, 1.4),
-		11	: InvCard("DireHit", 0, 0, False, 1.6),
-		12	: InvCard("XAttack", 0, 0, False, 1.8),
-		13	: InvCard("XSpecial", 0, 0, False, 2),
-		14	: InvCard("UnStunSpray", 0, 0, True, 1),
-		15	: InvCard("FullHeal", 20, 0, True, 1),
-		16	: InvCard("StaminaAndStun", 0, 25, True, 1),
-		17	: InvCard("FullRestore", 20, 20, True, 1.4)
+		0	: InvCard("Ether", 0, 15, False, 1,1),
+		1	: InvCard("Elixir", 0, 25, False, 1,1),
+		2	: InvCard("MaxEther", 0, 35, False, 1,1),
+		3	: InvCard("MaxElixir", 0, 45, False, 1,1),
+		4	: InvCard("Potion", 10, 0, False, 1,1),
+		5	: InvCard("SuperPotion", 25, 0, False, 1,1),
+		6	: InvCard("HyperPotion", 40, 0, False, 1,1),
+		7	: InvCard("MaxPotion", 65, 0, False, 1,1),
+		9	: InvCard("XSpeed", 0, 0, False, 1.2,1),
+		10	: InvCard("XAccuracy", 0, 0, False, 1.4,1),
+		11	: InvCard("DireHit", 0, 0, False, 1.6,1),
+		12	: InvCard("XAttack", 0, 0, False, 1.8,1),
+		13	: InvCard("XSpecial", 0, 0, False, 2,1),
+		14	: InvCard("UnStunSpray", 0, 0, True, 1,1),
+		15	: InvCard("FullHeal", 20, 0, True, 1,1),
+		16	: InvCard("StaminaAndStun", 0, 25, True, 1,1),
+		17	: InvCard("FullRestore", 20, 20, True, 1,1)
 		}
 
 	def initAttacks(self):

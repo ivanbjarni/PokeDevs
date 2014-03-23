@@ -17,7 +17,8 @@ class Card(object):
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
 	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
-	dmgMulti	= 1 		#float 		damage multiplier 		
+	dmgMulti	= 1 		#float 		damage multiplier 
+	defMulti	= 1 		#float 		defense multiplier	
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -74,21 +75,21 @@ class Card(object):
 
 		message = ""
 		
-		damage = atk.damage * self.dmgMulti
+		damage = atk.damage * self.dmgMulti * card.defMulti
 		#resistance
-		if atk.poketype == card.resistance and damage !=0:
+		if atk.poketype == card.resistance and damage >0:
 			damage *= resistanceMultiplier
 			message = ". It's not very effective!"
 		#weakness
-		if atk.poketype == card.weakness and damage !=0:
+		if atk.poketype == card.weakness and damage >0:
 			damage *= weaknessMultiplier
 			message = ". It's super effective!"
 		#crit
-		if random.random() < critChance and damage !=0:
+		if random.random() < critChance and damage >0:
 			damage *= critMultiplier
 			message = ", It's a critical hit!"
 		#miss
-		if random.random()<missChance and damage !=0:
+		if random.random()<missChance and damage >0:
 			damage = 0
 			message = ", but it missed!"
 		
@@ -120,7 +121,11 @@ class Card(object):
 			self.stun = 0
 			print str(self)+" is not stunned anymore"
 		if card.damageBoost > 1:
+			self.setDamageMultiplier(card.damageBoost)
 			print "Damageboost!"
+		if card.defenseBoost < 1:
+			self.setDefenseMultiplier(card.defenseBoost)
+			print "Defenseboost!"
 
 		return True
 
@@ -143,6 +148,7 @@ class Card(object):
 		if self.stun > 0:
 			self.stun -= 1
 		self.dmgMulti = 1
+		self.defMulti = max(1,defMulti+0.5)
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -282,6 +288,12 @@ class Card(object):
 	# After: the damage multiplier of the pokemon is d
 	def setDamageMultiplier(self, dmg):
 		self.dmgMulti = dmg
+
+	# Usage: c.setDamageMultiplier(d)
+	# Before: d is float
+	# After: the defense multiplier of the pokemon is d
+	def setDefenseMultiplier(self, d):
+		self.defMulti = d-0.5
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
