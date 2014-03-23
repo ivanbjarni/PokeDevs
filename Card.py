@@ -148,7 +148,7 @@ class Card(object):
 		if self.stun > 0:
 			self.stun -= 1
 		self.dmgMulti = 1
-		self.defMulti = max(1,defMulti+0.5)
+		self.defMulti = min(1,defMulti+0.5)
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
