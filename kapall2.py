@@ -19,7 +19,7 @@ if __name__=="__main__":
 	p1 = Player("player1")
 	p1.hand = Hand()
 	p1.deck = Deck()
-	for i in xrange(0,6):
+	for i in xrange(0,10):
 		p1.deck.add(presets.getRandomCard())
 	p1.mainCard = presets.getRandomCard()
 
@@ -27,7 +27,7 @@ if __name__=="__main__":
 	p2 = Player("player2")
 	p2.hand = Hand()
 	p2.deck = Deck()
-	for i in xrange(0,6):
+	for i in xrange(0,10):
 		p2.deck.add(presets.getRandomCard())
 	p2.mainCard = presets.getRandomCard()
 
