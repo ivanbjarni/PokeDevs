@@ -39,8 +39,10 @@ class Presets(object):
 		13	: InvCard("XSpecial", 0, 0, False, 2,1),
 		14	: InvCard("UnStunSpray", 0, 0, True, 1,1),
 		15	: InvCard("FullHeal", 20, 0, True, 1,1),
-		16	: InvCard("StaminaAndStun", 0, 25, True, 1,1),
-		17	: InvCard("FullRestore", 20, 20, True, 1,1)
+		16	: InvCard("LavaCookie", 0, 25, True, 1,1),
+		17	: InvCard("FullRestore", 20, 20, True, 1,1),
+		18	: InvCard("XDefense", 0, 0, False, 1,0.75),
+		19	: InvCard("GuardSpec", 0, 0, False, 1,0.5)
 		}
 
 	def initAttacks(self):
