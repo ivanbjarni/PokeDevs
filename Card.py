@@ -199,19 +199,22 @@ class Card(object):
 
 	
 
-	# Usage: x = c.findClosestAttack()
+	# Usage: x = c.findClosestAttack(eneHP)
 	# Before: Nothing
 	# After: Returns the attack that deals closest damage to enemy HP
 	def findClosestAttack(self, eneHP):
 		attacknumberlist = self.findPossibleAttacks()
 		attackdamagelist = []
-		for x in range(0,4):
-			if x in attacknumberlist:
-				attackdamagelist.append(self.attacks[x].damage)
-		bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
-		for x in range(0,4):
-			if x in attacknumberlist and bestDamage == self.attacks[x].damage:
-				return x
+		if len(attacknumberlist) > 0:
+			for x in range(0,4):
+				if x in attacknumberlist:
+					attackdamagelist.append(self.attacks[x].damage)
+			bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
+			for x in range(0,4):
+				if x in attacknumberlist and bestDamage == self.attacks[x].damage:
+					return x
+		else:
+			return 0
 
 
 
@@ -240,6 +243,11 @@ class Card(object):
 			if self.attacks[x].staminaCost < 0:
 				return x
 
+	# Usage: x = CanKillEne()
+	# Before: Nothing
+	# After: Returns true if attack damage is high enough til kill enemy
+	def canKillEne(self, attacknum, eneHP):
+		return self.attacks[attacknum].damage > eneHP
 
 
 

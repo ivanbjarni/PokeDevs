@@ -49,7 +49,7 @@ class Main(object):
 
 	def chooseAttackAI(self, pYou, pEne):
 		global waitingTime
-		waitingTime = randint(2,8)
+		waitingTime = randint(2,5)
 		time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
@@ -57,10 +57,10 @@ class Main(object):
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
-		if pYou.mainCard.hasStun():
-			x = pYou.mainCard.findStun()
-			print x
-		elif False:	
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage	
+		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
+			hasAttacked = pYou.attack(calcAttack, pEne)
+		else:	
 			#AI checks if it needs to and can heal	
 			if pYou.mainCard.needsHeal():
 				heal = pYou.mainCard.findHeal()
@@ -69,9 +69,11 @@ class Main(object):
 			elif pYou.mainCard.needsStamina():
 				stamina = pYou.mainCard.findStamina()
 				hasAttacked = pYou.attack(stamina, pEne) 	
+		 	#AI decides if it wants to stun enemy
+		 	elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
+		 		stun = pYou.mainCard.findStun()
+		 		hasAttacked = pYou.attack(stun, pEne)
 		 	elif len(pYou.mainCard.findPossibleAttacks()) > 0:
-			 	print pEne.mainCard.health
-			 	calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)
 			 	hasAttacked = pYou.attack(calcAttack, pEne)
 			else:
 				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
