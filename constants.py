@@ -10,3 +10,4 @@ metronomeBase = -20				#Starting amount for metronome
 pointsToWin = 6					#points needed to win
 needsHealMark = 0.35			#percentage of maxHealth to decide if pokemon needs healing
 needsStaminaMark = 0.3			#percentage of maxStamina to decide if pokemon needs more stamina
+stunSuccessRate = 0.1			#chance to make a successfull attack even though you are stunned
