@@ -193,6 +193,7 @@ class GamePanel(wx.ScrolledWindow):
 						self.moveItem(self.playerChosenID, tx, ty)
 						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
 						self.playerChosenID = self.dragid
+						self.GetParent().infoPanel.setPokeInfo(self.cards[self.dragid])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
@@ -235,6 +236,8 @@ class GamePanel(wx.ScrolledWindow):
 
 		#elif event.Moving():
 		#	print 'ok'
+		#	if(self.dragid != -1):
+		#		self.GetParent().infoPanel.setPokeInfo(self.cards[101])
 
 	def inPlayerChosenArea(self, dx, dy):
 		return  (110 < dx and dx < 245) and (376 > dy and dy > 182)
@@ -606,7 +609,7 @@ class GamePanel(wx.ScrolledWindow):
 # A panel that holds the names and HP of currently chosen pokemon
 class StatusPanel(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__(self, parent, size=(1200, 30))
+		wx.Panel.__init__(self, parent, size=(1200, 100))
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
@@ -622,7 +625,7 @@ class StatusPanel(wx.Panel):
 		self.pokemon1name.SetForegroundColour('#CCCCCC')
 		self.pokemon1hp.SetForegroundColour('#CCCCCC')
 		self.vbox1.Add(self.pokemon1name, flag=wx.ALIGN_CENTER, border=10)
-#		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
+		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox1, flag=wx.ALIGN_LEFT|wx.TOP, border=10)
 
 		self.hbox1.AddSpacer((630,0))
@@ -635,7 +638,7 @@ class StatusPanel(wx.Panel):
 		self.pokemon2name.SetForegroundColour('#CCCCCC')
 		self.pokemon2hp.SetForegroundColour('#CCCCCC')
 		self.vbox2.Add(self.pokemon2name, flag=wx.ALIGN_CENTER, border=10)
-#		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
+		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox2, flag=wx.ALIGN_RIGHT|wx.TOP, border=10)
 
 		self.vbox.Add(self.hbox1, flag=wx.ALIGN_CENTER, border=10)
@@ -781,6 +784,144 @@ class infoPanel(wx.Panel):
 	def __init__(self, parent):
 		wx.Panel.__init__(self, parent, size=(220, 725))
 
+		self.vbox = wx.BoxSizer(wx.VERTICAL)
+		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		self.hboxHealth = wx.BoxSizer(wx.HORIZONTAL)
+		self.hboxStamina = wx.BoxSizer(wx.HORIZONTAL)
+		font = wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		fc = '#CCCCCC'
+
+		self.name = wx.StaticText(self, label='Name', style=wx.ALIGN_LEFT)
+		self.name.SetFont(font)
+		self.name.SetForegroundColour(fc)
+		self.vbox1.Add(self.name, flag=wx.ALIGN_CENTER, border=10)
+
+
+		self.currentHP =  wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
+		self.currentHP.SetFont(font)
+		self.currentHP.SetForegroundColour(fc)
+
+		self.maxHP =  wx.StaticText(self, label='maxHP', style=wx.ALIGN_LEFT)
+		self.maxHP.SetFont(font)
+		self.maxHP.SetForegroundColour(fc)
+
+		self.hboxHealth.Add(self.currentHP, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxHealth.Add(self.maxHP, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxHealth, flag=wx.ALIGN_CENTER, border=10)
+
+		self.currentStamina = wx.StaticText(self, label='currentStamina', style=wx.ALIGN_LEFT)
+		self.currentStamina.SetFont(font)
+		self.currentStamina.SetForegroundColour(fc)
+
+		self.maxStamina = wx.StaticText(self, label='maxStamina', style=wx.ALIGN_LEFT)
+		self.maxStamina.SetFont(font)
+		self.maxStamina.SetForegroundColour(fc)
+
+		self.hboxStamina.Add(self.currentStamina, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxStamina.Add(self.maxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack1 = wx.StaticText(self, label='ATTACK1', style=wx.ALIGN_LEFT)
+		self.attack1.SetFont(font)
+		self.attack1.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack1, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack2 = wx.StaticText(self, label='ATTACK2', style=wx.ALIGN_LEFT)
+		self.attack2.SetFont(font)
+		self.attack2.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack2, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack3 = wx.StaticText(self, label='ATTACK3', style=wx.ALIGN_LEFT)
+		self.attack3.SetFont(font)
+		self.attack3.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack3, flag=wx.ALIGN_CENTER, border=10)
+
+		self.attack4 = wx.StaticText(self, label='ATTACK4', style=wx.ALIGN_LEFT)
+		self.attack4.SetFont(font)
+		self.attack4.SetForegroundColour(fc)
+		self.vbox1.Add(self.attack4, flag=wx.ALIGN_CENTER, border=10)
+
+		self.type = wx.StaticText(self, label='Type', style=wx.ALIGN_LEFT)
+		self.type.SetFont(font)
+		self.type.SetForegroundColour(fc)
+		self.vbox1.Add(self.type, flag=wx.ALIGN_CENTER, border=10)
+
+		self.weakness = wx.StaticText(self, label='Weakness', style=wx.ALIGN_LEFT)
+		self.weakness.SetFont(font)
+		self.weakness.SetForegroundColour(fc)
+		self.vbox1.Add(self.weakness, flag=wx.ALIGN_CENTER, border=10)
+
+		self.resistance = wx.StaticText(self, label='Resistance', style=wx.ALIGN_LEFT)
+		self.resistance.SetFont(font)
+		self.resistance.SetForegroundColour(fc)
+		self.vbox1.Add(self.resistance, flag=wx.ALIGN_CENTER, border=10)
+
+		self.SetSizer(self.vbox1)
+
+
+	def setPokeInfo(self, pcard):
+		self.Freeze()
+		self.name.SetLabel(str(pcard.name))
+		self.currentHP.SetLabel('HP:' + str(pcard.health) + '/')
+		self.maxHP.SetLabel(str(pcard.healthMax))
+		self.currentStamina.SetLabel('Stamina:' + str(pcard.stamina) + '/')
+		self.maxStamina.SetLabel(str(pcard.staminaMax))
+		self.attack1.SetLabel(str(pcard.attacks[0]))
+		self.attack2.SetLabel(str(pcard.attacks[1]))
+		self.attack3.SetLabel(str(pcard.attacks[2]))
+		self.attack4.SetLabel(str(pcard.attacks[3]))
+		self.type.SetLabel(str(pcard.poketype).title())
+		self.weakness.SetLabel(str(pcard.weakness).title())
+		self.resistance.SetLabel(str(pcard.resistance).title())
+		self.Layout()
+		self.Thaw()
+
+	def setAttackInfo(self, attack):
+		self.Freeze()
+		self.name.SetLabel(str(attack.name))
+		self.currentHP.SetLabel('Damage: ' + str(attack.damage))
+		self.maxHP.SetLabel('Stamina cost: ' + str(attack.staminaCost))
+		self.currentStamina.SetLabel('Health cost: ' + str(attack.healthCost))
+		self.maxStamina.SetLabel('Stun: ' + str(attack.stun))
+		self.attack1.SetLabel('Attack type: ' + str(attack.poketype))
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+		self.Layout()
+		self.Thaw()
+
+
+	def setInventoryInfo(self, icard):
+		self.Freeze()
+		self.name.SetLabel(str(icard.name))
+		self.currentHP.SetLabel('Healing power: ' + str(icard.health))
+		self.maxHP.SetLabel('Stamina boost: ' + str(icard.stamina))
+		if(icard.stun):
+			self.currentStamina.SetLabel('Stun off')
+			if(icard.damageBoost != 0):
+				self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		else:
+			if(icard.damageBoost == 0):
+				self.currentStamina.SetLabel('')
+				self.maxStamina.SetLabel('')
+			else:
+				self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+		self.Layout()
+		self.Thaw()
+
+
 class MainFrame(wx.Frame):
 	def __init__(self, game):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(1300, 725))
@@ -792,7 +933,7 @@ class MainFrame(wx.Frame):
 
 		self.menuBar = wx.MenuBar()
 		self.infoPanel = infoPanel(self)
-#		self.statusPanel = StatusPanel(self)
+		self.statusPanel = StatusPanel(self)
 		self.gamePanel = GamePanel(self, wx.ID_ANY)
 		self.attackPanel = AttackPanel(self)
 
@@ -803,7 +944,7 @@ class MainFrame(wx.Frame):
 
 		self.SetMenuBar(self.menuBar)
 
-#		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
+		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.gamePanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.attackPanel, 0, flag=wx.EXPAND)
 		self.hbox.Add(self.infoPanel, 0, flag=wx.EXPAND)
