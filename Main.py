@@ -135,29 +135,6 @@ class Main(object):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage
 		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
 			hasAttacked = pYou.attack(calcAttack, pEne)
-<<<<<<< HEAD
-		else:	
-			#AI checks if it needs to and can heal	
-			if pYou.mainCard.needsHeal():
-				heal = pYou.mainCard.findHeal()
-				hasAttacked = pYou.attack(heal, pEne)
-			#AI gets more stamina if it needs it and has the ability to
-			elif pYou.mainCard.needsStamina():
-				stamina = pYou.mainCard.findStamina()
-				hasAttacked = pYou.attack(stamina, pEne) 	
-		 	#AI decides if it wants to stun enemy
-		 	elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
-		 		stun = pYou.mainCard.findStun()
-		 		hasAttacked = pYou.attack(stun, pEne)
-		 	elif len(pYou.mainCard.findPossibleAttacks()) > 0:
-			 	hasAttacked = pYou.attack(calcAttack, pEne)
-			else:
-				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
-				print "He also lacks Stamina"
-
-		return hasAttacked
-=======
-			print "I can kill you"
 		else:
 			while(not hasAttacked):	
 				#AI checks if it needs to and can heal
@@ -183,7 +160,9 @@ class Main(object):
 							card = pYou.inv.remove(throwaway)
 							hasAttacked = pYou.use(card)
 					hasAttacked = True
->>>>>>> 563e2aa22cfeeb2f727cd3066d7fe870f9e8f84a
+
+		return hasAttacked
+
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou is active player and pEne is enemy player
