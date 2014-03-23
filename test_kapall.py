@@ -17,9 +17,18 @@ class TestPlayer(unittest.TestCase):
 		villi.mainCard = pre.gc("Bulbasaur")
 		self.assertTrue(isinstance(arni.attack(2, villi), bool))
 
+	# checks if str method for player is correct
 	def test_playerStr(self):
 		bla = Player("BlaBlaAlb")
 		self.assertEqual(str(bla), "BlaBlaAlb")
+
+	# Checks if isAi method is correct
+	def test_playerIsAI(self):
+		tilraunardyr = Player("computer")
+		tilraunardyr2 = Player("arni")
+		self.assertTrue(tilraunardyr.isAI())
+		self.assertFalse(tilraunardyr2.isAI())
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestPlayer)
 unittest.TextTestRunner(verbosity=2).run(suite)
