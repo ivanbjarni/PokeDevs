@@ -6,7 +6,7 @@ from InvCard import *
 
 class Inventory(object):
 	invCards 		= []		#Card[]		List of invCards in the hand
-	invCardsMax	= 6				#int 		Maximum amount of invCards a player can hold	
+	invCardsMax	= 3				#int 		Maximum amount of invCards a player can hold	
 
 	def __init__(self):
 		self.invCards = []

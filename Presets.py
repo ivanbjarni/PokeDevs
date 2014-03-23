@@ -184,7 +184,7 @@ class Presets(object):
 		352 : Attack("WaterPulse", 30, 30, 0, 0, "water"),			
 		361 : Attack("HealingWish", -5, 10, -20, 0, "normal"),			
 		362 : Attack("Brine", 15, 15, 0, 0, "water"),			
-		364 : Attack("Feint", 0, -15, -30, 0, "normal"),			
+		364 : Attack("Feint", 0, -15, -20, 0, "normal"),			
 		370 : Attack("CloseCombat", 30, 50, 0, 0, "normal"),			
 		382 : Attack("MeFirst", 0, 25, 0, 2, "normal"),			
 		390 : Attack("ToxicSpikes", 15, 30, 0, 1, "grass"),			

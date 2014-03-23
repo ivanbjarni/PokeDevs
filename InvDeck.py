@@ -17,7 +17,7 @@ class InvDeck(object):
 		return s
 
 	# Usage: deck.shuffle()
-	# Before: nothing
+	# Before: int
 	# After: deck has been shuffled
 	def shuffle(self):
 		random.shuffle(self.invCards)

@@ -55,6 +55,27 @@ class Main(object):
 			else:
 				print "You don't have a inventorycard "+x+" in your hand."
 
+	def chooseInvCardAI(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasUsed = False
+		while(not hasUsed):
+			for i in range(0,len(pYou.inv.invCards)):
+				if pYou.inv.invCards[i].stamina and pYou.mainCard.needsStamina():
+					stamina = pYou.ingv.getIndexOf(pYou.inv.inCards[i])
+					if ind != -1:
+						card = pYou.inv.remove(ind)
+						hasUsed = pYou.use(card)
+				if pYou.inv.invCards[i].health and pYou.mainCard.needsHeal():
+					heal = pYou.ingv.getIndexOf(pYou.inv.inCards[i])
+					if ind != -1:
+						card = pYou.inv.remove(ind)
+						hasUsed = pYou.use(card)
+				if pYou.inv.invCards[i].stun and pYou.mainCard.isStunned():
+					stun = pYou.ingv.getIndexOf(pYou.inv.inCards[i])
+					if ind != -1:
+						card = pYou.inv.remove(ind)
+						hasUsed = pYou.use(card)
+			hasUsed = True			
 
 	def chooseAttackPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
@@ -83,20 +104,23 @@ class Main(object):
 		time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
+		if len(pYou.inv.invCards) > 0:
+			self.chooseInvCardAI(pYou, pEne)	
 		#AI can't attack if his pokemon is stunned
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage	
+		print calcAttack
 		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
 			hasAttacked = pYou.attack(calcAttack, pEne)
 		else:	
 			#AI checks if it needs to and can heal	
-			if pYou.mainCard.needsHeal():
+			if pYou.mainCard.needsHeal and pYou.mainCard.hasHeal():
 				heal = pYou.mainCard.findHeal()
 				hasAttacked = pYou.attack(heal, pEne)
 			#AI gets more stamina if it needs it and has the ability to
-			elif pYou.mainCard.needsStamina():
+			elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStamina():
 				stamina = pYou.mainCard.findStamina()
 				hasAttacked = pYou.attack(stamina, pEne) 	
 		 	#AI decides if it wants to stun enemy

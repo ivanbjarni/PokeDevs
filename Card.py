@@ -159,7 +159,7 @@ class Card(object):
 	# After: Returns True if pokemon needs to and can heal it self, else False 
 	def needsHeal(self):
 		needs = self.health < needsHealMark*self.healthMax
-		return(self.hasHeal() and needs)
+		return needs
 
 	# Usage: x = c.findHeal()
 	# Before: The card has the ability to heal
@@ -255,7 +255,7 @@ class Card(object):
 	# After: Returns True if pokemon needs to and can heal it self, else False 
 	def needsStamina(self):
 		needs = self.stamina < needsStaminaMark*self.staminaMax
-		return(self.hasStaminaBoost() and needs)
+		return needs
 
 	# Usage: x = c.findStamina()
 	# Before: The card has the ability to increase its stamina
