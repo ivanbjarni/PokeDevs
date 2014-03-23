@@ -148,7 +148,7 @@ class Card(object):
 		if self.stun > 0:
 			self.stun -= 1
 		self.dmgMulti = 1
-		self.defMulti = min(1,defMulti+0.5)
+		self.defMulti = min(1,self.defMulti+0.5)
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -241,7 +241,7 @@ class Card(object):
 		attackdamagelist = []
 		if len(attacknumberlist) > 0:
 			for x in range(0,4):
-				if x in attacknumberlist:
+				if x in attacknumberlist and self.attacks[x].damage > 0:
 					attackdamagelist.append(self.attacks[x].damage)
 			bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
 			for x in range(0,4):
