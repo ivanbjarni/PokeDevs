@@ -13,12 +13,13 @@ class InvCard(object):
 	defenseBoost= 0 		#double 	Tells you how much defense boost is in % (less than 1 is good)
 	bitmap      = None 		#bitmap     Image to represent card
 
-	def __init__(self, name, health, stamina, stun, damageBoost):
+	def __init__(self, name, health, stamina, stun, damageBoost, defenseBoost):
 		self.name = name
 		self.health = health
 		self.stamina = stamina
 		self.stun = stun
 		self.damageBoost = damageBoost
+		self.defenseBoost = defenseBoost
 
 	def __str__(self):
 		return self.name
