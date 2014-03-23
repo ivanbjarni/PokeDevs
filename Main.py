@@ -82,6 +82,7 @@ class Main(object):
 					if stun != -1:
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card)
+						offset += 1
 				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned():
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
