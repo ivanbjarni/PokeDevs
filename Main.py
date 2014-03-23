@@ -38,13 +38,36 @@ class Main(object):
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
 
+	def chooseInvCardPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasUsed = False
+		while(not hasUsed):
+			print "Your inventory: "+str(pYou.inv)
+			print "What item do you wan't to use? (Back to go back)"
+			x = raw_input()
+			ind = pYou.inv.getIndexOf(x)
+			if ind != -1:
+				card = pYou.inv.remove(ind)
+				hasUsed = pYou.use(card)
+			elif x == "Back":
+				print "Oh, so you're a tough guy?"
+				hasUsed = True
+			else:
+				print "You don't have a inventorycard "+x+" in your hand."
+
+
 	def chooseAttackPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasAttacked = False
 		while(not hasAttacked):
-			print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
+			print 'What attack do you want to do 1-4? (0 to pass, 5 to access inventory, other to crash game): ',
 			x = input()
-			if x == 0:
+			if x == 5:
+				if len(pYou.inv.invCards) > 0:
+					self.chooseInvCardPlayer(pYou, pEne)
+				else:
+					print "You don't have any inventorycards!"
+			elif x == 0:
 				print "You passed on your turn"
 				hasAttacked = True
 			elif x==9:
@@ -128,7 +151,14 @@ class Main(object):
 		 
 		 return pYou.hand.remove(ind)
 			
-
+	# Usage: p = drawInvQuest()
+	# Before: Nothing
+	# AFter: p is true if it is the right time to draw inventory card, false otherwise
+	def drawInvQuest(self):
+		if self.turnCount > 1:
+			return (self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0)
+		else:
+			return False	
 
 	def gameLoop(self):
 		done = False
@@ -152,7 +182,7 @@ class Main(object):
 
 			#Draw a new card in the start of your turn
 			self.draw(pYou)
-			if self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0:
+			if self.drawInvQuest():
 				self.drawInv(pYou)
 		
 			

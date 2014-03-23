@@ -8,7 +8,7 @@ from Card import *
 class Player(object):
 	name 		= ""		#String		Name of player
 	deck		= None		#Deck		Deck of player
-	invdeck		= None		#Deck 		Inventorydeck of player
+	inv	   		= None		#Deck 		Inventorydeck of player
 	graveyard 	= None		#Deck 		Graveyard, where dead cards go
 	hand		= None		#Hand 		Cards that player has in his hand
 	mainCard	= None		#Card		Players main card on the field
@@ -28,6 +28,13 @@ class Player(object):
 	def attack(self,  nr,  player):
 		atk = self.mainCard.attacks[nr]
 		return self.mainCard.attack(atk, player.mainCard)
+
+	# Usage: b = p.attack(atk, player)
+	# Before: player is Player and atk is the index nr of attack on main card
+	# After: b is true if attack succeeds, false otherwise
+	def use(self,  card):
+		invcard = card
+		return self.mainCard.use(invcard)
 
 	# Usage: b = p.isAI()
 	# Before: Nothing
