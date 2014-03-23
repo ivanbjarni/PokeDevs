@@ -82,14 +82,14 @@ class Main(object):
 					if stun != -1:
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card)
-				elif pYou.inv.invCards[i].damgeBoost > 0 and not pYou.mainCard.isStunned:
+				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned():
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
 						card = pYou.inv.remove(damage)
 						hasUsed = pYou.use(card)
 						offset += 1
-				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.isStunned:
+				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.isStunned():
 					print "I want to take less DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
@@ -160,21 +160,18 @@ class Main(object):
 			print "I can kill you"
 		else:
 			while(not hasAttacked):	
-				#AI checks if it needs to and can heal	
-				if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal():
-					heal = pYou.mainCard.findHeal()
-					if pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
-						hasAttacked = pYou.attack(heal, pEne)
+				#AI checks if it needs to and can heal
+				heal = pYou.mainCard.findHeal()
+				stamina = pYou.mainCard.findStamina()
+				stun = pYou.mainCard.findStun()
+				if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal() and pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
+					hasAttacked = pYou.attack(heal, pEne)
 				#AI gets more stamina if it needs it and has the ability to
-				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost():
-					stamina = pYou.mainCard.findStamina()
-					if pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
-						hasAttacked = pYou.attack(stamina, pEne) 	
+				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
+					hasAttacked = pYou.attack(stamina, pEne) 	
 				#AI decides if it wants to stun enemy
-				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
-				 	stun = pYou.mainCard.findStun()
-				 	if pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:
-						hasAttacked = pYou.attack(stun, pEne)
+				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2) and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
+					hasAttacked = pYou.attack(stun, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne)
 				else:
