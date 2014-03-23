@@ -37,7 +37,7 @@ class Presets(object):
 		11	: InvCard("DireHit", 0, 0, False, 1.6),
 		12	: InvCard("XAttack", 0, 0, False, 1.8),
 		13	: InvCard("XSpecial", 0, 0, False, 2),
-		14	: InvCard("StunHeal", 0, 0, True, 1),
+		14	: InvCard("UnStunSpray", 0, 0, True, 1),
 		15	: InvCard("FullHeal", 20, 0, True, 1),
 		16	: InvCard("StaminaAndStun", 0, 25, True, 1),
 		17	: InvCard("FullRestore", 20, 20, True, 1.4)
