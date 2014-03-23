@@ -58,7 +58,7 @@ class Card(object):
 			print "ditto transformed to "+scard
 			return True
 		if(self.stamina <= atk.staminaCost):
-			print "Not Enough Stamina"
+			print "Not Enough Stamina "
 			return False
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
@@ -239,14 +239,20 @@ class Card(object):
 	def findClosestAttack(self, eneHP):
 		attacknumberlist = self.findPossibleAttacks()
 		attackdamagelist = []
+		nonattackdamagelist = []
 		if len(attacknumberlist) > 0:
 			for x in range(0,4):
-				if x in attacknumberlist and self.attacks[x].damage > 0:
+				if x in attacknumberlist and self.attacks[x].damage != 0:
 					attackdamagelist.append(self.attacks[x].damage)
-			bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
-			for x in range(0,4):
-				if x in attacknumberlist and bestDamage == self.attacks[x].damage:
-					return x
+				elif x in attacknumberlist and self.attacks[x].damage == 0:
+					nonattackdamagelist.append(x)
+			if len(attackdamagelist) > 0:
+				bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
+				for x in range(0,4):
+					if x in attacknumberlist and bestDamage == self.attacks[x].damage:
+						return x
+			else:
+				return nonattackdamagelist[0]
 		else:
 			return 0
 

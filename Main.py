@@ -57,24 +57,45 @@ class Main(object):
 
 	def chooseInvCardAI(self, pYou, pEne):
 		yourCard = pYou.mainCard
-		hasUsed = False
+		hasUsed = False 
 		while(not hasUsed):
-			for i in range(0,len(pYou.inv.invCards)):
-				if pYou.inv.invCards[i].stamina and pYou.mainCard.needsStamina():
-					stamina = pYou.inv.getIndexOf(pYou.inv.inCards[i])
-					if ind != -1:
-						card = pYou.inv.remove(ind)
+			offset = 0
+			for j in range(0,len(pYou.inv.invCards)):
+				i = j - offset
+				if (pYou.inv.invCards[i].stamina > 0) and pYou.mainCard.needsStamina():
+					print "I need stamina"
+					stamina = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if stamina != -1:
+						card = pYou.inv.remove(stamina)
 						hasUsed = pYou.use(card)
-				if pYou.inv.invCards[i].health and pYou.mainCard.needsHeal():
-					heal = pYou.inv.getIndexOf(pYou.inv.inCards[i])
-					if ind != -1:
-						card = pYou.inv.remove(ind)
+						offset += 1
+				elif pYou.inv.invCards[i].health > 0 and pYou.mainCard.needsHeal():
+					print "I need heal"
+					heal = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if heal != -1:
+						card = pYou.inv.remove(heal)
 						hasUsed = pYou.use(card)
-				if pYou.inv.invCards[i].stun and pYou.mainCard.isStunned():
-					stun = pYou.inv.getIndexOf(pYou.inv.inCards[i])
-					if ind != -1:
-						card = pYou.inv.remove(ind)
+						offset += 1
+				elif pYou.inv.invCards[i].stun and pYou.mainCard.isStunned():
+					print "I need to get unstunned"
+					stun = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if stun != -1:
+						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card)
+				elif pYou.inv.invCards[i].damgeBoost > 0 and not pYou.mainCard.isStunned:
+					print "I want to deal more DAMAGE!!"
+					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if damage != -1:
+						card = pYou.inv.remove(damage)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.isStunned:
+					print "I want to take less DAMAGE!!"
+					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if damage != -1:
+						card = pYou.inv.remove(damage)
+						hasUsed = pYou.use(card)
+						offset += 1
 			hasUsed = True			
 
 	def chooseAttackPlayer(self, pYou, pEne):
@@ -105,13 +126,13 @@ class Main(object):
 		AICard = pYou.mainCard
 		hasAttacked = False
 		if len(pYou.inv.invCards) > 0:
+			print "I have inventory things!"
 			self.chooseInvCardAI(pYou, pEne)	
 		#AI can't attack if his pokemon is stunned
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
-		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage	
-		print calcAttack
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage
 		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
 			hasAttacked = pYou.attack(calcAttack, pEne)
 			print "I can kill you"
@@ -120,20 +141,28 @@ class Main(object):
 				#AI checks if it needs to and can heal	
 				if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal():
 					heal = pYou.mainCard.findHeal()
-					hasAttacked = pYou.attack(heal, pEne)
+					if pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
+						hasAttacked = pYou.attack(heal, pEne)
 				#AI gets more stamina if it needs it and has the ability to
-				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStamina():
+				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost():
 					stamina = pYou.mainCard.findStamina()
-					hasAttacked = pYou.attack(stamina, pEne) 	
+					if pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
+						hasAttacked = pYou.attack(stamina, pEne) 	
 				#AI decides if it wants to stun enemy
 				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
 				 	stun = pYou.mainCard.findStun()
-				 	hasAttacked = pYou.attack(stun, pEne)
+				 	if pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:
+						hasAttacked = pYou.attack(stun, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne)
 				else:
 					print str(AICard)+" is too busy playing this awesome new Pokemongame..."
 					print "He also lacks Stamina"
+					if len(pYou.inv.invCards) == 3:
+						throwaway = pYou.inv.getIndexOf(pYou.inv.invCards[randint(0,2)].name)
+						if throwaway != -1:
+							card = pYou.inv.remove(throwaway)
+							hasAttacked = pYou.use(card)
 					hasAttacked = True
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
