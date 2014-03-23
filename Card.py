@@ -57,7 +57,7 @@ class Card(object):
 			scard = self.transformTo(card)
 			print "ditto transformed to "+scard
 			return True
-		if(self.stamina < atk.staminaCost):
+		if(self.stamina <= atk.staminaCost):
 			print "Not Enough Stamina"
 			return False
 		if(self.isDead()):
