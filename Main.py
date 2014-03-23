@@ -78,9 +78,9 @@ class Main(object):
 				hasAttacked = pYou.attack(x-1,pEne)
 
 	def chooseAttackAI(self, pYou, pEne):
-		global waitingTime
-		waitingTime = randint(2,5)
-		time.sleep(waitingTime)			
+	#	global waitingTime
+	#	waitingTime = randint(2,5)
+	#	time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
 		#AI can't attack if his pokemon is stunned
@@ -109,6 +109,7 @@ class Main(object):
 				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
 				print "He also lacks Stamina"
 
+		return hasAttacked
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou is active player and pEne is enemy player
@@ -135,7 +136,7 @@ class Main(object):
 	# Usage: p = main.chooseCardAI(pYou,pEne):
 	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
-	def chooseCardAI(self,pYou, pEne):
+	def chooseCardAI(self, pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
 		 if(pokemon!="none"):

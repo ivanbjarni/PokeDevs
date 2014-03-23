@@ -22,6 +22,7 @@ class GamePanel(wx.ScrolledWindow):
 		wx.ScrolledWindow.__init__(self, parent, id, (0, 0), size=(1060, 560), style=wx.SUNKEN_BORDER)
 		self.SetDoubleBuffered(True)
 
+		self.isMyTurn = True 		# Determines wheather you can move cards around
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.pdc = wx.PseudoDC()	# For drawing to the panel
@@ -35,9 +36,11 @@ class GamePanel(wx.ScrolledWindow):
 		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			# Dict of original position of bitmaps by id
 		self.cards = {}				# Dict of cards by id
+		self.cardsCPU = [] 			# List of CPU cards
 		self.cardType = {} 			# Dict of card types by id
 		self.backsides = {} 		# Dict of backside ids to link backsides to cards
-		self.backsidesInv = {} 		# Dict of invetory backside ids to link to inventory cards
+		self.backsidesInv = {} 		# Dict of inventory backside ids to link to inventory cards
+		self.backsidesCPU = {} 		# Dict of CPU backsides
 		self.slot = {} 				# Dict of slot number for cards by id 
 		self.invSlot = {} 			# Dict of slot number for inventory cards by 
 		self.anim = []				# List of moves for animations
@@ -123,11 +126,12 @@ class GamePanel(wx.ScrolledWindow):
 	def onMouse(self, event):
 		# If the left button is pressed, grab the object that the mouse was over and
 		# save the old coordinates where it was placed
+
 		if event.LeftDown():
 			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
 			for id in l:
-				if not self.pdc.GetIdGreyedOut(id) and self.movable[id]:
+				if not self.pdc.GetIdGreyedOut(id) and self.movable[id] and self.isMyTurn:
 					self.dragid = id
 					self.lastpos = (event.GetX(), event.GetY())
 					self.startpos = self.lastpos
@@ -185,19 +189,21 @@ class GamePanel(wx.ScrolledWindow):
 						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 119
 						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
 						self.GetParent().attackPanel.setLabels(self.cards[self.dragid])
-						#self.emptyslotPlayer = self.slot[self.dragid]
 						slot = self.slot[self.dragid]
 						self.slot[self.playerChosenID] = slot
 						tx = -106 + slot * 127
 						ty = 189
 						self.moveItem(self.playerChosenID, tx, ty)
+						self.moveItem(self.dragid, x, y)
 						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
 						self.playerChosenID = self.dragid
+						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
+						self.updatePlayerHp()
+						self.updatePlayerStamina()
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
-					self.moveItem(self.dragid, x, y)
-					self.dragid = -1
+						self.moveItem(self.dragid, x, y)
 
 				elif self.cardType[self.dragid] == 'Backside':
 					slot = self.findEmptySlot()
@@ -209,6 +215,7 @@ class GamePanel(wx.ScrolledWindow):
 						self.origpos[id] = [x-200, y-200]
 						self.slot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
+						#self.GetParent().game.players[0].hand.cards.append(self.cards[id])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
@@ -232,7 +239,11 @@ class GamePanel(wx.ScrolledWindow):
 					if self.inPlayerChosenArea(dx, dy):
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
-
+					else:
+						x = self.startpos[0] - self.lastpos[0]
+						y = self.startpos[1] - self.lastpos[1]
+						self.moveItem(self.dragid, x, y)
+				self.dragid = -1
 		#elif event.Moving():
 		#	print 'ok'
 
@@ -269,7 +280,6 @@ class GamePanel(wx.ScrolledWindow):
 				i['0'] = False
 
 		for k in range(0, 6):
-			print k
 			if i[str(k)]:
 				return k
 		return -1
@@ -289,7 +299,6 @@ class GamePanel(wx.ScrolledWindow):
 				i['0'] = False
 
 		for k in range(0, 3):
-			print k
 			if i[str(k)]:
 				return k
 		return -1
@@ -311,6 +320,8 @@ class GamePanel(wx.ScrolledWindow):
 	def animation1(self, isPlayer):
 		if isPlayer:
 			id = self.playerChosenID
+		else:
+			id = self.CPUChosenID
 		loopCPU = 10
 		forward = True
 
@@ -348,14 +359,17 @@ class GamePanel(wx.ScrolledWindow):
 		origY = self.origpos[bar][0]
 		currentY = self.origpos[bar][1]
 
+		if hp <= 0: 
+			hp = 0
+
 		endY = origY + movement
 
 		if currentY < endY:
 			while currentY < endY:
 				time.sleep(0.01)
-				self.moveItem(bar, 0, 2)
-				self.origpos[bar][1] += 2
-				currentY += 2
+				self.moveItem(bar, 0, 1)
+				self.origpos[bar][1] += 1
+				currentY += 1
 				self.Update()
 		else:
 			while currentY > endY:
@@ -369,19 +383,20 @@ class GamePanel(wx.ScrolledWindow):
 
 	def updatePlayerHp(self):
 		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
-
+		print 'playerhp: ' + str(hp)
 		if hp == 0:
 			self.pdc.SetIdGreyedOut(self.playerChosenID)
-			self.moveItem(self.playerChosenID, 500, 100)
+			self.moveItem(self.playerChosenID, 812, 185)
 
 	def updatePlayerStamina(self):
 		stamina = self.updateBar(self.playerStaminaID, self.cards[self.playerChosenID], 'stamina')
 
 	def updateCPUHp(self):
 		hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
+		print 'CPUhp: ' + str(hp)
 		if hp == 0:
 			self.pdc.SetIdGreyedOut(self.CPUChosenID)
-			self.moveItem(self.CPUChosenID, 100, 100)
+			self.moveItem(self.CPUChosenID, 387, 185)
 
 	def updateCPUStamina(self):
 		stamina = self.updateBar(self.CPUStaminaID, self.cards[self.CPUChosenID], 'stamina')
@@ -394,6 +409,20 @@ class GamePanel(wx.ScrolledWindow):
 		rgn = self.GetUpdateRegion()
 		r = rgn.GetBox()
 		self.pdc.DrawToDCClipped(dc, r)
+
+	def addCPUpokemon(self):
+		if self.cardsCPU:
+			card = self.cardsCPU.pop()
+			self.findID(card)
+
+	def findID(self, card):
+		for id in self.cards.iteritems():
+			if(card == id[1]):
+				return id[0]
+
+#	def findBacksideCPU(self, id):
+
+#	def switchCPUpokemon(self):
 
 	def drawItem(self, dc, id, bitmap, x, y, w, h):
 		dc.DrawBitmap(bitmap, x, y, True)
@@ -541,7 +570,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
 			self.movable[id] = True
 			self.cardType[id] = 'Inventory'
-			self.cards[id] = player.invdeck.invCards[i].bitmap
+			self.cards[id] = player.invdeck.invCards[i]
 			self.invSlot[id] = -1
 
 			bid = wx.NewId()
@@ -556,12 +585,13 @@ class GamePanel(wx.ScrolledWindow):
 			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, -200, -200, w, h)
 			self.movable[id] = False
 			self.cards[id] = CPU.deck.cards[i]
+			self.cardsCPU.append(CPU.deck.cards[i])
 
 			bid = wx.NewId()
 			dc.SetId(bid)
 			self.drawItem(dc, bid, self.backsideBmp, -200, -200, w, h)
 			self.movable[bid] = False
-			self.backsides[bid] = id
+			self.backsidesCPU[bid] = [id, i]
 
 		dc.EndDrawing()		
 
@@ -737,11 +767,24 @@ class AttackPanel(wx.Panel):
 		self.SetSizer(self.vbox)
 
 	def attack1(self):
+		self.disableAll()
 		main = self.GetParent()
+#		main.SetCallFilterEvent(True)
+		main.gamePanel.isMyTurn = False
 		if main.game.players[0].attack(0, main.game.players[1]):
 			main.gamePanel.animation1(True)
 			main.gamePanel.updateCPUHp()
 			main.gamePanel.updatePlayerStamina()
+		main.game.draw(main.game.players[1])
+		main.game.chooseCardAI(main.game.players[1], main.game.players[0])
+		main.gamePanel.addCPUpokemon()
+		if main.game.chooseAttackAI(main.game.players[1], main.game.players[0]):
+			main.gamePanel.animation1(False)
+			main.gamePanel.updatePlayerHp()
+			main.gamePanel.updateCPUStamina()
+		self.enableAll()
+		main.gamePanel.isMyTurn = True
+#		main.SetCallFilterEvent(False)
 
 	def attack2(self):
 		self.GetParent().gamePanel.animation1(True)
