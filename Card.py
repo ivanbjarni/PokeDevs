@@ -1,7 +1,7 @@
 from Attack import *
 import random
 from constants import *
-
+import copy
 
 
 
@@ -17,6 +17,7 @@ class Card(object):
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
 	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
+	dmgMulti	= 1 		#float 		damage multiplier 		
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -51,6 +52,10 @@ class Card(object):
 			atk.staminaCost = round(random.random()*metronomeAmount+metronomeBase)
 			atk.damage 		= round(random.random()*metronomeAmount+metronomeBase)
 			atk.healthCost 	= round(random.random()*metronomeAmount+metronomeBase)
+		if(atk.name == "Transform"):
+			scard = self.transformTo(card)
+			print "ditto transformed to "+scard
+			return True
 		if(self.stamina < atk.staminaCost):
 			print "Not Enough Stamina"
 			return False
@@ -69,7 +74,7 @@ class Card(object):
 
 		message = ""
 		
-		damage = atk.damage
+		damage = atk.damage * self.dmgMulti
 		#resistance
 		if atk.poketype == card.resistance and damage !=0:
 			damage *= resistanceMultiplier
@@ -115,6 +120,7 @@ class Card(object):
 	def applyEffects(self):
 		if self.stun > 0:
 			self.stun -= 1
+		self.dmgMulti = 1
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -249,5 +255,20 @@ class Card(object):
 	def canKillEne(self, attacknum, eneHP):
 		return self.attacks[attacknum].damage > eneHP
 
+	# Usage: c.setDamageMultiplier(d)
+	# Before: d is float
+	# After: the damage multiplier of the pokemon is d
+	def setDamageMultiplier(self, dmg):
+		self.dmgMulti = dmg
 
-
+	# Usage: string = c.transformTo(card)
+	# Before: card is card
+	# After: c has transformed to card but still retains his health percent
+	def transformTo(self, card):
+		ratio = self.health/self.healthMax
+		self.health = card.healthMax * ratio
+		self.healthMax = card.healthMax
+		self.stamina = card.staminaMax
+		self.staminaMax = card.staminaMax
+		self.attacks = copy.deepcopy(card.attacks)
+		return card.name
