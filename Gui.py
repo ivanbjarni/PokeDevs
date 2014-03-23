@@ -933,7 +933,7 @@ class MainFrame(wx.Frame):
 
 		self.menuBar = wx.MenuBar()
 		self.infoPanel = infoPanel(self)
-		self.statusPanel = StatusPanel(self)
+		#self.statusPanel = StatusPanel(self)
 		self.gamePanel = GamePanel(self, wx.ID_ANY)
 		self.attackPanel = AttackPanel(self)
 
@@ -944,7 +944,7 @@ class MainFrame(wx.Frame):
 
 		self.SetMenuBar(self.menuBar)
 
-		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
+		#self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.gamePanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.attackPanel, 0, flag=wx.EXPAND)
 		self.hbox.Add(self.infoPanel, 0, flag=wx.EXPAND)
