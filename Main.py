@@ -25,19 +25,49 @@ class Main(object):
 			pYou.hand.add(newCard)				
 			print "You draw a card. It's a "+str(newCard)
 
+	def drawInv(self,pYou):
+		#draw a new card if you can
+		if not pYou.inv.isFull() and not pYou.invdeck.isEmpty():
+			newCard = pYou.invdeck.draw()
+			pYou.inv.add(newCard)				
+			print "You draw a inventory card. It's a "+str(newCard)
+
 	def chooseAttack(self,pYou, pEne):
 		if pYou.isAI():
 			self.chooseAttackAI(pYou, pEne)
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
 
+	def chooseInvCardPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasUsed = False
+		while(not hasUsed):
+			print "Your inventory: "+str(pYou.inv)
+			print "What item do you wan't to use? (Back to go back)"
+			x = raw_input()
+			ind = pYou.inv.getIndexOf(x)
+			if ind != -1:
+				card = pYou.inv.remove(ind)
+				hasUsed = pYou.use(card)
+			elif x == "Back":
+				print "Oh, so you're a tough guy?"
+				hasUsed = True
+			else:
+				print "You don't have a inventorycard "+x+" in your hand."
+
+
 	def chooseAttackPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasAttacked = False
 		while(not hasAttacked):
-			print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
+			print 'What attack do you want to do 1-4? (0 to pass, 5 to access inventory, other to crash game): ',
 			x = input()
-			if x == 0:
+			if x == 5:
+				if len(pYou.inv.invCards) > 0:
+					self.chooseInvCardPlayer(pYou, pEne)
+				else:
+					print "You don't have any inventorycards!"
+			elif x == 0:
 				print "You passed on your turn"
 				hasAttacked = True
 			elif x==9:
@@ -49,7 +79,7 @@ class Main(object):
 
 	def chooseAttackAI(self, pYou, pEne):
 		global waitingTime
-		waitingTime = randint(2,8)
+		waitingTime = randint(2,5)
 		time.sleep(waitingTime)			
 		AICard = pYou.mainCard
 		hasAttacked = False
@@ -57,18 +87,23 @@ class Main(object):
 		if AICard.isStunned():
 			print str(AICard)+" is stunned"
 			hasAttacked = True
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage	
+		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
+			hasAttacked = pYou.attack(calcAttack, pEne)
 		else:	
 			#AI checks if it needs to and can heal	
 			if pYou.mainCard.needsHeal():
 				heal = pYou.mainCard.findHeal()
 				hasAttacked = pYou.attack(heal, pEne)
 			#AI gets more stamina if it needs it and has the ability to
-			if pYou.mainCard.needsStamina():
+			elif pYou.mainCard.needsStamina():
 				stamina = pYou.mainCard.findStamina()
 				hasAttacked = pYou.attack(stamina, pEne) 	
-		 	if len(pYou.mainCard.findPossibleAttacks()) > 0:
-			 	print pEne.mainCard.health
-			 	calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)
+		 	#AI decides if it wants to stun enemy
+		 	elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
+		 		stun = pYou.mainCard.findStun()
+		 		hasAttacked = pYou.attack(stun, pEne)
+		 	elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 			 	hasAttacked = pYou.attack(calcAttack, pEne)
 			else:
 				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
@@ -116,7 +151,14 @@ class Main(object):
 		 
 		 return pYou.hand.remove(ind)
 			
-
+	# Usage: p = drawInvQuest()
+	# Before: Nothing
+	# AFter: p is true if it is the right time to draw inventory card, false otherwise
+	def drawInvQuest(self):
+		if self.turnCount > 1:
+			return (self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0)
+		else:
+			return False	
 
 	def gameLoop(self):
 		done = False
@@ -140,8 +182,12 @@ class Main(object):
 
 			#Draw a new card in the start of your turn
 			self.draw(pYou)
+			if self.drawInvQuest():
+				self.drawInv(pYou)
+		
 			
 			print "Your Hand: "+str(pYou.hand)
+			print "Your Inventory: "+str(pYou.inv)
 
 			#put out a new pokemon
 			if yourCard.isDead():

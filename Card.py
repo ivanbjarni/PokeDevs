@@ -64,14 +64,14 @@ class Card(object):
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
-		card.health   = min(self.health , self.healthMax)
+		card.health   = min(card.health , card.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 
 		message = ""
-
+		
 		damage = atk.damage
 		#resistance
-		if self.poketype == card.resistance and damage !=0:
+		if atk.poketype == card.resistance and damage !=0:
 			damage *= resistanceMultiplier
 			message = ". It's not very effective!"
 		#weakness
@@ -94,7 +94,29 @@ class Card(object):
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
 		card.health  -= damage
-		
+
+		return True
+
+
+	# Usage: b = c.use(card)
+	# Before: card is inventorycard and user is pokemoncard
+	# After: b is true if useage succeeds, false otherwise.
+	#		 Also prints out on console what happens.
+	def use(self, card):
+		if card.stamina > 0:
+			self.stamina += card.stamina
+			print str(self)+ "'s stamina increased by "+str(card.stamina)
+		if card.health > 0:
+			self.health  += card.health
+			print str(self)+"'s health increased by "+str(card.health)
+		self.health   = min(self.health , self.healthMax)
+		self.stamina = min(self.stamina, self.staminaMax)
+		if card.stun:
+			self.stun = 0
+			print str(self)+" is not stunned anymore"
+		if card.damageBoost > 1:
+			print "Damageboost!"
+
 		return True
 
 	# Usage: b = c.isDead()
@@ -122,7 +144,7 @@ class Card(object):
 	def shortInfo(self):
 		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"
 
-	# Usage: c.hasHeal()
+	# Usage: b = c.hasHeal()
 	# Before: Nothing
 	# After: Returns True if Pokemon can heal it self, else False	
 	def hasHeal(self):
@@ -132,7 +154,7 @@ class Card(object):
 		
 		return False
 
-	# Usage: c.needsHeal()
+	# Usage: b = c.needsHeal()
 	# Before: Nothing
 	# After: Returns True if pokemon needs to and can heal it self, else False 
 	def needsHeal(self):
@@ -140,12 +162,36 @@ class Card(object):
 		return(self.hasHeal() and needs)
 
 	# Usage: x = c.findHeal()
-	# Before: Nothing
+	# Before: The card has the ability to heal
 	# After: Returns the number of the attack that heals
 	def findHeal(self):
 		for x in range(0,4):
 			if self.attacks[x].healthCost < 0:
 				return x
+
+	# Usage: b = c.hasStun()
+	# Before: Nothing
+	# After: Returns True if Pokemon can stun his enemy, else False	
+	def hasStun(self):
+		for x in range(0,4):
+			if self.attacks[x].stun > 0:
+				return True
+		
+		return False
+
+	# Usage: x = c.findStun()
+	# Before: The card has the ability to stun
+	# After: Returns the number of the attack that stuns with least stamina cost	
+	def findStun(self):
+		stacost = 1000 #Just some high number
+		attacknum = 0
+		for x in range(0,4):
+			if self.attacks[x].stun > 0 and self.attacks[x].staminaCost < stacost:
+				attacknum = x
+				stacost = self.attacks[x].staminaCost
+
+		return attacknum
+				
 
 
 
@@ -175,23 +221,26 @@ class Card(object):
 
 	
 
-	# Usage: x = c.findClosestAttack()
+	# Usage: x = c.findClosestAttack(eneHP)
 	# Before: Nothing
 	# After: Returns the attack that deals closest damage to enemy HP
 	def findClosestAttack(self, eneHP):
 		attacknumberlist = self.findPossibleAttacks()
 		attackdamagelist = []
-		for x in range(0,4):
-			if x in attacknumberlist:
-				attackdamagelist.append(self.attacks[x].damage)
-		bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
-		for x in range(0,4):
-			if x in attacknumberlist and bestDamage == self.attacks[x].damage:
-				return x
+		if len(attacknumberlist) > 0:
+			for x in range(0,4):
+				if x in attacknumberlist:
+					attackdamagelist.append(self.attacks[x].damage)
+			bestDamage = min(attackdamagelist, key=lambda x:abs(x-eneHP))
+			for x in range(0,4):
+				if x in attacknumberlist and bestDamage == self.attacks[x].damage:
+					return x
+		else:
+			return 0
 
 
 
-	# Usage: c.hasStamina()
+	# Usage: b = c.hasStamina()
 	# Before: Nothing
 	# After: Returns True if Pokemon can increase its stamina, else False
 	def hasStaminaBoost(self):
@@ -201,7 +250,7 @@ class Card(object):
 		
 		return False
 
-	# Usage: c.needsStamina()
+	# Usage: b = c.needsStamina()
 	# Before: Nothing
 	# After: Returns True if pokemon needs to and can heal it self, else False 
 	def needsStamina(self):
@@ -209,13 +258,18 @@ class Card(object):
 		return(self.hasStaminaBoost() and needs)
 
 	# Usage: x = c.findStamina()
-	# Before: Nothing
+	# Before: The card has the ability to increase its stamina
 	# After: Returns the number of the attack that increases Stamina
 	def findStamina(self):
 		for x in range(0,4):
 			if self.attacks[x].staminaCost < 0:
 				return x
 
+	# Usage: x = CanKillEne()
+	# Before: Nothing
+	# After: Returns true if attack damage is high enough til kill enemy
+	def canKillEne(self, attacknum, eneHP):
+		return self.attacks[attacknum].damage > eneHP
 
 
 
