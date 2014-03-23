@@ -24,23 +24,23 @@ class Presets(object):
 
 	def initInvCards(self):
 		self.invCards = {
-		0	: InvCard("StaminaBoost1", 0, 15, False, 1),
-		1	: InvCard("StaminaBoost2", 0, 25, False, 1),
-		2	: InvCard("StaminaBoost3", 0, 35, False, 1),
-		3	: InvCard("StaminaBoost4", 0, 45, False, 1),
-		4	: InvCard("HealthPotion1", 10, 0, False, 1),
-		5	: InvCard("HealthPotion2", 25, 0, False, 1),
-		6	: InvCard("HealthPotion3", 40, 0, False, 1),
-		7	: InvCard("HealthPotion4", 65, 0, False, 1),
-		9	: InvCard("DamageBoost1", 0, 0, False, 1.2),
-		10	: InvCard("DamageBoost2", 0, 0, False, 1.4),
-		11	: InvCard("DamageBoost3", 0, 0, False, 1.6),
-		12	: InvCard("DamageBoost4", 0, 0, False, 1.8),
-		13	: InvCard("DoubleDamage", 0, 0, False, 2),
-		14	: InvCard("LooseStun", 0, 0, True, 1),
-		15	: InvCard("HealthAndStun", 20, 0, True, 1),
+		0	: InvCard("Ether", 0, 15, False, 1),
+		1	: InvCard("Elixir", 0, 25, False, 1),
+		2	: InvCard("MaxEther", 0, 35, False, 1),
+		3	: InvCard("MaxElixir", 0, 45, False, 1),
+		4	: InvCard("Potion", 10, 0, False, 1),
+		5	: InvCard("SuperPotion", 25, 0, False, 1),
+		6	: InvCard("HyperPotion", 40, 0, False, 1),
+		7	: InvCard("MaxPotion", 65, 0, False, 1),
+		9	: InvCard("XSpeed", 0, 0, False, 1.2),
+		10	: InvCard("XAccuracy", 0, 0, False, 1.4),
+		11	: InvCard("DireHit", 0, 0, False, 1.6),
+		12	: InvCard("XAttack", 0, 0, False, 1.8),
+		13	: InvCard("XSpecial", 0, 0, False, 2),
+		14	: InvCard("UnStunSpray", 0, 0, True, 1),
+		15	: InvCard("FullHeal", 20, 0, True, 1),
 		16	: InvCard("StaminaAndStun", 0, 25, True, 1),
-		17	: InvCard("TheWholePackage", 20, 20, True, 1.4)
+		17	: InvCard("FullRestore", 20, 20, True, 1.4)
 		}
 
 	def initAttacks(self):
@@ -107,7 +107,7 @@ class Presets(object):
 		96	: Attack("Meditate", 0, -20, -20, 0, "psychic"),				
 		98	: Attack("QuickAttack", 12, 20, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 20, -20, 2, "normal"),	
-		105	: Attack("Recover", 0, 50, 50, 0, "normal"),	
+		105	: Attack("Recover", 0, 30, -30, 0, "normal"),	
 		106	: Attack("Harden", 0, 10, -25, 0, "normal"),	
 		107	: Attack("Minimize", 0, -20, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 1, "normal"),	
@@ -118,7 +118,7 @@ class Presets(object):
 		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 0, 0, 0, "normal"),	
 		119 : Attack("MirrorMove", 0, -5, -25, 0, "normal"),	
-		120 : Attack("SelfDestruct", 80, 50, 0, 0, "ground"),	
+		120 : Attack("SelfDestruct", 80, 50, 50, 0, "ground"),	
 		122 : Attack("Lick", 10, 20, 0, 1, "psychic"),	
 		123 : Attack("Smog", 10, 20, 0, 1, "grass"),	
 		124 : Attack("Sludge", 18, 40, 0, 0, "grass"),	
@@ -127,6 +127,7 @@ class Presets(object):
 		127 : Attack("Waterfall", 25, 55, 0, 0, "water"),	
 		141 : Attack("LeechLife", 15, 30, -15, 0, "normal"),	
 		143 : Attack("SkyAttack", 15, 30, 0, 0, "normal"),	
+		144 : Attack("Transform", 0, 0, 0, 0, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
 		146 : Attack("DizzyPunch", 22, 44, 0, 0, "ground"),	
 		150 : Attack("Splash", 7, 15, 0, 0, "water"),	
@@ -311,7 +312,7 @@ class Presets(object):
 		68	: Card("Machamp", 90, 90, [self.ga("KarateChop"), self.ga("FocusEnergy"), self.ga("Submission"), self.ga("DynamicPunch")], "ground", "psychic", "ground"),
 		69	: Card("Bellsprout", 50, 100, [self.ga("RazorLeaf"), self.ga("VineWhip"), self.ga("Acid"), self.ga("Growth")], "grass", "fire", "grass"),
 		70	: Card("Weepinbell", 65, 95, [self.ga("Slam"), self.ga("RazorLeaf"), self.ga("Acid"), self.ga("StunSpore")], "grass", "fire", "grass"),
-		71	: Card("Victreebel", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
+		71	: Card("Victreebell", 80, 90, [self.ga("Slam"), self.ga("VineWhip"), self.ga("Acid"), self.ga("RazorLeaf")], "grass", "fire", "grass"),
 		72	: Card("Tentacool", 40, 80, [self.ga("PoisonSting"), self.ga("Acid"), self.ga("BubbleBeam"), self.ga("AcidSpray")], "water", "psychic", "fire"),
 		73	: Card("Tentacruel", 80, 95, [self.ga("PoisonSting"), self.ga("BubbleBeam"), self.ga("HydroPump"), self.ga("Acid")], "water", "psychic", "fire"),
 		74	: Card("Geodude", 40, 95, [self.ga("Tackle"), self.ga("SelfDestruct"), self.ga("DoubleEdge"), self.ga("Magnitude")], "ground", "water", "electric"),
@@ -372,7 +373,7 @@ class Presets(object):
 		129	: Card("Magikarp", 20, 300, [self.ga("Splash"), self.ga("Tackle"), self.ga("Flail"), self.ga("Empty")], "water", "electric", "water"),
 		130	: Card("Gyarados", 95, 120, [self.ga("Leer"), self.ga("AquaTail"), self.ga("HydroPump"), self.ga("HyperBeam")], "water", "electric", "ground"),
 		131	: Card("Lapras", 130, 85, [self.ga("Sing"), self.ga("WaterGun"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "ground", "water"),
-		132	: Card("Ditto", 48, 85, [self.ga("Empty"), self.ga("Empty"), self.ga("Empty"), self.ga("Empty")], "normal", "ground", "psychic"),
+		132	: Card("Ditto", 48, 85, [self.ga("Transform"), self.ga("Empty"), self.ga("Empty"), self.ga("Empty")], "normal", "ground", "psychic"),
 		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic"),
 		134	: Card("Vaporeon", 130, 90, [self.ga("WaterGun"), self.ga("HelpingHand"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "electric", "fire"),
 		135	: Card("Jolteon", 65, 120, [self.ga("ThunderShock"), self.ga("HelpingHand"), self.ga("ThunderFang"), self.ga("Thunder")], "electric", "ground", "normal"),
@@ -442,3 +443,6 @@ class Presets(object):
 
 	def getRandomCard(self):
 		return copy.deepcopy(random.choice(self.cards.values()))
+
+	def getRandomInvCard(self):
+		return copy.deepcopy(random.choice(self.invCards.values()))

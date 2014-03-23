@@ -9,12 +9,12 @@ from Main import *
 
 presets = Presets()
 
-p1 = Player("player")
+p1 = Player("playerb")
 p1.hand = Hand()
 p1.deck = Deck()
 for i in xrange(0,10):
 	p1.deck.add(presets.getRandomCard())
-p1.mainCard = presets.getRandomCard()
+p1.mainCard = presets.gc("Ditto")
 p2 = Player("computer")
 p2.hand = Hand()
 p2.deck = Deck()

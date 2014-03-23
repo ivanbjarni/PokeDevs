@@ -1,5 +1,6 @@
 #	TODO:
 #		- Add info panel, to display info on pokemon/attacks/inventory items when hovered over
+#		- Add "menubar" where you can choose help, exit, some other things maybe
 #		- Maybe add a healthbar to either drawing area(gamePanel) or the statusPanel instead of just showing numbers for HP
 #		- Choose which type of buttons to use
 #		- Maybe choose some better colors for some things
@@ -10,47 +11,102 @@ import wx
 import sys
 import os
 import time
+import threading
 import wx.lib.agw.gradientbutton as GB
+import random
 
 # A drawable panel that contains the Playing Area
 class GamePanel(wx.ScrolledWindow):
 	def __init__(self, parent, id, size=wx.DefaultSize):
-		wx.ScrolledWindow.__init__(self, parent, id, (0, 0), size=(1200, 650), style=wx.SUNKEN_BORDER)
+		# This needs to be a scrolled window even though it doesn't scroll
+		wx.ScrolledWindow.__init__(self, parent, id, (0, 0), size=(1060, 560), style=wx.SUNKEN_BORDER)
 		self.SetDoubleBuffered(True)
 
-#		self.x = 0 					# We probably won't need this
-#		self.y = 0 					# We probably won't need this
-#		self.drawing = False		# We probably won't need this
-		self.hitradius = 500		# How many pixels you can be "off" when trying to click on something
+		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
-
-		self.Bind(wx.EVT_PAINT, self.OnPaint)
-		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
-		self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
-
-		#---- This will be deleted ------------
-		self.image = wx.Image('images/alakazam.jpg', wx.BITMAP_TYPE_ANY)  
-		self.image = self.image.Scale(122, 175, wx.IMAGE_QUALITY_HIGH)
-		self.bitmap = self.image.ConvertToBitmap()
-		#--------------------------------------
-
-		self.pdc = wx.PseudoDC()	# For drawing to the area
-		self.DoDrawing(self.pdc)
-
-		self.dragid = -1 			# ID of currently chosen object
-		self.lastdragid = -1 		# ID of last chosen object
-		self.lastpos = (0,0)		# Position of the mouse while dragging
+		self.pdc = wx.PseudoDC()	# For drawing to the panel
+		self.dragid = -1 			# ID for currently chosen object
+		self.playerChosenID = -1 	# ID for player's currently chosen object
+		self.CPUChosenID = -1 		# ID for CPU's currently chosen object
+		self.playerHealthID = -1 	# ID for players healthbar
+		self.playerStaminaID = -1 	# ID for players stamina bar
+		self.CPUHealthID = -1 		# ID for CPU health bar
+		self.CPUStaminaID = -1 		# ID for CPU stamina bar
+		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
+		self.origpos = {}			# Dict of original position of bitmaps by id
+		self.cards = {}				# Dict of cards by id
+		self.cardType = {} 			# Dict of card types by id
+		self.backsides = {} 		# Dict of backside ids to link backsides to cards
+		self.backsidesInv = {} 		# Dict of invetory backside ids to link to inventory cards
+		self.slot = {} 				# Dict of slot number for cards by id 
+		self.invSlot = {} 			# Dict of slot number for inventory cards by 
+		self.anim = []				# List of moves for animations
+		self.lastpos = (0,0)		# Lates position of the mouse while dragging
 		self.startpos = (0,0)		# Position of the mouse when clicked
+		self.backsideBmp = None		# Bitmap of the backside of a pokemon card
+		self.backsideInvBmp = None 	# Bitmap of the backside of an inventory card
+
+		wx.Log.SetLogLevel(0) # remove this and fix images
+
+	def setupPanel(self, player, CPU):
+		for card in player.deck.cards:
+			self.setImage(card)
+
+		for card in player.invdeck.invCards:
+			self.setInvImage(card)
+
+		for card in CPU.deck.cards:
+			self.setImage(card)
+
+		self.setBacksideBmp()
+		self.setBacksideInvBmp()
+
+		self.doDrawing(self.pdc, player, CPU)
+
+		self.Bind(wx.EVT_PAINT, self.onPaint)
+		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
+		self.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse)
 
 	# Sets the bitmap for card
 	def setImage(self, card):
-		image = wx.Image('images/' + str(card.name) + '.jpg', wx.BITMAP_TYPE_ANY)
-		image = image.Scale(122, 175, wx.IMAGE_QUALITY_HIGH)
-		card.bitmap = image.ConvertToBitmap()
+		name = card.name.replace(' ', '').replace('.', '')
+		try:
+			image = wx.Image('images/Pokecards/' + name + '.jpg', wx.BITMAP_TYPE_ANY)
+			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
+			card.bitmap = image.ConvertToBitmap()
+		except:
+			print 'Failed to load card: ' + str(name)
+
+	# Sets the bitmap for card
+	def setInvImage(self, card):
+		name = card.name.replace(' ', '').replace('.', '')
+		try:
+			image = wx.Image('images/Inventorycards/' + name + '.png', wx.BITMAP_TYPE_ANY)
+			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
+			card.bitmap = image.ConvertToBitmap()
+		except:
+			print 'Failed to load card: ' + str(name)
+
+	# Sets the bitmap for the backside of a pokemon card
+	def setBacksideBmp(self):
+		try:
+			image = wx.Image('images/Pokecards/Backside.jpg', wx.BITMAP_TYPE_ANY)
+			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
+			self.backsideBmp = image.ConvertToBitmap()
+		except:
+			print 'Failed to load backside card'
+
+	def setBacksideInvBmp(self):
+		try:
+			image = wx.Image('images/Inventorycards/invBackside.png', wx.BITMAP_TYPE_ANY)
+			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
+			self.backsideInvBmp = image.ConvertToBitmap()
+		except:
+			print 'Failed to load inventory backside card'		
 	
 	# Sets the right coordinates for a scrollable area if the area has been scrolled
 	# Our area will never scroll so this will probably be changed/deleted
-	def ConvertEventCoords(self, event):
+	def convertEventCoords(self, event):
 		xView, yView = self.GetViewStart()
 		xDelta, yDelta = self.GetScrollPixelsPerUnit()
 		return (event.GetX() + (xView * xDelta),
@@ -58,48 +114,41 @@ class GamePanel(wx.ScrolledWindow):
 
 	# Offsets a rectangle based on where you are placed on a scrollable area, 
 	# Our area will never scroll so this will probably be changed/deleted
-	def OffsetRect(self, r):
+	def offsetRect(self, r):
 		xView, yView = self.GetViewStart()
 		xDelta, yDelta = self.GetScrollPixelsPerUnit()
 		r.OffsetXY(-(xView*xDelta),-(yView*yDelta))
 
 	#Handles mouse events
-	# -------- Will be changed somewhat when it has been connected to the actual game -----
-	def OnMouse(self, event):
+	def onMouse(self, event):
 		# If the left button is pressed, grab the object that the mouse was over and
 		# save the old coordinates where it was placed
 		if event.LeftDown():
-			#x = event.GetX() 
-			#y = event.GetY()
-			#self.ConvertEventCoords(event)
-			x,y = self.ConvertEventCoords(event)
+			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
 			for id in l:
-				if not self.pdc.GetIdGreyedOut(id):
+				if not self.pdc.GetIdGreyedOut(id) and self.movable[id]:
 					self.dragid = id
 					self.lastpos = (event.GetX(), event.GetY())
 					self.startpos = self.lastpos
 					break
+
 		# Right click is currently only used for testing purposes
 		elif event.RightDown():
-			#x = event.GetX() 
-			#y = event.GetY()
-			#self.ConvertEventCoords(event)
-			'''x,y = self.ConvertEventCoords(event)
+			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
 			if l:
 				self.pdc.SetIdGreyedOut(l[0], not self.pdc.GetIdGreyedOut(l[0]))
 				r = self.pdc.GetIdBounds(l[0])
 				r.Inflate(4, 4)
-				self.OffsetRect(r)
+				self.offsetRect(r)
 				self.RefreshRect(r, False)
-			'''
+			
 			dx,dy = 100, 100
-			if self.lastdragid != -1:
+			if self.playerChosenID != -1:
 #				dx,dy = 100,100
 				loopCPU = 10
 				start = time.time()
-				print self.lastpos
 
 				while(loopCPU != 0):
 					time.sleep(0.005)
@@ -107,109 +156,457 @@ class GamePanel(wx.ScrolledWindow):
 					dx = -5
 					dy = -5
 
-					print "dx" + str(dx)
-					print "dy" + str(dy)
+					self.moveItem(self.playerChosenID, dx, dy)
 
-					r = self.pdc.GetIdBounds(self.lastdragid)
-					self.pdc.TranslateId(self.lastdragid, dx, dy)
-					r2 = self.pdc.GetIdBounds(self.lastdragid)
-					r = r.Union(r2)
-					r.Inflate(4, 4)
-					self.OffsetRect(r)
-					self.RefreshRect(r, False)
-				#	self.pdc.DrawToDc(self.pdc)
 					self.Update()
-
-					print loopCPU
-			#		self.OnPaint(event)
 					loopCPU -= 1
 				self.lastpos = (event.GetX(), event.GetY())
+
 		# If dragging an object, move it relative to mouse movements
 		elif event.Dragging():
 			if self.dragid != -1:
 				x,y = self.lastpos
+				
 				dx = event.GetX() - x
 				dy = event.GetY() - y
-				r = self.pdc.GetIdBounds(self.dragid)
-				self.pdc.TranslateId(self.dragid, dx, dy)
-				r2 = self.pdc.GetIdBounds(self.dragid)
-				r = r.Union(r2)
-				r.Inflate(4, 4)
-				self.OffsetRect(r)
-				self.RefreshRect(r, False)
+
+				self.moveItem(self.dragid, dx, dy)
 				self.lastpos = (event.GetX(), event.GetY())
-		# Move object back to original position
-		# TODO: Move object to allowed area if dropped over that area
-		elif event.LeftUp():
+
+		# Move object back to original position if left button is realeased or the mouse leaves the panel
+		elif event.LeftUp() or event.Leaving():
 			if self.dragid != -1:
-				self.lastdragid = self.dragid
+				dx = event.GetX()
+				dy = event.GetY()
 
-#				print self.startpos - self.lastpos
-				x = self.startpos[0] - self.lastpos[0]
-				y = self.startpos[1] - self.lastpos[1]
+				if self.cardType[self.dragid] == 'Pokemon': 
+					if self.inPlayerChosenArea(dx, dy) and self.playerChosenID != self.dragid:
+						# Switch currently chosen pokemon out for a new one 
+						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 119
+						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
+						self.GetParent().attackPanel.setLabels(self.cards[self.dragid])
+						#self.emptyslotPlayer = self.slot[self.dragid]
+						slot = self.slot[self.dragid]
+						self.slot[self.playerChosenID] = slot
+						tx = -106 + slot * 127
+						ty = 189
+						self.moveItem(self.playerChosenID, tx, ty)
+						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
+						self.playerChosenID = self.dragid
+					else:
+						x = self.startpos[0] - self.lastpos[0]
+						y = self.startpos[1] - self.lastpos[1]
+					self.moveItem(self.dragid, x, y)
+					self.dragid = -1
 
-				r = self.pdc.GetIdBounds(self.lastdragid)
-				self.pdc.TranslateId(self.lastdragid, x, y)
-				r2 = self.pdc.GetIdBounds(self.lastdragid)
-				r = r.Union(r2)
-				r.Inflate(4, 4)
-				self.OffsetRect(r)
-				self.RefreshRect(r, False)
+				elif self.cardType[self.dragid] == 'Backside':
+					slot = self.findEmptySlot()
+					if self.inPlayerHandArea(dx, dy) and slot != -1:
+						id = self.backsides[self.dragid]
+						x = 213 + slot * 127
+						y = 584
+						self.moveItem(id, x, y)
+						self.origpos[id] = [x-200, y-200]
+						self.slot[id] = slot
+						self.moveItem(self.dragid, 0, -1000)
+					else:
+						x = self.startpos[0] - self.lastpos[0]
+						y = self.startpos[1] - self.lastpos[1]
+						self.moveItem(self.dragid, x, y)
 
-				self.dragid = -1
+				elif self.cardType[self.dragid] == 'InvBackside':
+					slot = self.findEmptyInvSlot()
+					if self.inPlayerInvArea(dx, dy) and slot != -1:
+						id = self.backsidesInv[self.dragid]
+						x = 991
+						y = 215 + slot * 180
+						self.moveItem(id, x, y)
+						self.invSlot[id] = slot
+						self.moveItem(self.dragid, 0, -1000)
+					else:
+						x = self.startpos[0] - self.lastpos[0]
+						y = self.startpos[1] - self.lastpos[1]
+						self.moveItem(self.dragid, x, y)
+
+				elif self.cardType[self.dragid] == 'Inventory':
+					if self.inPlayerChosenArea(dx, dy):
+						self.moveItem(self.dragid, 0, -1000)
+						self.invSlot[self.dragid] = -1
 
 		#elif event.Moving():
 		#	print 'ok'
 
-	# Updates the drawing area
-	def OnPaint(self, event):
+	def inPlayerChosenArea(self, dx, dy):
+		return  (110 < dx and dx < 245) and (376 > dy and dy > 182)
+	
+	def inPlayerHandArea(self, dx, dy):
+		return (3 < dx and dx < 778) and (555 > dy and dy > 308)
+
+	def inPlayerInvArea(self, dx, dy):
+		return (782 < dx and dx < 917) and (552 > dy and dy > 3)
+
+	def findEmptySlot(self):
+		i = {
+			'0': True,
+			'1': True,
+			'2': True,
+			'3': True,
+			'4': True,
+			'5': True,
+		}
+		for j in self.slot.iteritems():
+			if j[1] == 5:
+				i['5'] = False
+			if j[1] == 4:
+				i['4'] = False
+			if j[1] == 3:
+				i['3'] = False
+			if j[1] == 2:
+				i['2'] = False
+			if j[1] == 1:
+				i['1'] = False
+			if j[1] == 0:
+				i['0'] = False
+
+		for k in range(0, 6):
+			print k
+			if i[str(k)]:
+				return k
+		return -1
+
+	def findEmptyInvSlot(self):
+		i = {
+			'0': True,
+			'1': True,
+			'2': True,
+		}
+		for j in self.invSlot.iteritems():
+			if j[1] == 2:
+				i['2'] = False
+			if j[1] == 1:
+				i['1'] = False
+			if j[1] == 0:
+				i['0'] = False
+
+		for k in range(0, 3):
+			print k
+			if i[str(k)]:
+				return k
+		return -1
+
+	def moveItem(self, id, x, y):
+		r = self.pdc.GetIdBounds(id)
+		self.pdc.TranslateId(id, x, y)
+		r2 = self.pdc.GetIdBounds(id)
+		r = r.Union(r2)
+		r.Inflate(4, 4)
+		self.offsetRect(r)
+		self.RefreshRect(r, False)
+
+	# Usage: g.animation(self, isPlayer)
+	# Pre  : isPlayer is a boolean value that determines if the players or the
+	#		 CPU's pokemon should be "shaken"
+	# Post : if isPlayer == True player's currently chosen pokemon is "shaken"
+	#		 otherwise the CPU's currently chosen pokemon is "shaken"
+	def animation1(self, isPlayer):
+		if isPlayer:
+			id = self.playerChosenID
+		loopCPU = 10
+		forward = True
+
+		while(loopCPU < 11):
+			time.sleep(0.01)
+			if forward:
+				dx = random.randint(1, 41) - 20
+				dy = random.randint(1, 21) - 10
+
+				self.anim.append([dx, dy])
+
+				self.moveItem(id, dx, dy)
+
+				self.Update()
+				if loopCPU > 0:
+					loopCPU -= 1
+				else:
+					forward = False
+			else:
+				dx, dy = self.anim.pop()
+
+				self.moveItem(id, -dx, -dy)
+
+				loopCPU += 1
+
+	#	def updatePlayerHP(self, card):
+	def updateBar(self, bar, card, type):
+		if type == 'health':
+			hp = card.health
+			maxhp = card.healthMax
+		else:
+			hp = card.stamina
+			maxhp = card.staminaMax
+		movement = 193 - (float(hp) / float(maxhp) * 193)
+		origY = self.origpos[bar][0]
+		currentY = self.origpos[bar][1]
+
+		endY = origY + movement
+
+		if currentY < endY:
+			while currentY < endY:
+				time.sleep(0.01)
+				self.moveItem(bar, 0, 2)
+				self.origpos[bar][1] += 2
+				currentY += 2
+				self.Update()
+		else:
+			while currentY > endY:
+				time.sleep(0.01)
+				self.moveItem(bar, 0, -2)
+				self.origpos[bar][1] -= 2
+				currentY -= 2
+				self.Update()
+
+		return hp
+
+	def updatePlayerHp(self):
+		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
+
+		if hp == 0:
+			self.pdc.SetIdGreyedOut(self.playerChosenID)
+			self.moveItem(self.playerChosenID, 500, 100)
+
+	def updatePlayerStamina(self):
+		stamina = self.updateBar(self.playerStaminaID, self.cards[self.playerChosenID], 'stamina')
+
+	def updateCPUHp(self):
+		hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
+		if hp == 0:
+			self.pdc.SetIdGreyedOut(self.CPUChosenID)
+			self.moveItem(self.CPUChosenID, 100, 100)
+
+	def updateCPUStamina(self):
+		stamina = self.updateBar(self.CPUStaminaID, self.cards[self.CPUChosenID], 'stamina')
+
+	# Updates the playing area
+	def onPaint(self, event):
 		dc = wx.BufferedPaintDC(self)
 		self.PrepareDC(dc)
-#		bg = wx.Brush(self.GetBackgroundColour())
-#		dc.SetBackground()
 		dc.Clear()
-
-#		xv, yv = self.GetViewStart()
 		rgn = self.GetUpdateRegion()
 		r = rgn.GetBox()
 		self.pdc.DrawToDCClipped(dc, r)
 
-	# Draws the inital drawing area
-	def DoDrawing(self, dc):
-		dc.BeginDrawing()
-		background = wx.Bitmap("images/pokematBasic.png")
-		dc.DrawBitmap(background, 0, 0)
-		pen = wx.Pen('#435353', 1)
-		brush = wx.Brush('#708B8B')
+	def drawItem(self, dc, id, bitmap, x, y, w, h):
+		dc.DrawBitmap(bitmap, x, y, True)
+		dc.SetIdBounds(id, wx.Rect(x, y, w, h))
+#		self.origpos[id] = [x, y]
+		self.objids.append(id)
+
+	def drawBar(self, dc, x, y, w, h, color):
+		# draw the bar outline
+		pen = wx.Pen('#000000', 1)
+		brush = wx.Brush('#FFFF66')
 		dc.SetPen(pen)
 		dc.SetBrush(brush)
-		player1pokePanel = wx.Rect(190, 445, 805, 195)
-		player2pokePanel = wx.Rect(190, 5, 805, 195)
-		player1invPanel = wx.Rect(15, 70, 160, 570)
-		player2invPanel = wx.Rect(1010, 5, 160, 570)
-		player1chosenPanel = wx.Rect(300, 215, 165, 220)
-		player2chosenPanel = wx.Rect(730, 215, 165, 220)
+		tempid = wx.NewId()
+		dc.SetId(tempid)
+		outline = wx.Rect(x, y, w, h)
+		dc.DrawRectangleRect(outline)
+		outline.Inflate(pen.GetWidth(), pen.GetWidth())
+		dc.SetIdBounds(tempid, outline)
+		self.movable[tempid] = False
+
+		# draw the bar itself
+		id = wx.NewId()
+		dc.SetId(id)
+		brush = wx.Brush(color)
+		dc.SetBrush(brush)
+		dc.SetPen(pen)
+		bar = wx.Rect(x, y, w, h)
+		dc.DrawRectangleRect(bar)
+		bar.Inflate(pen.GetWidth(), pen.GetWidth())
+		dc.SetIdBounds(id, bar)
+		self.movable[id] = False
+		self.origpos[id] = [y, y]		# The x value never changes, keep track of original and current y values
+
+		return id
+
+	# Draws the inital playing area
+	def doDrawing(self, dc, player, CPU):
+		dc.BeginDrawing()
+		try:
+			background = wx.Bitmap("images/pokematBasic.png")
+		except:
+			print 'Failed to load backround image'
+		dc.DrawBitmap(background, 0, 0)
+
+		pen = wx.Pen('#435353', 2)
+		brush = wx.Brush('#A8B8B8')
+		dc.SetPen(pen)
+		dc.SetBrush(brush)
+
+		player1pokePanel = wx.Rect(3, 380, 775, 175)
+		player2pokePanel = wx.Rect(3, 3, 775, 175)
+		player1invPanel = wx.Rect(782, 3, 135, 552)
+#		player2invPanel = wx.Rect(782, 3, 135, 275)
+		player1chosenPanel = wx.Rect(110, 182, 135, 193)
+		player2chosenPanel = wx.Rect(535, 182, 135, 193)
+		inventoryDeckPanel = wx.Rect(922, 3, 135, 181)
+		cardDeckPanel = wx.Rect(922, 188, 135, 181)
+		graveyardPanel = wx.Rect(922, 373, 135, 181)
 		dc.DrawRoundedRectangleRect(player1pokePanel, 10)
-		dc.DrawRoundedRectangleRect(player2pokePanel, 10)
 		dc.DrawRoundedRectangleRect(player1invPanel, 10)
-		dc.DrawRoundedRectangleRect(player2invPanel, 10)
 		dc.DrawRoundedRectangleRect(player1chosenPanel, 10)
+		brush = wx.Brush('#708B8B')
+		dc.SetBrush(brush)
+		dc.DrawRoundedRectangleRect(player2pokePanel, 10)
+#		dc.DrawRoundedRectangleRect(player2invPanel, 10)
 		dc.DrawRoundedRectangleRect(player2chosenPanel, 10)
+		brush = wx.Brush('#435353')
+		dc.SetBrush(brush)
+		dc.DrawRoundedRectangleRect(inventoryDeckPanel, 10)
+		dc.DrawRoundedRectangleRect(cardDeckPanel, 10)
+		dc.DrawRoundedRectangleRect(graveyardPanel, 10)
+
+		self.playerHealthID = self.drawBar(dc, 90, 182, 10, 193, '#DB3340')
+
+		self.CPUHealthID = self.drawBar(dc, 680, 182, 10, 193, '#DB3340')
+
+		self.playerStaminaID = self.drawBar(dc, 70, 182, 10, 193, '#28ABE3')
+
+		self.CPUStaminaID = self.drawBar(dc, 700, 182, 10, 193, '#28ABE3')
 
 		id = wx.NewId()
 		dc.SetId(id)
-		x = 195
-		y = 450
-		w, h = self.bitmap.GetSize()
-		dc.DrawBitmap(self.bitmap, 195, 450, True)
-		dc.SetIdBounds(id, wx.Rect(x, y, w, h))
-		self.objids.append(id)
+		pen = wx.Pen('#FFFFFF', 1)
+		brush = wx.Brush('#FFFF66')
+		dc.SetPen(pen)
+		dc.SetBrush(brush)
+		yellowLine = wx.Rect(60, 375, 680, 195)
+		dc.DrawRectangleRect(yellowLine)
+		yellowLine.Inflate(pen.GetWidth(), pen.GetWidth())
+		dc.SetIdBounds(id, yellowLine)
+		self.movable[id] = False
+
+		id = wx.NewId()
+		dc.SetId(id)
+		pen = wx.Pen('#435353', 2)
+		brush = wx.Brush('#A8B8B8')
+		dc.SetPen(pen)
+		dc.SetBrush(brush)
+		player1pokePanel = wx.Rect(3, 380, 775, 175)
+		dc.DrawRoundedRectangleRect(player1pokePanel, 10)
+		player1pokePanel.Inflate(pen.GetWidth(), pen.GetWidth())
+		dc.SetIdBounds(id, player1pokePanel)
+		self.movable[id] = False
+#		dc.EndDrawing()
+
+		w, h = player.deck.cards[0].bitmap.GetSize()
+		id = wx.NewId()
+		dc.SetId(id)
+		self.drawItem(dc, id, player.deck.cards[0].bitmap, 119, 195, w, h)
+		self.movable[id] = True
+		self.cardType[id] = 'Pokemon'
+		self.cards[id] = player.deck.cards[0]
+		self.slot[id] = -1
+		self.origpos[id] = [13, 384]
+		self.playerChosenID = id
+		self.GetParent().attackPanel.setLabels(self.cards[id])
+
+		id = wx.NewId()
+		dc.SetId(id)
+		self.drawItem(dc, id, CPU.deck.cards[0].bitmap, 544, 195, w, h)
+		self.movable[id] = False
+		self.cards[id] = CPU.deck.cards[0]
+		self.CPUChosenID = id
+
+
+		for i in range(1, 10):
+			id = wx.NewId()
+			dc.SetId(id)
+			self.drawItem(dc, id, player.deck.cards[i].bitmap, -200, -200, w, h)
+			self.movable[id] = True
+			self.cardType[id] = 'Pokemon'
+			self.cards[id] = player.deck.cards[i]
+			self.slot[id] = -1
+
+			bid = wx.NewId()
+			dc.SetId(bid)
+			self.drawItem(dc, bid, self.backsideBmp, 931, 195, w, h)
+			self.movable[bid] = True
+			self.cardType[bid] = 'Backside'
+			self.backsides[bid] = id
+
+			id = wx.NewId()
+			dc.SetId(id)
+			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
+			self.movable[id] = True
+			self.cardType[id] = 'Inventory'
+			self.cards[id] = player.invdeck.invCards[i].bitmap
+			self.invSlot[id] = -1
+
+			bid = wx.NewId()
+			dc.SetId(bid)
+			self.drawItem(dc, bid, self.backsideInvBmp, 931, 10, w, h)
+			self.movable[bid] = True
+			self.cardType[bid] = 'InvBackside'
+			self.backsidesInv[bid] = id
+
+			id = wx.NewId()
+			dc.SetId(id)
+			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, -200, -200, w, h)
+			self.movable[id] = False
+			self.cards[id] = CPU.deck.cards[i]
+
+			bid = wx.NewId()
+			dc.SetId(bid)
+			self.drawItem(dc, bid, self.backsideBmp, -200, -200, w, h)
+			self.movable[bid] = False
+			self.backsides[bid] = id
+
+		dc.EndDrawing()		
+
+'''		for i in range(0, 6):
+			id = wx.NewId()
+			dc.SetId(id)
+			x = 13 + i * 127
+			y = 384
+			self.movable[id] = True
+			self.drawItem(dc, id, player.deck.cards[i].bitmap, x, y, w, h)
+			self.cards[id] = player.deck.cards[i]
+
 		dc.EndDrawing()
+''''''
+		for i in range(1, 6):
+			id = wx.NewId()
+			dc.SetId(id)
+			x = 195 + i * 134
+			y = 15
+			self.movable[id] = False
+			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, x, y, w, h)
+			self.cards[id] = CPU.deck.cards[i]
+
+			# Draw the backside of a card over the CPU card 
+			id = id * 2
+			dc.SetId(id)
+			self.movable[id] = False
+			self.drawItem(dc, id, self.backsideBmp, x, y, w, h)
+
+		id = wx.NewId()
+		dc.SetId(id)
+		x = 750
+		y = 236
+		self.movable[id] = False
+		self.cards[id] = CPU.deck.cards[0]
+		self.drawItem(dc, id, CPU.deck.cards[0].bitmap, x, y, w, h)
+'''
+#		self.GetParent().statusPanel.setCPUPokemonInfo(CPU.deck.cards[0])
+
+#		dc.EndDrawing()
 
 # A panel that holds the names and HP of currently chosen pokemon
 class StatusPanel(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__(self, parent, size=(1200, 80))
+		wx.Panel.__init__(self, parent, size=(1200, 30))
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
@@ -217,15 +614,15 @@ class StatusPanel(wx.Panel):
 		self.hbox1 = wx.BoxSizer(wx.HORIZONTAL)
 		self.hbox2 = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.pokemon1name = wx.StaticText(self, label='Pikachu', style=wx.ALIGN_LEFT)
-		self.pokemon1hp = wx.StaticText(self, label='HP: 100', style=wx.ALIGN_LEFT)
+		self.pokemon1name = wx.StaticText(self, label='Player', style=wx.ALIGN_LEFT)
+		self.pokemon1hp = wx.StaticText(self, label='HP: ---', style=wx.ALIGN_LEFT)
 		font = wx.Font(pointSize=24, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
 		self.pokemon1name.SetFont(font)
 		self.pokemon1hp.SetFont(font)
 		self.pokemon1name.SetForegroundColour('#CCCCCC')
 		self.pokemon1hp.SetForegroundColour('#CCCCCC')
 		self.vbox1.Add(self.pokemon1name, flag=wx.ALIGN_CENTER, border=10)
-		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
+#		self.vbox1.Add(self.pokemon1hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox1, flag=wx.ALIGN_LEFT|wx.TOP, border=10)
 
 		self.hbox1.AddSpacer((630,0))
@@ -238,31 +635,39 @@ class StatusPanel(wx.Panel):
 		self.pokemon2name.SetForegroundColour('#CCCCCC')
 		self.pokemon2hp.SetForegroundColour('#CCCCCC')
 		self.vbox2.Add(self.pokemon2name, flag=wx.ALIGN_CENTER, border=10)
-		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
+#		self.vbox2.Add(self.pokemon2hp, flag=wx.ALIGN_CENTER, border=10)
 		self.hbox1.Add(self.vbox2, flag=wx.ALIGN_RIGHT|wx.TOP, border=10)
 
 		self.vbox.Add(self.hbox1, flag=wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
 
-	# Usage: c.setNamePlayer(name)
-	# Pre  : name is the name of the players currently chosen pokemon
-	# Post : The player pokemon label has been changed to name
-	def setNamePlayer(self, name):
-		self.pokemon1name.SetLabel(name)
+	# Usage: c.setPlayerPokemonInfo(card)
+	# Pre  : card is the currently chosen card of the player
+	# Post : The pokemon name and hp labels have been set to the values given
+	#        on the card.
+	def setPlayerPokemonInfo(self, card):
+		self.Freeze()
+		self.pokemon1name.SetLabel(card.name)
+#		self.pokemon1hp.SetLabel('HP: ' + str(card.health))
 		self.Layout()
+		self.Thaw()
+
+	# Usage: c.setCPUPokemonInfo(card)
+	# Pre  : card is the currently chosen card of the CPU
+	# Post : The pokemon name and hp labels have been set to the values given
+	#        on the card.
+	def setCPUPokemonInfo(self, card):
+		self.Freeze()
+		self.pokemon2name.SetLabel(card.name)
+		self.pokemon2hp.SetLabel('HP: ' + str(card.health))
+		self.Layout()
+		self.Thaw()
 
 	# Usage: c.setHpPlayer(hp)
 	# Pre  : hp is the current hp of the players chosen pokemon
 	# Post : The player pokemon hp label has been set to 'HP: ' + hp
 	def setHpPlayer(self, hp):
 		self.pokemon1hp.SetLabel('HP:' + str(hp))
-		self.Layout()
-
-	# Usage: c.setNameCPU(name)
-	# Pre  : name is the name of the CPU's currently chosen pokemon
-	# Post : The CPU pokemon label has been changed to name
-	def setNameCPU(self, name):
-		self.pokemon2name.SetLabel(name)
 		self.Layout()
 
 	# Usage: c.setHpCPU(hp)
@@ -273,7 +678,7 @@ class StatusPanel(wx.Panel):
 		self.Layout()
 
 # A panel that holds 4 attack buttons
-class ControlPanel(wx.Panel):
+class AttackPanel(wx.Panel):
 	def __init__(self, parent):
 		wx.Panel.__init__(self, parent, size=(1200, 200))
 
@@ -287,7 +692,7 @@ class ControlPanel(wx.Panel):
 		# This button looks nicer than the generic button but I'm not 100% sure it's compatable with
 		# other operating systems than windows
 		# The label also doesn't center on this button if it is multiline
-		self.attackButton1 = GB.GradientButton(self, -1, label='Attack\n'.center(5) + '25/25'.center(5), size=(200, 100))
+		self.attackButton1 = GB.GradientButton(self, -1, label='---', size=(200, 100))
 		#self.attackButton1.SetTopStartColour(wx.Colour('#A8B8B8'))
 		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton1.SetTopEndColour(wx.Colour(70, 89, 89))
@@ -296,23 +701,34 @@ class ControlPanel(wx.Panel):
 		self.attackButton1.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-#		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: attack())
+		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack1())
 
-		self.attackButton2 = GB.GradientButton(self, -1, label='Attack', size=(200, 100))
+		self.attackButton2 = GB.GradientButton(self, -1, label='---', size=(200, 100))
 		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton2.SetTopEndColour(wx.Colour(70, 89, 89))
 		self.attackButton2.SetBottomStartColour(wx.Colour(66, 82, 82))
 		self.attackButton2.SetPressedTopColour(wx.Colour(88, 110, 110))
 		self.attackButton2.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton2.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton2, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-#		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: attack())
+		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack2())
 
-		self.attackButton3 = wx.Button(self, label='Attack\n25/25', size=(200, 100))
+		self.attackButton3 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton3.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton3.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton3.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton3.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton3.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton3, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 #		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: attack())
 
-		self.attackButton4 = wx.Button(self, label='Attack', size=(200, 100))
+		self.attackButton4 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton4.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton4.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton4.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton4.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton4.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton4, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 #		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: attack())
@@ -320,12 +736,23 @@ class ControlPanel(wx.Panel):
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
 
+	def attack1(self):
+		main = self.GetParent()
+		if main.game.players[0].attack(0, main.game.players[1]):
+			main.gamePanel.animation1(True)
+			main.gamePanel.updateCPUHp()
+			main.gamePanel.updatePlayerStamina()
+
+	def attack2(self):
+		self.GetParent().gamePanel.animation1(True)
+		self.GetParent().gamePanel.updatePlayerHp()
+
 	# Usage: c.setAttackLabels(card)
 	# Pre  : card is Card
 	# Post : the labels on the attack buttons have been updated to the 
 	#        attacks on card
-	def setAttackLabels(self, card):
-		self.freeze()
+	def setLabels(self, card):
+		self.Freeze()
 		self.attackButton1.SetLabel(card.attacks[0].name)
 		self.attackButton2.SetLabel(card.attacks[1].name)
 		self.attackButton3.SetLabel(card.attacks[2].name)
@@ -349,29 +776,61 @@ class ControlPanel(wx.Panel):
 		self.attackButton3.Enable()
 		self.attackButton4.Enable()
 
+# Displays info
+class infoPanel(wx.Panel):
+	def __init__(self, parent):
+		wx.Panel.__init__(self, parent, size=(220, 725))
+
 class MainFrame(wx.Frame):
-	def __init__(self):
-		wx.Frame.__init__(self, None, title="Pokemon", size=(1200, 880))
+	def __init__(self, game):
+		wx.Frame.__init__(self, None, title="Pokemon", size=(1300, 725))
 		self.SetBackgroundColour('#435353')		
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.statusPanel = StatusPanel(self)
-		self.gamePanel = GamePanel(self, wx.ID_ANY)
-		self.controlPanel = ControlPanel(self)
+		self.game = game
 
-		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
+		self.menuBar = wx.MenuBar()
+		self.infoPanel = infoPanel(self)
+#		self.statusPanel = StatusPanel(self)
+		self.gamePanel = GamePanel(self, wx.ID_ANY)
+		self.attackPanel = AttackPanel(self)
+
+		self.fileMenu = wx.Menu()
+		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+		self.menuBar.Append(self.fileMenu, "&File")
+		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
+
+		self.SetMenuBar(self.menuBar)
+
+#		self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
 		self.vbox.Add(self.gamePanel, 0, flag=wx.EXPAND)
-		self.vbox.Add(self.controlPanel, 0, flag=wx.EXPAND)
+		self.vbox.Add(self.attackPanel, 0, flag=wx.EXPAND)
+		self.hbox.Add(self.infoPanel, 0, flag=wx.EXPAND)
+		self.hbox.Add(self.vbox, 0, flag=wx.EXPAND)
 
 		self.SetAutoLayout(True)
-		self.SetSizer(self.vbox)
+		self.SetSizer(self.hbox)
 		self.Layout()
 		self.Centre()
 
+	def onQuit(self, event):
+		self.Close()
 
-if __name__=="__main__":
-    app = wx.App()
-    MainFrame().Show()
-    app.MainLoop()
+#class RunGuiThread(threading.Thread):
+#	def run(self):
+#		self.app = wx.App()
+#		self.gui = MainFrame()
+#		self.gui.Show()
+#		self.app.MainLoop()
+#
+#	def stop(self):
+#		self.app.ExitMainLoop()
+#if __name__=="__main__":
+#    app = wx.App()
+#    gui = MainFrame()
+#    gui.Show()
+#    app.MainLoop()
+#    MainFrame().Show()
+#    app.MainLoop()
 

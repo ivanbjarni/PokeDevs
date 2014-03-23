@@ -3,6 +3,8 @@ from Player import *
 from Attack import *
 import random
 from Presets import *
+import time 
+from random import randint
 
 
 class Main(object):	
@@ -10,6 +12,8 @@ class Main(object):
 	playerMode = "vs"		#String	 	player mode "vs" for 2 human players / "ai" for 1 human player and 1 computer
 	turn = 0				#int 		states whether it is player's 0 turn or player's 1
 	turnCount = 1			#int 		total number of turns passed
+	waitingTime = 0			#int 		The time it takes the AI to choose attack each turn, random integral.
+
 
 	def __init__(self, players):
 		self.players = players
@@ -21,19 +25,49 @@ class Main(object):
 			pYou.hand.add(newCard)				
 			print "You draw a card. It's a "+str(newCard)
 
+	def drawInv(self,pYou):
+		#draw a new card if you can
+		if not pYou.inv.isFull() and not pYou.invdeck.isEmpty():
+			newCard = pYou.invdeck.draw()
+			pYou.inv.add(newCard)				
+			print "You draw a inventory card. It's a "+str(newCard)
+
 	def chooseAttack(self,pYou, pEne):
 		if pYou.isAI():
 			self.chooseAttackAI(pYou, pEne)
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
 
+	def chooseInvCardPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasUsed = False
+		while(not hasUsed):
+			print "Your inventory: "+str(pYou.inv)
+			print "What item do you wan't to use? (Back to go back)"
+			x = raw_input()
+			ind = pYou.inv.getIndexOf(x)
+			if ind != -1:
+				card = pYou.inv.remove(ind)
+				hasUsed = pYou.use(card)
+			elif x == "Back":
+				print "Oh, so you're a tough guy?"
+				hasUsed = True
+			else:
+				print "You don't have a inventorycard "+x+" in your hand."
+
+
 	def chooseAttackPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasAttacked = False
 		while(not hasAttacked):
-			print 'What attack do you want to do 1-4 (0 to pass, other to crash game): ',
+			print 'What attack do you want to do 1-4? (0 to pass, 5 to access inventory, other to crash game): ',
 			x = input()
-			if x == 0:
+			if x == 5:
+				if len(pYou.inv.invCards) > 0:
+					self.chooseInvCardPlayer(pYou, pEne)
+				else:
+					print "You don't have any inventorycards!"
+			elif x == 0:
 				print "You passed on your turn"
 				hasAttacked = True
 			elif x==9:
@@ -44,19 +78,49 @@ class Main(object):
 				hasAttacked = pYou.attack(x-1,pEne)
 
 	def chooseAttackAI(self, pYou, pEne):
-		return None
+		global waitingTime
+		waitingTime = randint(2,5)
+		time.sleep(waitingTime)			
+		AICard = pYou.mainCard
+		hasAttacked = False
+		#AI can't attack if his pokemon is stunned
+		if AICard.isStunned():
+			print str(AICard)+" is stunned"
+			hasAttacked = True
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health) #Best attack choise for damage	
+		if pYou.mainCard.canKillEne(calcAttack, pEne.mainCard.health):
+			hasAttacked = pYou.attack(calcAttack, pEne)
+		else:	
+			#AI checks if it needs to and can heal	
+			if pYou.mainCard.needsHeal():
+				heal = pYou.mainCard.findHeal()
+				hasAttacked = pYou.attack(heal, pEne)
+			#AI gets more stamina if it needs it and has the ability to
+			elif pYou.mainCard.needsStamina():
+				stamina = pYou.mainCard.findStamina()
+				hasAttacked = pYou.attack(stamina, pEne) 	
+		 	#AI decides if it wants to stun enemy
+		 	elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2):
+		 		stun = pYou.mainCard.findStun()
+		 		hasAttacked = pYou.attack(stun, pEne)
+		 	elif len(pYou.mainCard.findPossibleAttacks()) > 0:
+			 	hasAttacked = pYou.attack(calcAttack, pEne)
+			else:
+				print str(AICard)+" is too busy playing this awesome new Pokemongame..."
+				print "He also lacks Stamina"
+
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic if pYou is AI, manual otherwise)
-	def chooseCard(self,pYou, pEne):
+	def chooseCard(self, pYou, pEne):
 		if pYou.isAI():
 			return self.chooseCardAI(pYou, pEne)
 		else:
 			return self.chooseCardPlayer(pYou, pEne)
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(manual)
 	def chooseCardPlayer(self,pYou, pEne):
 		while(True):
@@ -69,7 +133,7 @@ class Main(object):
 				print "You don't have a pokemon named "+inp+" in your hand."
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
-	# Before: pYou and pEne are players
+	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
 	def chooseCardAI(self,pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
@@ -87,7 +151,14 @@ class Main(object):
 		 
 		 return pYou.hand.remove(ind)
 			
-
+	# Usage: p = drawInvQuest()
+	# Before: Nothing
+	# AFter: p is true if it is the right time to draw inventory card, false otherwise
+	def drawInvQuest(self):
+		if self.turnCount > 1:
+			return (self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0)
+		else:
+			return False	
 
 	def gameLoop(self):
 		done = False
@@ -111,8 +182,12 @@ class Main(object):
 
 			#Draw a new card in the start of your turn
 			self.draw(pYou)
+			if self.drawInvQuest():
+				self.drawInv(pYou)
+		
 			
 			print "Your Hand: "+str(pYou.hand)
+			print "Your Inventory: "+str(pYou.inv)
 
 			#put out a new pokemon
 			if yourCard.isDead():
@@ -126,7 +201,7 @@ class Main(object):
 
 			#Print info about what is going on on the field
 			print "Enemy pokemon is:",
-			print yourCard.shortInfo()
+			print enemCard.shortInfo()
 			print "Your pokemon is:",
 			print yourCard.shortInfo()
 			print "Attacks:"
