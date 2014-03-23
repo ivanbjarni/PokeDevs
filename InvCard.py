@@ -9,7 +9,8 @@ class InvCard(object):
 	health		= 0			#int 		Healing power of card
 	stamina		= 0			#int 		Stamina boost from card
 	stun		= False		#boolean	If true you are not stuned anymore 		
-	damageBoost	= 0			#double		Tells you how much damage boost in %
+	damageBoost	= 0			#double		Tells you how much damage boost in % 
+	defenseBoost= 0 		#double 	Tells you how much defense boost is in % (less than 1 is good)
 	bitmap      = None 		#bitmap     Image to represent card
 
 	def __init__(self, name, health, stamina, stun, damageBoost):

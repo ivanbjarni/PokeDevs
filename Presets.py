@@ -24,23 +24,23 @@ class Presets(object):
 
 	def initInvCards(self):
 		self.invCards = {
-		0	: InvCard("Ether", 0, 15, False, 1),
-		1	: InvCard("Elixir", 0, 25, False, 1),
-		2	: InvCard("MaxEther", 0, 35, False, 1),
-		3	: InvCard("MaxElixir", 0, 45, False, 1),
-		4	: InvCard("Potion", 10, 0, False, 1),
-		5	: InvCard("SuperPotion", 25, 0, False, 1),
-		6	: InvCard("HyperPotion", 40, 0, False, 1),
-		7	: InvCard("MaxPotion", 65, 0, False, 1),
-		9	: InvCard("XSpeed", 0, 0, False, 1.2),
-		10	: InvCard("XAccuracy", 0, 0, False, 1.4),
-		11	: InvCard("DireHit", 0, 0, False, 1.6),
-		12	: InvCard("XAttack", 0, 0, False, 1.8),
-		13	: InvCard("XSpecial", 0, 0, False, 2),
-		14	: InvCard("UnStunSpray", 0, 0, True, 1),
-		15	: InvCard("FullHeal", 20, 0, True, 1),
-		16	: InvCard("StaminaAndStun", 0, 25, True, 1),
-		17	: InvCard("FullRestore", 20, 20, True, 1.4)
+		0	: InvCard("Ether", 0, 15, False, 1,1),
+		1	: InvCard("Elixir", 0, 25, False, 1,1),
+		2	: InvCard("MaxEther", 0, 35, False, 1,1),
+		3	: InvCard("MaxElixir", 0, 45, False, 1,1),
+		4	: InvCard("Potion", 10, 0, False, 1,1),
+		5	: InvCard("SuperPotion", 25, 0, False, 1,1),
+		6	: InvCard("HyperPotion", 40, 0, False, 1,1),
+		7	: InvCard("MaxPotion", 65, 0, False, 1,1),
+		9	: InvCard("XSpeed", 0, 0, False, 1.2,1),
+		10	: InvCard("XAccuracy", 0, 0, False, 1.4,1),
+		11	: InvCard("DireHit", 0, 0, False, 1.6,1),
+		12	: InvCard("XAttack", 0, 0, False, 1.8,1),
+		13	: InvCard("XSpecial", 0, 0, False, 2,1),
+		14	: InvCard("UnStunSpray", 0, 0, True, 1,1),
+		15	: InvCard("FullHeal", 20, 0, True, 1,1),
+		16	: InvCard("StaminaAndStun", 0, 25, True, 1,1),
+		17	: InvCard("FullRestore", 20, 20, True, 1,1)
 		}
 
 	def initAttacks(self):
@@ -127,6 +127,7 @@ class Presets(object):
 		127 : Attack("Waterfall", 25, 55, 0, 0, "water"),	
 		141 : Attack("LeechLife", 15, 30, -15, 0, "normal"),	
 		143 : Attack("SkyAttack", 15, 30, 0, 0, "normal"),	
+		144 : Attack("Transform", 0, 0, 0, 0, "normal"),	
 		145 : Attack("Bubble", 10, 10, 0, 0, "water"),	
 		146 : Attack("DizzyPunch", 22, 44, 0, 0, "ground"),	
 		150 : Attack("Splash", 7, 15, 0, 0, "water"),	
@@ -372,7 +373,7 @@ class Presets(object):
 		129	: Card("Magikarp", 20, 300, [self.ga("Splash"), self.ga("Tackle"), self.ga("Flail"), self.ga("Empty")], "water", "electric", "water"),
 		130	: Card("Gyarados", 95, 120, [self.ga("Leer"), self.ga("AquaTail"), self.ga("HydroPump"), self.ga("HyperBeam")], "water", "electric", "ground"),
 		131	: Card("Lapras", 130, 85, [self.ga("Sing"), self.ga("WaterGun"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "ground", "water"),
-		132	: Card("Ditto", 48, 85, [self.ga("Empty"), self.ga("Empty"), self.ga("Empty"), self.ga("Empty")], "normal", "ground", "psychic"),
+		132	: Card("Ditto", 48, 85, [self.ga("Transform"), self.ga("Empty"), self.ga("Empty"), self.ga("Empty")], "normal", "ground", "psychic"),
 		133	: Card("Eevee", 55, 100, [self.ga("Tackle"), self.ga("QuickAttack"), self.ga("FocusEnergy"), self.ga("Bite")], "normal", "ground", "psychic"),
 		134	: Card("Vaporeon", 130, 90, [self.ga("WaterGun"), self.ga("HelpingHand"), self.ga("WaterPulse"), self.ga("HydroPump")], "water", "electric", "fire"),
 		135	: Card("Jolteon", 65, 120, [self.ga("ThunderShock"), self.ga("HelpingHand"), self.ga("ThunderFang"), self.ga("Thunder")], "electric", "ground", "normal"),
