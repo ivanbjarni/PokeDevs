@@ -102,6 +102,28 @@ class Card(object):
 
 		return True
 
+
+	# Usage: b = c.use(card)
+	# Before: card is inventorycard and user is pokemoncard
+	# After: b is true if useage succeeds, false otherwise.
+	#		 Also prints out on console what happens.
+	def use(self, card):
+		if card.stamina > 0:
+			self.stamina += card.stamina
+			print str(self)+ "'s stamina increased by "+str(card.stamina)
+		if card.health > 0:
+			self.health  += card.health
+			print str(self)+"'s health increased by "+str(card.health)
+		self.health   = min(self.health , self.healthMax)
+		self.stamina = min(self.stamina, self.staminaMax)
+		if card.stun:
+			self.stun = 0
+			print str(self)+" is not stunned anymore"
+		if card.damageBoost > 1:
+			print "Damageboost!"
+
+		return True
+
 	# Usage: b = c.isDead()
 	# Before: Nothing
 	# After: b is true if c is dead, false otherwise. 

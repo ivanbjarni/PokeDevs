@@ -118,7 +118,7 @@ class Presets(object):
 		116 : Attack("FocusEnergy", 0, -25, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 0, 0, 0, "normal"),	
 		119 : Attack("MirrorMove", 0, -5, -25, 0, "normal"),	
-		120 : Attack("SelfDestruct", 80, 50, 0, 0, "ground"),	
+		120 : Attack("SelfDestruct", 80, 50, 50, 0, "ground"),	
 		122 : Attack("Lick", 10, 20, 0, 1, "psychic"),	
 		123 : Attack("Smog", 10, 20, 0, 1, "grass"),	
 		124 : Attack("Sludge", 18, 40, 0, 0, "grass"),	
@@ -443,3 +443,6 @@ class Presets(object):
 
 	def getRandomCard(self):
 		return copy.deepcopy(random.choice(self.cards.values()))
+
+	def getRandomInvCard(self):
+		return copy.deepcopy(random.choice(self.invCards.values()))

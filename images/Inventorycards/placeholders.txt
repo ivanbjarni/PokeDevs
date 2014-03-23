@@ -1,0 +1,5 @@
+Spil sem eru bara einhver spil til að geta gert dót, skipta út
+
+StaminaAndStun
+FullRestore
+FullHeal
