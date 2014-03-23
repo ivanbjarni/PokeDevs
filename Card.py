@@ -150,7 +150,7 @@ class Card(object):
 		if self.stun > 0:
 			self.stun -= 1
 		self.dmgMulti = 1
-		self.defMulti = min(1,self.defMulti+0.5)
+		self.defMulti = min(1,self.defMulti+defEachTurn)
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -301,7 +301,7 @@ class Card(object):
 	# Before: d is float
 	# After: the defense multiplier of the pokemon is d
 	def setDefenseMultiplier(self, d):
-		self.defMulti = d-0.5
+		self.defMulti = d-defEachTurn
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
