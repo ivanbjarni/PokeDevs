@@ -22,6 +22,8 @@ class Card(object):
 	critDiff	= 0			#double		How much difference is between standard crit chance and the crit chance of this pokemon
 	hitDiff		= 0			#double		How much difference is between standard hit chance and the hit chance of this pokemon
 	weakExploit = 0			#double		How much additional % of damage you do with super effective moves
+	turnsOut	= 0			#int 		How many turns a pokemon has been on the field
+	turnsStunned= 0 		#int 		How many turns a pokemon has been stunned
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -105,8 +107,9 @@ class Card(object):
 			self.stamina= min(self.stamina,oldsta)
 			self.health = min(self.health ,oldhp)
 		
-		if(atk.stun!=0 and random.random() < stunChance):
-			card.stun = atk.stun
+		realStunChance = max(stunChance - (card.turnsStunned/turnsToMinStun)*(stunChance-stunChanceMin),stunChanceMin)
+		if(atk.stun!=0 and random.random() < realStunChance):
+			card.setStun(atk.stun)
 			message += "(Stun applied for "+str(atk.stun)+" turns)"
 		elif atk.stun!=0:
 			message += "(Stun not applied.)"
@@ -277,7 +280,12 @@ class Card(object):
 		else:
 			return 0
 
-
+	# Usage: c.setStun(turns)
+	# Before: Nothing
+	# After: c is stunned for stun turns
+	def setStun(self,turns):
+		self.stun = turns
+		self.turnsStunned = turns
 
 	# Usage: b = c.hasStamina()
 	# Before: Nothing
