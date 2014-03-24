@@ -97,6 +97,52 @@ class TestCard(unittest.TestCase):
 		# Attack shuld fail
 		self.assertTrue(not card.attack(card.attacks[0], card2))
 
+	# Testing if the use method works correctly
+	def test_Carduse(self):
+		pre = Presets()
+		card = pre.gic("Ether")
+		pokemon = pre.gc("Bulbasaur")
+		self.assertTrue(pokemon.use(card))
+
+	# Testing if the hasHeal method is working correctly
+	def test_CardHasHeal(self):
+		pre = Presets()
+		canHeal = pre.gc("Slowbro")
+		cantHeal = pre.gc("Charmander")
+		self.assertTrue(canHeal.hasHeal())
+		self.assertFalse(cantHeal.hasHeal())
+
+
+	# Testing if the needsheal method is working correctly
+	def test_CardNeedsHeal(self):
+		pre = Presets()
+		pika = pre.gc("Pikachu")
+		self.assertFalse(pika.needsHeal())
+		pika.health = 1
+		self.assertTrue(pika.needsHeal())
+
+	# Testing method findHeal for Card
+	def test_CardFindHeal(self):
+		pre = Presets()
+		numberShouldBe = 0
+		canHeal = pre.gc("Slowbro")
+		self.assertEqual(canHeal.findHeal(), numberShouldBe)
+
+	# Testing method hasStun
+	def test_CardHasStun(self):
+		pre = Presets()
+		canStun = pre.gc("Gengar")
+		cantStun = pre.gc("Bulbasaur")
+		self.assertTrue(canStun.hasStun())
+		self.assertFalse(cantStun.hasStun())
+
+	# Testing method findStun
+	def test_CardFindStun(self):
+		numberShouldBe = 0
+		pre = Presets()
+		canStun = pre.gc("Gengar")
+		self.assertEqual(canStun.findStun(), numberShouldBe)
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestCard)
 unittest.TextTestRunner(verbosity=2).run(suite)
@@ -206,8 +252,8 @@ class TestinvDeck(unittest.TestCase):
 	def test_invDeckgetIndexOf(self):
 		invDeck = InvDeck()
 		pre = Presets()
-		invDeck.invCards = [pre.gic("StaminaBoost1")]
-		self.assertEqual(invDeck.getIndexOf("StaminaBoost1"), 0)
+		invDeck.invCards = [pre.gic("Ether")]
+		self.assertEqual(invDeck.getIndexOf("Ether"), 0)
 		self.assertEqual(invDeck.getIndexOf("Gamli"), -1)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestinvDeck)
@@ -237,8 +283,8 @@ class Testinventory(unittest.TestCase):
 	def test_inventoryisFull(self):
 		inventory = Inventory()
 		inventory2 = Inventory()
-		inventory.invCards = [1,2,3,4,5,6]
-		inventory2.invCards = [1,2,3]
+		inventory.invCards = [1,2,3]
+		inventory2.invCards = [1,2]
 		self.assertTrue(inventory.isFull())
 		self.assertFalse(inventory2.isFull())
 
@@ -246,9 +292,9 @@ class Testinventory(unittest.TestCase):
 	def test_inventorygetIndexOf(self):
 		inventory = Inventory()
 		pre = Presets()
-		inventory.invCards = [pre.gic("HealthPotion2")]
+		inventory.invCards = [pre.gic("Ether")]
 		# healtpotion2 is in the inventory number zero
-		self.assertEqual(inventory.getIndexOf("HealthPotion2"), 0)
+		self.assertEqual(inventory.getIndexOf("Ether"), 0)
 		# hundur is not in the inventory
 		self.assertEqual(inventory.getIndexOf("Hundur"), -1)
 

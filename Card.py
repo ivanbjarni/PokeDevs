@@ -17,8 +17,11 @@ class Card(object):
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
 	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
-	dmgMulti	= 1 		#float 		damage multiplier 
-	defMulti	= 1 		#float 		defense multiplier	
+	dmgMulti	= 1 		#double		Damage multiplier 
+	defMulti	= 1 		#double		Defense multiplier
+	critDiff	= 0			#double		How much difference is between standard crit chance and the crit chance of this pokemon
+	hitDiff		= 0			#double		How much difference is between standard hit chance and the hit chance of this pokemon
+	weakExploit = 0			#double		How much additional % of damage you do with super effective moves
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -63,10 +66,12 @@ class Card(object):
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			return False
-		if(self.isStunned()):
+		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
 			return True
 
+		oldhp = self.health
+		oldsta= self.stamina
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
@@ -82,20 +87,29 @@ class Card(object):
 			message = ". It's not very effective!"
 		#weakness
 		if atk.poketype == card.weakness and damage >0:
-			damage *= weaknessMultiplier
+			damage *= (weaknessMultiplier + self.weakExploit)
 			message = ". It's super effective!"
 		#crit
-		if random.random() < critChance and damage >0:
+		if random.random() < (critChance+self.critDiff) and damage >0:
 			damage *= critMultiplier
 			message = ", It's a critical hit!"
 		#miss
-		if random.random()<missChance and damage >0:
-			damage = 0
-			message = ", but it missed!"
+		if random.random()<(missChance-self.hitDiff):
+			#we print different message depending on whether it is an actual attack
+			if damage >0:
+				message = ", but it missed!"
+				damage = 0
+			else:
+				message = ", but it failed!"
+			#make heal and stamina recovery fail as well:
+			self.stamina= min(self.stamina,oldsta)
+			self.health = min(self.health ,oldhp)
 		
 		if(atk.stun!=0 and random.random() < stunChance):
 			card.stun = atk.stun
 			message += "(Stun applied for "+str(atk.stun)+" turns)"
+		elif atk.stun!=0:
+			message += "(Stun not applied.)"
 
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
@@ -122,10 +136,16 @@ class Card(object):
 			print str(self)+" is not stunned anymore"
 		if card.damageBoost > 1:
 			self.setDamageMultiplier(card.damageBoost)
-			print "Damageboost!"
+			print "Damage boost!"
 		if card.defenseBoost < 1:
 			self.setDefenseMultiplier(card.defenseBoost)
-			print "Defenseboost!"
+			print "Defense boost!"
+		if card.hitBoost > 0:
+			self.hitDiff += card.hitBoost
+			print "Hit Boost"
+		if card.critBoost > 0:
+			self.critDiff += card.critBoost
+			print "Crit Boost"
 
 		return True
 
@@ -147,8 +167,10 @@ class Card(object):
 	def applyEffects(self):
 		if self.stun > 0:
 			self.stun -= 1
+		self.stamina = min (self.stamina+staminaEachRound,self.staminaMax)
 		self.dmgMulti = 1
-		self.defMulti = min(1,self.defMulti+0.5)
+		self.defMulti = min(1,self.defMulti+defEachTurn)
+		self.weakExploit = 0
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -168,7 +190,7 @@ class Card(object):
 
 	# Usage: b = c.needsHeal()
 	# Before: Nothing
-	# After: Returns True if pokemon needs to and can heal it self, else False 
+	# After: Returns True if pokemon needs to heal it self, else False 
 	def needsHeal(self):
 		needs = self.health < needsHealMark*self.healthMax
 		return needs
@@ -203,9 +225,6 @@ class Card(object):
 				stacost = self.attacks[x].staminaCost
 
 		return attacknum
-				
-
-
 
 	# Usage: x = c.findHighestDamg()
 	# Before: Nothing
@@ -231,7 +250,6 @@ class Card(object):
 
 		return possibleAtt
 
-	
 
 	# Usage: x = c.findClosestAttack(eneHP)
 	# Before: Nothing
@@ -270,7 +288,7 @@ class Card(object):
 
 	# Usage: b = c.needsStamina()
 	# Before: Nothing
-	# After: Returns True if pokemon needs to and can heal it self, else False 
+	# After: Returns True if pokemon needs more staminga, else False 
 	def needsStamina(self):
 		needs = self.stamina < needsStaminaMark*self.staminaMax
 		return needs
@@ -299,7 +317,7 @@ class Card(object):
 	# Before: d is float
 	# After: the defense multiplier of the pokemon is d
 	def setDefenseMultiplier(self, d):
-		self.defMulti = d-0.5
+		self.defMulti = d-defEachTurn
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card

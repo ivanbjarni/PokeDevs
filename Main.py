@@ -5,7 +5,7 @@ import random
 from Presets import *
 import time 
 from random import randint
-
+from constants import *
 
 class Main(object):	
 	players = None			#Player[]	a list keeping track og the 2 players
@@ -82,6 +82,7 @@ class Main(object):
 					if stun != -1:
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card)
+						offset += 1
 				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned():
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
@@ -147,14 +148,14 @@ class Main(object):
 				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
 					hasAttacked = pYou.attack(stamina, pEne) 	
 				#AI decides if it wants to stun enemy
-				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2) and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
+				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
 					hasAttacked = pYou.attack(stun, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne)
 				else:
 					print str(AICard)+" is too busy playing this awesome new Pokemongame..."
 					print "He also lacks Stamina"
-					if len(pYou.inv.invCards) == 3:
+					if len(pYou.inv.invCards) == invCardsMax:
 						throwaway = pYou.inv.getIndexOf(pYou.inv.invCards[randint(0,2)].name)
 						if throwaway != -1:
 							card = pYou.inv.remove(throwaway)
@@ -210,7 +211,7 @@ class Main(object):
 	# AFter: p is true if it is the right time to draw inventory card, false otherwise
 	def drawInvQuest(self):
 		if self.turnCount > 1:
-			return (self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0)
+			return (self.turnCount%(2*turnsBetweenInvCards) == 0 or (self.turnCount - 1)%(2*turnsBetweenInvCards) == 0)
 		else:
 			return False	
 
