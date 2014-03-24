@@ -1,12 +1,11 @@
 from InvCard import *
-
+from constants import *
 
 
 
 
 class Inventory(object):
 	invCards 		= []		#Card[]		List of invCards in the hand
-	invCardsMax	= 3				#int 		Maximum amount of invCards a player can hold	
 
 	def __init__(self):
 		self.invCards = []
@@ -39,4 +38,4 @@ class Inventory(object):
 		return -1
 
 	def isFull(self):
-		return len(self.invCards)>= self.invCardsMax
+		return len(self.invCards)>= invCardsMax

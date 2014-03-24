@@ -1,5 +1,5 @@
 from Card import *
-
+from constants import *
 
 
 
@@ -7,7 +7,6 @@ from Card import *
 
 class Hand(object):
 	cards 		= []		#Card[]		List of cards in the hand
-	cardsMax	= 6			#int 		Maximum amount of cards a player can hold	
 
 	def __init__(self):
 		self.cards = []
@@ -43,7 +42,7 @@ class Hand(object):
 	# Before: Nothing
 	# After: returns true if hand you can't have more cards in your hand
 	def isFull(self):
-		return len(self.cards)>= self.cardsMax
+		return len(self.cards)>= cardsMax
 
 	# Usage: i=h.getNameOfType(type)
 	# Before: type is string
