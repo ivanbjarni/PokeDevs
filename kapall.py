@@ -34,7 +34,7 @@ p2.deck = Deck()
 p2.invdeck = InvDeck()
 for i in xrange(0,10):
 	p2.deck.add(presets.getRandomCard())
-p2.mainCard = presets.getRandomCard()
+p2.mainCard = presets.gc("Pikachu")
 for i in xrange(0,5000):
 	p2.invdeck.add(presets.getRandomInvCard())
 
