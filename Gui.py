@@ -543,7 +543,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.pdc.DrawToDCClipped(dc, r)
 
 	def addCPUpokemon(self):
-		if self.cardsCPU:
+		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1:
 			card = self.cardsCPU.pop()
 			self.cardsCPU.insert(0, card)
 			id = self.findID(card)
@@ -1235,13 +1235,12 @@ class MainFrame(wx.Frame):
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
 			self.gamePanel.switchCPUpokemon(newCard)
-			self.gamePanel.updateCPUHp()
-			self.gamePanel.updateCPUStamina()
 		if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
 			self.game.players[1].mainCard.applyEffects()
 			self.gamePanel.animation1(False)
 			self.gamePanel.updatePlayerHp()
-			self.gamePanel.updateCPUStamina()
+		self.gamePanel.updateCPUHp()
+		self.gamePanel.updateCPUStamina()
 		#self.turn = (t+1)%2
 		self.game.turnCount += 1
 		worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
