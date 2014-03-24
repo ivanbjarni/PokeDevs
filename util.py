@@ -14,3 +14,12 @@ def replace_line(file_name, line_num, text):
     out = open(file_name, 'w')
     out.writelines(lines)
     out.close()
+
+def mean (data):
+	return sum(data)/len(data)
+
+def var(data, average):
+    variance = 0
+    for item in data:
+        variance += (average - item) ** 2
+    return variance / len(data)
