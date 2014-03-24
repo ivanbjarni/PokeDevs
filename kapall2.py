@@ -28,7 +28,7 @@ if __name__=="__main__":
 	for i in xrange(0,10):
 		p1.deck.add(presets.getRandomCard())
 	p1.mainCard = p1.deck.cards[0]
-	for i in xrange(0,10):
+	for i in xrange(0,100):
 		p1.invdeck.add(presets.getRandomInvCard())
 
 	#create player 1 give him a hand, random mainCard and a random 10card deck
@@ -40,7 +40,7 @@ if __name__=="__main__":
 	for i in xrange(0,10):
 		p2.deck.add(presets.getRandomCard())
 	p2.mainCard = p2.deck.cards[0]
-	for i in xrange(0,10):
+	for i in xrange(0,100):
 		p2.invdeck.add(presets.getRandomInvCard())
 	
 	game = Main([p1, p2])

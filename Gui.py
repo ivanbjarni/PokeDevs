@@ -1,12 +1,5 @@
-#	TODO:
-#		- Add info panel, to display info on pokemon/attacks/inventory items when hovered over
-#		- Add "menubar" where you can choose help, exit, some other things maybe
-#		- Maybe add a healthbar to either drawing area(gamePanel) or the statusPanel instead of just showing numbers for HP
-#		- Choose which type of buttons to use
-#		- Maybe choose some better colors for some things
-#		- Hook everything up to the actual gameplay!!
-
-
+import subprocess
+import tempfile
 import wx
 import sys
 import os
@@ -113,6 +106,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.isMyTurn = True 		# Determines wheather you can move cards around
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
+		self.countCPUpokemon = 0 	# Count how many pokemon CPU has drawn
 		self.pdc = wx.PseudoDC()	# For drawing to the panel
 		self.dragid = -1 			# ID for currently chosen object
 		self.playerChosenID = -1 	# ID for player's currently chosen object
@@ -287,6 +281,7 @@ class GamePanel(wx.ScrolledWindow):
 						else:
 							self.slot[self.playerChosenID] = -1
 						self.moveItem(self.dragid, x, y)
+						self.slot[self.dragid] = -1 ######################
 						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
 						self.playerChosenID = self.dragid
 						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
@@ -528,7 +523,7 @@ class GamePanel(wx.ScrolledWindow):
 		if hp == 0:
 			self.pdc.SetIdGreyedOut(self.CPUChosenID)
 			self.moveItem(self.CPUChosenID, 387, 185)
-			self.slot[self.CPUChosenID] = -1
+			self.slotCPU[self.CPUChosenID] = -1
 
 	def updateCPUStamina(self):
 		stamina = self.updateBar(self.CPUStaminaID, self.cards[self.CPUChosenID], 'stamina')
@@ -543,28 +538,24 @@ class GamePanel(wx.ScrolledWindow):
 		self.pdc.DrawToDCClipped(dc, r)
 
 	def addCPUpokemon(self):
-		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1:
+		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1 and self.countCPUpokemon < 10:
+			print 'ok===================================================='
 			card = self.cardsCPU.pop()
 			self.cardsCPU.insert(0, card)
 			id = self.findID(card)
 			bid = self.findBacksideCPU(id)
 			slot = self.findEmptySlot(self.slotCPU)
 			self.slotCPU[bid] = slot
+			self.countCPUpokemon += 1
 			self.origpos[bid] = [10 + slot * 127, 6]
 			self.moveItem(bid, 210 + slot * 127, 206)
 
 	def switchCPUpokemon(self, card):
-		print 'oooooooooooooooooooooooooooooo'
 		if self.cardsCPU:
 			id = self.findID(card)
 			bid = self.findBacksideCPU(id)
-			self.slotCPU[id] = -1
-			#x = self.origpos[self.CPUChosenID][0] + 544
-			#y = self.origpos[self.CPUChosenID][1] + 195
+			self.slotCPU[bid] = -1
 			self.CPUChosenID = id
-	#		print id
-	#		print bid
-			print 'switched=========================================== ' + str(id)
 			self.moveItem(id, 744, 395)
 			self.moveItem(bid, 0, -1000)
 
@@ -725,21 +716,6 @@ class GamePanel(wx.ScrolledWindow):
 
 			id = wx.NewId()
 			dc.SetId(id)
-			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
-			self.movable[id] = True
-			self.cardType[id] = 'Inventory'
-			self.cards[id] = player.invdeck.invCards[i]
-			self.invSlot[id] = -1
-
-			bid = wx.NewId()
-			dc.SetId(bid)
-			self.drawItem(dc, bid, self.backsideInvBmp, 931, 10, w, h)
-			self.movable[bid] = True
-			self.cardType[bid] = 'InvBackside'
-			self.backsidesInv[bid] = id
-
-			id = wx.NewId()
-			dc.SetId(id)
 			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, -200, -200, w, h)
 			self.movable[id] = False
 			self.cards[id] = CPU.deck.cards[i]
@@ -753,6 +729,23 @@ class GamePanel(wx.ScrolledWindow):
 			self.backsidesCPU[bid] = id
 			print bid
 		#	print id
+
+		for i in range(0, 100):
+			id = wx.NewId()
+			dc.SetId(id)
+			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
+			self.movable[id] = True
+			self.cardType[id] = 'Inventory'
+			self.cards[id] = player.invdeck.invCards[i]
+			self.invSlot[id] = -1
+
+			bid = wx.NewId()
+			dc.SetId(bid)
+			self.drawItem(dc, bid, self.backsideInvBmp, 931, 10, w, h)
+			self.movable[bid] = True
+			self.cardType[bid] = 'InvBackside'
+			self.backsidesInv[bid] = id
+
 		dc.EndDrawing()		
 
 '''		for i in range(0, 6):
@@ -1187,6 +1180,20 @@ class infoPanel(wx.Panel):
 		self.Layout()
 		self.Thaw()
 
+class LogPanel(wx.ScrolledWindow):
+	def __init__(self, parent):
+		# This needs to be a scrolled window even though it doesn't scroll
+		wx.ScrolledWindow.__init__(self, parent, size=(1060, 560), style=wx.SUNKEN_BORDER)
+		self.SetDoubleBuffered(True)
+
+		
+	#	with tempfile.TemporaryFile() as tempf:
+	#		proc = subprocess.Popen(['echo', 'a', 'b'], stdout=tempf)
+	#		proc.wait()
+	#		tempf.seek(0)
+   	#		print tempf.read()
+
+
 
 class MainFrame(wx.Frame):
 	def __init__(self, game):
@@ -1222,6 +1229,8 @@ class MainFrame(wx.Frame):
 		self.Centre()
 
 	def playerAction(self, attackNum):
+		self.game.turn += 1
+		self.game.turnCount += 1
 		if self.game.players[0].attack(attackNum, self.game.players[1]):
 			self.gamePanel.animation1(True)
 			self.gamePanel.updateCPUHp()
@@ -1229,12 +1238,10 @@ class MainFrame(wx.Frame):
 			self.gamePanel.updatePlayerHp()
 			self.gamePanel.updatePlayerStamina()
 
-		self.game.turn += 1
-#		self.game.turn = (self.game.turn+1)%2
-		self.game.turnCount += 1
 		worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
 	def CPUAction(self):
+		self.game.turnCount += 1
 		self.game.draw(self.game.players[1])
 		self.gamePanel.addCPUpokemon()
 		if self.game.drawInvQuest():
@@ -1243,33 +1250,14 @@ class MainFrame(wx.Frame):
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
 			self.gamePanel.switchCPUpokemon(newCard)
+			time.sleep(0.5)
 		if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
 			self.game.players[1].mainCard.applyEffects()
 			self.gamePanel.animation1(False)
 			self.gamePanel.updatePlayerHp()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()
-		#self.turn = (t+1)%2
-		self.game.turnCount += 1
 		worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
 
 	def onQuit(self, event):
 		self.Close()
-
-#class RunGuiThread(threading.Thread):
-#	def run(self):
-#		self.app = wx.App()
-#		self.gui = MainFrame()
-#		self.gui.Show()
-#		self.app.MainLoop()
-#
-#	def stop(self):
-#		self.app.ExitMainLoop()
-#if __name__=="__main__":
-#    app = wx.App()
-#    gui = MainFrame()
-#    gui.Show()
-#    app.MainLoop()
-#    MainFrame().Show()
-#    app.MainLoop()
-
