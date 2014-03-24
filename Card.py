@@ -17,8 +17,11 @@ class Card(object):
 	resistance 	= "normal"	#String		Type the pokemon is strong against, same format as above
 	stun 		= 0			#int 		Turns that pokemon will be stunned
 	bitmap		= None		#Bitmap		Image that represents the card on the playing mat
-	dmgMulti	= 1 		#float 		damage multiplier 
-	defMulti	= 1 		#float 		defense multiplier	
+	dmgMulti	= 1 		#double		Damage multiplier 
+	defMulti	= 1 		#double		Defense multiplier
+	critDiff	= 0			#double		How much difference is between standard crit chance and the crit chance of this pokemon
+	hitDiff		= 0			#double		How much difference is between standard hit chance and the hit chance of this pokemon
+	weakExploit = 0			#double		How much additional % of damage you do with super effective moves
 
 	def __init__(self, name, health,  stamina, attacks, poketype, weakness, resistance):
 		self.name = name
@@ -82,14 +85,14 @@ class Card(object):
 			message = ". It's not very effective!"
 		#weakness
 		if atk.poketype == card.weakness and damage >0:
-			damage *= weaknessMultiplier
+			damage *= (weaknessMultiplier + self.weakExploit)
 			message = ". It's super effective!"
 		#crit
-		if random.random() < critChance and damage >0:
+		if random.random() < (critChance+self.critDiff) and damage >0:
 			damage *= critMultiplier
 			message = ", It's a critical hit!"
 		#miss
-		if random.random()<missChance and damage >0:
+		if random.random()<(missChance-self.hitDiff) and damage >0:
 			damage = 0
 			message = ", but it missed!"
 		
@@ -128,6 +131,12 @@ class Card(object):
 		if card.defenseBoost < 1:
 			self.setDefenseMultiplier(card.defenseBoost)
 			print "Defense boost!"
+		if card.hitBoost > 0:
+			self.hitDiff += card.hitBoost
+			print "Hit Boost"
+		if card.critBoost > 0:
+			self.critDiff += card.critBoost
+			print "Crit Boost"
 
 		return True
 
@@ -152,6 +161,7 @@ class Card(object):
 		self.stamina = min (self.stamina+staminaEachRound,self.staminaMax)
 		self.dmgMulti = 1
 		self.defMulti = min(1,self.defMulti+defEachTurn)
+		self.weakExploit = 0
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
