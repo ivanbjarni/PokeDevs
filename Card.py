@@ -146,6 +146,9 @@ class Card(object):
 		if card.critBoost > 0:
 			self.critDiff += card.critBoost
 			print "Crit Boost"
+		if card.weakExploit != 0
+			self.weakExploit = card.weakExploit
+			print "Super effective moves boosted"
 
 		return True
 
