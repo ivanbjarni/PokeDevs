@@ -68,8 +68,6 @@ class Card(object):
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			return False
-		if(card.isDead()):
-			print "Your opponent's pokemon has fainted, you can't attack him now."
 			return False
 		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
