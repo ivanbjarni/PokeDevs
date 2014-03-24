@@ -63,7 +63,7 @@ class Card(object):
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			return False
-		if(self.isStunned()):
+		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
 			return True
 
@@ -96,6 +96,8 @@ class Card(object):
 		if(atk.stun!=0 and random.random() < stunChance):
 			card.stun = atk.stun
 			message += "(Stun applied for "+str(atk.stun)+" turns)"
+		elif atk.stun!=0:
+			message += "(Stun not applied.)"
 
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
@@ -122,10 +124,10 @@ class Card(object):
 			print str(self)+" is not stunned anymore"
 		if card.damageBoost > 1:
 			self.setDamageMultiplier(card.damageBoost)
-			print "Damageboost!"
+			print "Damage boost!"
 		if card.defenseBoost < 1:
 			self.setDefenseMultiplier(card.defenseBoost)
-			print "Defenseboost!"
+			print "Defense boost!"
 
 		return True
 
@@ -147,8 +149,9 @@ class Card(object):
 	def applyEffects(self):
 		if self.stun > 0:
 			self.stun -= 1
+		self.stamina = min (self.stamina+staminaEachRound,self.staminaMax)
 		self.dmgMulti = 1
-		self.defMulti = min(1,self.defMulti+0.5)
+		self.defMulti = min(1,self.defMulti+defEachTurn)
 
 	# Usage: c.shortInfo()
 	# Before: Nothing
@@ -299,7 +302,7 @@ class Card(object):
 	# Before: d is float
 	# After: the defense multiplier of the pokemon is d
 	def setDefenseMultiplier(self, d):
-		self.defMulti = d-0.5
+		self.defMulti = d-defEachTurn
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
