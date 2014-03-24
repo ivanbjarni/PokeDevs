@@ -38,6 +38,14 @@ class Main(object):
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
 
+	def clefable(self, pYou, pEne):
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
+		for x in range(0,4):
+			if pYou.mainCard.attacks[x].name == "Metronome" and pYou.mainCard.attacks[x].staminaCost < pYou.mainCard.stamina:
+				calcAttack = x
+		return pYou.attack(calcAttack, pEne)
+
+
 	def chooseInvCardPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasUsed = False
@@ -171,6 +179,8 @@ class Main(object):
 				#AI decides if it wants to stun enemy
 				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
 					hasAttacked = pYou.attack(stun, pEne)
+				elif pYou.mainCard.name == "Clefable" and len(pYou.mainCard.findPossibleAttacks()) > 0:
+					hasAttacked = self.clefable(pYou, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne)
 				else:
