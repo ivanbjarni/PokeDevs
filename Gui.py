@@ -15,6 +15,81 @@ import threading
 import wx.lib.agw.gradientbutton as GB
 import random
 
+# Define notification events for threads
+EVT_ANIM_ID = wx.NewId()
+EVT_ACTIVATE_ID = wx.NewId()
+
+def EVT_ANIM(win, func):
+	win.Connect(-1, -1, EVT_ANIM_ID, func)
+ 
+class AnimEvent(wx.PyEvent):
+    def __init__(self, id, dx, dy, moveY, done):
+		wx.PyEvent.__init__(self)
+		self.SetEventType(EVT_ANIM_ID)
+		self.id = id
+		self.dx = dx
+		self.dy = dy
+		self.moveY = moveY
+		self.done = done
+
+class Worker(threading.Thread):
+	def __init__(self, wxObject, id, i, j, animation):
+		threading.Thread.__init__(self)
+		self.wxObject = wxObject
+		self.id = id
+		self.i = i
+		self.j = j
+		self.animation = animation
+		self.anim = []
+		self.start()
+
+	def run(self):
+		if self.animation == 'animation1':
+			self.animation1()
+		elif self.animation == 'bar':
+			self.bar()
+
+	def animation1(self):
+		forward = True
+		while(self.i < self.j):
+			time.sleep(0.01)
+			if forward:
+				dx = random.randint(1, 41) - 20
+				dy = random.randint(1, 21) - 10
+
+				self.anim.append([dx, dy])
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, dx, dy, -1, False))
+
+				if self.i > 0:
+					self.i -= 1
+				else:
+					forward = False
+			else:
+				dx, dy = self.anim.pop()
+
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, -dx, -dy, -1, False))
+				self.i += 1
+		waitingTime = random.randint(2,5)
+		time.sleep(waitingTime)
+		wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True))
+
+	def bar(self):
+		if self.i < self.j:
+			while self.i < self.j:
+				time.sleep(0.01)
+				self.i += 1
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 1, self.i, False))
+				#self.i += 1
+		else:
+			while self.i > self.j:
+				time.sleep(0.01)
+				self.i -= 1
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, self.i, False))
+				#self.i -= 1
+
+
+		
+
 # A drawable panel that contains the Playing Area
 class GamePanel(wx.ScrolledWindow):
 	def __init__(self, parent, id, size=wx.DefaultSize):
@@ -70,6 +145,8 @@ class GamePanel(wx.ScrolledWindow):
 		self.Bind(wx.EVT_ERASE_BACKGROUND, lambda x: None)
 		self.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse)
 
+		EVT_ANIM(self, self.updateDisplay)
+
 	# Sets the bitmap for card
 	def setImage(self, card):
 		name = card.name.replace(' ', '').replace('.', '')
@@ -105,7 +182,7 @@ class GamePanel(wx.ScrolledWindow):
 			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
 			self.backsideInvBmp = image.ConvertToBitmap()
 		except:
-			print 'Failed to load inventory backside card'		
+			print 'Failed to load inventory backside card'
 	
 	# Sets the right coordinates for a scrollable area if the area has been scrolled
 	# Our area will never scroll so this will probably be changed/deleted
@@ -315,6 +392,16 @@ class GamePanel(wx.ScrolledWindow):
 		self.offsetRect(r)
 		self.RefreshRect(r, False)
 
+	def updateDisplay(self, msg):
+		if msg.moveY != -1:
+			self.origpos[msg.id][1] = msg.moveY
+		if not msg.done:
+			self.moveItem(msg.id, msg.dx, msg.dy)
+			self.Update()
+		elif msg.done:
+			self.isMyTurn = True
+			self.GetParent().attackPanel.enableAll()
+
 	# Usage: g.animation(self, isPlayer)
 	# Pre  : isPlayer is a boolean value that determines if the players or the
 	#		 CPU's pokemon should be "shaken"
@@ -326,9 +413,11 @@ class GamePanel(wx.ScrolledWindow):
 		else:
 			id = self.CPUChosenID
 		loopCPU = 10
-		forward = True
+#		forward = True
 
-		while(loopCPU < 11):
+		anim = Worker(self, id, 10, 11, 'animation1')
+
+	'''while(loopCPU < 11):
 			time.sleep(0.01)
 			if forward:
 				dx = random.randint(1, 41) - 20
@@ -348,7 +437,7 @@ class GamePanel(wx.ScrolledWindow):
 
 				self.moveItem(id, -dx, -dy)
 
-				loopCPU += 1
+				loopCPU += 1'''
 
 	#	def updatePlayerHP(self, card):
 	def updateBar(self, bar, card, type):
@@ -367,7 +456,9 @@ class GamePanel(wx.ScrolledWindow):
 
 		endY = origY + movement
 
-		if currentY < endY:
+		worker = Worker(self, bar, currentY, endY, 'bar')
+
+		'''if currentY < endY:
 			while currentY < endY:
 				time.sleep(0.01)
 				self.moveItem(bar, 0, 1)
@@ -380,7 +471,7 @@ class GamePanel(wx.ScrolledWindow):
 				self.moveItem(bar, 0, -2)
 				self.origpos[bar][1] -= 2
 				currentY -= 2
-				self.Update()
+				self.Update()'''
 
 		return hp
 
@@ -772,7 +863,6 @@ class AttackPanel(wx.Panel):
 	def attack1(self):
 		self.disableAll()
 		main = self.GetParent()
-#		main.SetCallFilterEvent(True)
 		main.gamePanel.isMyTurn = False
 		if main.game.players[0].attack(0, main.game.players[1]):
 			main.gamePanel.animation1(True)
@@ -785,9 +875,6 @@ class AttackPanel(wx.Panel):
 			main.gamePanel.animation1(False)
 			main.gamePanel.updatePlayerHp()
 			main.gamePanel.updateCPUStamina()
-		self.enableAll()
-		main.gamePanel.isMyTurn = True
-#		main.SetCallFilterEvent(False)
 
 	def attack2(self):
 		self.GetParent().gamePanel.animation1(True)
