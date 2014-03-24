@@ -70,6 +70,8 @@ class Card(object):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
 			return True
 
+		oldhp = self.health
+		oldsta= self.stamina
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
@@ -92,9 +94,16 @@ class Card(object):
 			damage *= critMultiplier
 			message = ", It's a critical hit!"
 		#miss
-		if random.random()<(missChance-self.hitDiff) and damage >0:
-			damage = 0
-			message = ", but it missed!"
+		if random.random()<(missChance-self.hitDiff):
+			#we print different message depending on whether it is an actual attack
+			if damage >0:
+				message = ", but it missed!"
+				damage = 0
+			else:
+				message = ", but it failed!"
+			#make heal and stamina recovery fail as well:
+			self.stamina= min(self.stamina,oldsta)
+			self.health = min(self.health ,oldhp)
 		
 		if(atk.stun!=0 and random.random() < stunChance):
 			card.stun = atk.stun
