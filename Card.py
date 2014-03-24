@@ -171,7 +171,7 @@ class Card(object):
 
 	# Usage: b = c.needsHeal()
 	# Before: Nothing
-	# After: Returns True if pokemon needs to and can heal it self, else False 
+	# After: Returns True if pokemon needs to heal it self, else False 
 	def needsHeal(self):
 		needs = self.health < needsHealMark*self.healthMax
 		return needs
@@ -206,9 +206,6 @@ class Card(object):
 				stacost = self.attacks[x].staminaCost
 
 		return attacknum
-				
-
-
 
 	# Usage: x = c.findHighestDamg()
 	# Before: Nothing
@@ -234,7 +231,6 @@ class Card(object):
 
 		return possibleAtt
 
-	
 
 	# Usage: x = c.findClosestAttack(eneHP)
 	# Before: Nothing
@@ -273,7 +269,7 @@ class Card(object):
 
 	# Usage: b = c.needsStamina()
 	# Before: Nothing
-	# After: Returns True if pokemon needs to and can heal it self, else False 
+	# After: Returns True if pokemon needs more staminga, else False 
 	def needsStamina(self):
 		needs = self.stamina < needsStaminaMark*self.staminaMax
 		return needs
