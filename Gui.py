@@ -200,7 +200,7 @@ class GamePanel(wx.ScrolledWindow):
 						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
-#						self.GetParent().infoPanel.setPokeInfo(self.cards[self.dragid])
+						self.GetParent().infoPanel.setPokeInfo(self.cards[self.dragid])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
