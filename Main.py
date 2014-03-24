@@ -5,7 +5,7 @@ import random
 from Presets import *
 import time 
 from random import randint
-
+from constants import *
 
 class Main(object):	
 	players = None			#Player[]	a list keeping track og the 2 players
@@ -37,6 +37,14 @@ class Main(object):
 			self.chooseAttackAI(pYou, pEne)
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
+
+	def clefable(self, pYou, pEne):
+		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
+		for x in range(0,4):
+			if pYou.mainCard.attacks[x].name == "Metronome" and pYou.mainCard.attacks[x].staminaCost < pYou.mainCard.stamina:
+				calcAttack = x
+		return pYou.attack(calcAttack, pEne)
+
 
 	def chooseInvCardPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
@@ -90,11 +98,32 @@ class Main(object):
 						card = pYou.inv.remove(damage)
 						hasUsed = pYou.use(card)
 						offset += 1
-				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.isStunned():
+				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.health < 15:
 					print "I want to take less DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
 						card = pYou.inv.remove(damage)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].weakExploit > 0 and pEne.mainCard.weakness == pYou.mainCard.poketype:
+					print "I want to exploit your WEAKNESS!!"
+					weaknessExploit = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if weaknessExploit != -1:
+						card = pYou.inv.remove(weaknessExploit)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].hitBoost > 0 and pYou.mainCard.health > 60:
+					print "I want to hit BETTER!!"
+					hitBoost = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if hitBoost != -1:
+						card = pYou.inv.remove(hitBoost)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].critBoost > 0 and pYou.mainCard.health > 60:
+					print "I want to critically hit BETTER!!"
+					critBoost = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if critBoost != -1:
+						card = pYou.inv.remove(critBoost)
 						hasUsed = pYou.use(card)
 						offset += 1
 			hasUsed = True			
@@ -148,14 +177,16 @@ class Main(object):
 				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
 					hasAttacked = pYou.attack(stamina, pEne) 	
 				#AI decides if it wants to stun enemy
-				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and (randint(2,4) == 2) and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
+				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
 					hasAttacked = pYou.attack(stun, pEne)
+				elif pYou.mainCard.name == "Clefable" and len(pYou.mainCard.findPossibleAttacks()) > 0:
+					hasAttacked = self.clefable(pYou, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne)
 				else:
 					print str(AICard)+" is too busy playing this awesome new Pokemongame..."
 					print "He also lacks Stamina"
-					if len(pYou.inv.invCards) == 3:
+					if len(pYou.inv.invCards) == invCardsMax:
 						throwaway = pYou.inv.getIndexOf(pYou.inv.invCards[randint(0,2)].name)
 						if throwaway != -1:
 							card = pYou.inv.remove(throwaway)
@@ -211,7 +242,7 @@ class Main(object):
 	# AFter: p is true if it is the right time to draw inventory card, false otherwise
 	def drawInvQuest(self):
 		if self.turnCount > 1:
-			return (self.turnCount%5 == 0 or (self.turnCount - 1)%5 == 0)
+			return (self.turnCount%(2*turnsBetweenInvCards) == 0 or (self.turnCount - 1)%(2*turnsBetweenInvCards) == 0)
 		else:
 			return False	
 
