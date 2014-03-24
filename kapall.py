@@ -22,7 +22,7 @@ p1.invdeck = InvDeck()
 for i in xrange(0,10):
 	p1.deck.add(presets.getRandomCard())
 p1.mainCard = presets.getRandomCard()
-for i in xrange(0,50):
+for i in xrange(0,5000):
 	p1.invdeck.add(presets.getRandomInvCard())
 
 
@@ -35,7 +35,7 @@ p2.invdeck = InvDeck()
 for i in xrange(0,10):
 	p2.deck.add(presets.getRandomCard())
 p2.mainCard = presets.getRandomCard()
-for i in xrange(0,50):
+for i in xrange(0,5000):
 	p2.invdeck.add(presets.getRandomInvCard())
 
 
