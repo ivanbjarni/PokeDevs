@@ -2,7 +2,7 @@ from Attack import *
 import random
 from constants import *
 import copy
-
+from util import *
 
 
 class Card(object):
@@ -68,6 +68,9 @@ class Card(object):
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			return False
+		if(card.isDead()):
+			print "Your opponent's pokemon has fainted, you can't attack him now."
+			return False
 		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
 			return True
@@ -117,6 +120,10 @@ class Card(object):
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
 		card.health  -= damage
+
+		if(card.isDead() and isLogged):
+			pokemonCounterLog(self.name,"pokemonKillers.txt")
+			pokemonCounterLog(card.name,"pokemonVictims.txt")
 
 		return True
 

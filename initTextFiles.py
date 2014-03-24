@@ -10,3 +10,4 @@ def createPokemonCounterFile(name):
 
 createPokemonCounterFile("pokemonKillers.txt")
 createPokemonCounterFile("pokemonVictims.txt")
+createPokemonCounterFile("pokemonPlayed.txt")

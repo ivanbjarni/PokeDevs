@@ -1,4 +1,9 @@
 #---------------------------------------------------
+#				Other constants
+#---------------------------------------------------
+isLogged = True					#Tells you whethere you are writing log files to tell you about pokemons
+
+#---------------------------------------------------
 #	Constants that can be used to fine tune game
 #---------------------------------------------------
 resistanceMultiplier = 0.7		#how much % of damage a move does if the pokemon is resistant to that type of move

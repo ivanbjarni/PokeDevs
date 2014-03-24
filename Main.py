@@ -282,6 +282,7 @@ class Main(object):
 				#Tell player a pokemon is being swithced and switch pokemons
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
 				yourCard = newCard
+				pokemonCounterLog(str(newCard),"pokemonPlayed.txt")
 				pYou.mainCard = newCard
 
 
