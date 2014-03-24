@@ -16,7 +16,8 @@ needsStaminaMark = 0.3			#percentage of maxStamina to decide if pokemon needs mo
 stunSuccessRate = 0.1			#chance to make a successfull attack even though you are stunned
 defEachTurn = 0.5				#amount the defence multiplier is raised by at the end of each of your turns
 staminaEachRound = 2 			#amount of stamina regained each round
-
+AIChanceToStun = 0.35 			#likelyhood of ai using stun providing he has a pokemon with stun and you are not already stunned
+turnsBetweenInvCards = 3 		#turns between inventory cards; 3 means every 3rd turn, not every 4th turn
 
 #---------------------------------------------------
 #		Constants that are not to be changed
