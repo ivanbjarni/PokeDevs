@@ -149,6 +149,7 @@ class Card(object):
 	def applyEffects(self):
 		if self.stun > 0:
 			self.stun -= 1
+		self.stamina = min (self.stamina+staminaEachRound,self.staminaMax)
 		self.dmgMulti = 1
 		self.defMulti = min(1,self.defMulti+defEachTurn)
 

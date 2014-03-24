@@ -15,6 +15,7 @@ needsHealMark = 0.35			#percentage of maxHealth to decide if pokemon needs heali
 needsStaminaMark = 0.3			#percentage of maxStamina to decide if pokemon needs more stamina
 stunSuccessRate = 0.1			#chance to make a successfull attack even though you are stunned
 defEachTurn = 0.5				#amount the defence multiplier is raised by at the end of each of your turns
+staminaEachRound = 2 			#amount of stamina regained each round
 
 
 #---------------------------------------------------
