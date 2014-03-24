@@ -1131,11 +1131,12 @@ class infoPanel(wx.Panel):
 		self.Freeze()
 		self.name.SetLabel('-' + str(attack.name) + '-')
 		self.currentHP.SetLabel(' Damage: ' + str(attack.damage))
-		self.maxHP.SetLabel(' Stamina cost: ' + str(attack.staminaCost))
-		self.stamina.SetLabel(' Health cost: ' + str(attack.healthCost))
-		self.currentStamina.SetLabel(' Stun: ' + str(attack.stun))
-		self.maxStamina.SetLabel(' Attack type: ' + str(attack.poketype))
-		self.attack1.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel(' St. cost: ' + str(attack.staminaCost))
+		self.currentStamina.SetLabel(' HP cost: ' + str(attack.healthCost))
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel(' Stun: ' + str(attack.stun))
+		self.attack1.SetLabel(' Type: ' + str(attack.poketype).title())
 		self.attack2.SetLabel('')
 		self.attack3.SetLabel('')
 		self.attack4.SetLabel('')
@@ -1153,8 +1154,14 @@ class infoPanel(wx.Panel):
 	def setInventoryInfo(self, icard):
 		self.Freeze()
 		self.name.SetLabel('-' + str(icard.name) + '-')
-		self.currentHP.SetLabel(' Healing power: ' + str(icard.health))
-		self.maxHP.SetLabel(' Stamina boost: ' + str(icard.stamina))
+		if(icard.health == 0):
+			self.currentHP.SetLabel(' No HP boost')
+		else:
+			self.currentHP.SetLabel(' HP boost: ' + str(icard.health))
+		if(icard.stamina == 0):
+			self.maxHP.SetLabel(' No stamina boost ')
+		else:
+			self.maxHP.SetLabel(' Stamina boost: ' + str(icard.stamina))
 		if(icard.stun):
 			self.stamina.SetLabel(' Stun off')
 			#self.currentStamina.SetLabel('Stun off')
@@ -1169,6 +1176,7 @@ class infoPanel(wx.Panel):
 			else:
 				self.currentStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
 		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
 		self.attack1.SetLabel('')
 		self.attack2.SetLabel('')
 		self.attack3.SetLabel('')
