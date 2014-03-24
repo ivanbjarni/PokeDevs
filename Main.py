@@ -90,11 +90,32 @@ class Main(object):
 						card = pYou.inv.remove(damage)
 						hasUsed = pYou.use(card)
 						offset += 1
-				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.isStunned():
+				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.health < 15:
 					print "I want to take less DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
 						card = pYou.inv.remove(damage)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].weakExploit > 0 and pEne.mainCard.weakness == pYou.mainCard.poketype:
+					print "I want to exploit your WEAKNESS!!"
+					weaknessExploit = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if weaknessExploit != -1:
+						card = pYou.inv.remove(weaknessExploit)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].hitBoost > 0 and pYou.mainCard.health > 60:
+					print "I want to hit BETTER!!"
+					hitBoost = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if hitBoost != -1:
+						card = pYou.inv.remove(hitBoost)
+						hasUsed = pYou.use(card)
+						offset += 1
+				elif pYou.inv.invCards[i].critBoost > 0 and pYou.mainCard.health > 60:
+					print "I want to critically hit BETTER!!"
+					critBoost = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
+					if critBoost != -1:
+						card = pYou.inv.remove(critBoost)
 						hasUsed = pYou.use(card)
 						offset += 1
 			hasUsed = True			
