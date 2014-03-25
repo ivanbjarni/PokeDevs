@@ -282,7 +282,8 @@ class Main(object):
 				#Tell player a pokemon is being swithced and switch pokemons
 				print str(yourCard) + " come back, "+str(newCard)+" I choose you!"
 				yourCard = newCard
-				pokemonCounterLog(str(newCard),"pokemonPlayed.txt")
+				if isLogged:
+					pokemonCounterLog(str(newCard),"pokemonPlayed.txt")
 				pYou.mainCard = newCard
 
 
@@ -309,7 +310,7 @@ class Main(object):
 			if pYou.mainCard.isDead():
 				pEne.points += 1
 			#end game if you have enough points
-			if(pYou.points>=pointsToWin):
+			if(pYou.points>=pointsToWin or (isLogged and self.turnCount > loggedTurnsMax)):
 				break
 
 		if(self.players[0].points>self.players[1].points):

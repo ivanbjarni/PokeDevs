@@ -114,7 +114,7 @@ class Presets(object):
 		98	: Attack("QuickAttack", 12, 10, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 10, -20, 2, "normal"),	
 		105	: Attack("Recover", 0, 20, -30, 0, "normal"),	
-		106	: Attack("Harden", 0, 5, -25, 0, "normal"),	
+		106	: Attack("Harden", 0, 10, -18, 0, "normal"),	
 		107	: Attack("Minimize", 0, -15, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 0, "normal"),	
 		110 : Attack("Withdraw", 0, -18, -5, 0, "normal"),			
@@ -123,7 +123,7 @@ class Presets(object):
 		114 : Attack("Haze", 0, -18, -12, 0, "water"),			
 		116 : Attack("FocusEnergy", 0, -27, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 0, 0, 0, "normal"),	
-		119 : Attack("MirrorMove", 0, -5, -25, 0, "normal"),	
+		119 : Attack("MirrorMove", 0, -5, -18, 0, "normal"),	
 		120 : Attack("SelfDestruct", 80, 40, 65, 0, "ground"),	
 		122 : Attack("Lick", 10, 10, 0, 0, "psychic"),	
 		123 : Attack("Smog", 10, 27, 0, 1, "grass"),	
@@ -211,7 +211,7 @@ class Presets(object):
 		435 : Attack("Discharge", 0, 55, -55, 0, "electric"),				
 		436 : Attack("LavaPlume", 25, 35, -10, 0, "fire"),				
 		437 : Attack("LeafStorm", 35, 50, 0, 0, "grass"),				
-		441 : Attack("GunkShot", 20, 50, 0, 1, "grass"),				
+		441 : Attack("GunkShot", 20, 55, 0, 1, "grass"),				
 		443 : Attack("MagnetBomb", 50, 20, 35, 2, "electric"),				
 		445 : Attack("Captivate", 30, 40, 0, 0, "normal"),				
 		450 : Attack("BugBite", 15, 7, 0, 0, "grass"),				
@@ -241,7 +241,7 @@ class Presets(object):
 		580	: Attack("GrassyTerrain", 0, 40, -30, 0, "grass"),
 		583	: Attack("PlayRough", 27, 45, 0, 0, "normal"),
 		585	: Attack("Moonblast", 25, 45, 0, 0, "normal"),
-		678	: Attack("ElectroBall", 18, 20, 0, 0, "electric")
+		678	: Attack("ElectroBall", 18, 20, -5, 0, "electric")
 		
 
 		}
@@ -258,10 +258,10 @@ class Presets(object):
 		8	: Card("Wartortle", 59, 100, [self.ga("Tackle"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "grass", "fire"),
 		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("WaterPulse"), self.ga("WaterGun"), self.ga("HydroPump")], "water", "grass", "fire"),
 		10	: Card("Caterpie", 45, 100, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		11	: Card("Metapod", 50, 12000, [self.ga("Tackle"), self.ga("Harden"), self.ga("Harden"), self.ga("Harden")], "grass", "ground", "grass"),
+		11	: Card("Metapod", 50, 12000, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "ground", "grass"),
 		12	: Card("Butterfree", 60, 110, [self.ga("Gust"), self.ga("Supersonic"), self.ga("SilverWind"), self.ga("BugBuzz")], "grass", "fire", "grass"),
 		13	: Card("Weedle", 40, 60, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		14	: Card("Kakuna", 45, 80, [self.ga("Tackle"), self.ga("Harden"), self.ga("Harden"), self.ga("Harden")], "grass", "fire", "grass"),
+		14	: Card("Kakuna", 45, 80, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "fire", "grass"),
 		15	: Card("Beedrill", 65, 110, [self.ga("FocusEnergy"), self.ga("Twineedle"), self.ga("Rage"), self.ga("FellStinger")], "grass", "fire", "grass"),
 		16	: Card("Pidgey", 40, 100, [self.ga("Tackle"), self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash")], "normal", "electric", "grass"),
 		17	: Card("Pidgeotto", 63, 105, [self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash"), self.ga("Hurricane")], "normal", "electric", "grass"),
