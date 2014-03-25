@@ -233,7 +233,7 @@ class Presets(object):
 		517	: Attack("Inferno", 25, 40, 0, 0, "fire"),				
 		531	: Attack("HeartStamp", 25, 40, 0, 0, "psychic"),				
 		540	: Attack("Psystrike", 15, 30, 0, 1, "psychic"),				
-		542	: Attack("Hurricane", 35, 50, 0, 1, "normal"),				
+		542	: Attack("Hurricane", 25, 50, 0, 1, "normal"),				
 		562	: Attack("Belch", 35, 50, 0, 1, "grass"),				
 		565	: Attack("FellStinger", 30, 30, 10, 0, "grass"),				
 		572	: Attack("PetalBlizzard", 35, 50, 0, 0, "grass"),
