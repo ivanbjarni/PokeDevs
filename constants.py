@@ -1,8 +1,8 @@
 #---------------------------------------------------
 #				Other constants
 #---------------------------------------------------
-isLogged = True				#Tells you whethere you are writing log files to tell you about pokemons
-loggedTurnsMax = 1000			#if you are logging the game it breaks after this many turns
+isLogged = False				#Tells you whethere you are writing log files to tell you about pokemons
+loggedTurnsMax = 2000			#if you are logging the game it breaks after this many turns
 
 #---------------------------------------------------
 #	Constants that can be used to fine tune game
