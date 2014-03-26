@@ -26,6 +26,7 @@ class AnimEvent(wx.PyEvent):
 		self.moveY = moveY
 		self.done = done
 
+# A worker thread that handles long running task so the GUI doesn't stop functioning
 class Worker(threading.Thread):
 	def __init__(self, wxObject, id, i, j, animation):
 		threading.Thread.__init__(self)
@@ -707,19 +708,32 @@ class GamePanel(wx.ScrolledWindow):
 			self.cardType[bid] = 'InvBackside'
 			self.backsidesInv[bid] = id
 
-#		id = wx.NewId()
-#		dc.SetId(id)
-#		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-#		dc.SetFont(font)
-#		dc.SetTextForeground('#435353')
-#		text = 'You win!'
-#		dc.DrawText(text, 200, 200)
-#		w, h = self.GetFullTextExtent(text)[0:2]
-#		r = wx.Rect(200, 200, w, h)
-#		r.Inflate(2,2)
-#		dc.SetIdBounds(id, r)
-#		self.winId = id
-#		self.objids.append(id)
+		id = wx.NewId()
+		dc.SetId(id)
+		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		dc.SetFont(font)
+		dc.SetTextForeground('#FF00FF')
+		text = 'YOU WIN!'
+		dc.DrawText(text, -200, -200)
+		r = wx.Rect(-200, -200, 1000, 200)
+		r.Inflate(2,2)
+		dc.SetIdBounds(id, r)
+		self.winId = id
+		self.movable[id] = False
+		self.objids.append(id)
+
+		id = wx.NewId()
+		dc.SetId(id)
+		dc.SetFont(font)
+		dc.SetTextForeground('#0000FF')
+		text = 'YOU LOOSE!'
+		dc.DrawText(text, -200, -200)
+		r = wx.Rect(-200, -200, 1000, 200)
+		r.Inflate(2,2)
+		dc.SetIdBounds(id, r)
+		self.looseId = id
+		self.movable[id] = False
+		self.objids.append(id)
 
 		dc.EndDrawing()
 
@@ -1225,11 +1239,11 @@ class MainFrame(wx.Frame):
 				self.gamePanel.updatePlayerHp()
 				self.gamePanel.updatePlayerStamina()
 			self.game.players[0].mainCard.applyEffects()
-			self.checkWin()
 		else:
 			self.game.textLog.append('You passed your turn\n')
 		self.updateStatus()
-		worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
+		if not self.checkWin():
+			worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
 	def CPUAction(self):
 		self.game.turnCount += 1
@@ -1254,10 +1268,17 @@ class MainFrame(wx.Frame):
 
 	def checkWin(self):
 		if self.game.players[0].points >= pointsToWin:
-			print 'You Win!'
+			self.gamePanel.isMyTurn = False
+			self.gamePanel.moveItem(self.gamePanel.winId, 400, 400)
+			self.gamePanel.Update()
+			self.gamePanel.Update()
+			return True
 		elif self.game.players[1].points >= pointsToWin:
-			print 'You loose!'
-
+			self.gamePanel.isMyTurn = False
+			self.gamePanel.moveItem(self.gamePanel.looseId, 400, 400)
+			self.gamePanel.Update()
+			return True
+		return False
 	def onQuit(self, event):
 		self.Close()
 
