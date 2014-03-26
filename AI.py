@@ -107,7 +107,7 @@ def chooseAttackAI(self, pYou, pEne):
 				#AI decides if it wants to stun enemy
 				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
 					hasAttacked = pYou.attack(stun, pEne, self.textLog)
-				elif pYou.mainCard.name == "Clefable" and len(pYou.mainCard.findPossibleAttacks()) > 0:
+				elif (pYou.mainCard.name == "Clefable" or pYou.mainCard.name == "Clefairy") and len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = self.clefable(pYou, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = pYou.attack(calcAttack, pEne, self.textLog)

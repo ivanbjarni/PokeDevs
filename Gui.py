@@ -109,7 +109,6 @@ class GamePanel(wx.ScrolledWindow):
 		self.hasDrawnPoke = False 	# Determines wheather you have drawn a pokemon this round
 		self.canDrawInv = False 	# Determines wheather you can drag an inventory card
 		self.hasDrawnInv = False 	# Determines wheather you have drawn an inventory card this round
-		self.canUseInv = True 		# Determines wheather you can use an inventory card
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.countCPUpokemon = 0 	# Count how many pokemon CPU has drawn
@@ -122,6 +121,8 @@ class GamePanel(wx.ScrolledWindow):
 		self.playerStaminaID = -1 	# ID for players stamina bar
 		self.CPUHealthID = -1 		# ID for CPU health bar
 		self.CPUStaminaID = -1 		# ID for CPU stamina bar
+		self.winId = -1 			# ID for text that displays when you win
+		self.loosId = -1 			# ID for text that displays when you loose
 		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			# Dict of original position of bitmaps by id
 		self.cards = {}				# Dict of cards by id
@@ -313,26 +314,22 @@ class GamePanel(wx.ScrolledWindow):
 							self.GetParent().game.textLog.append('You can only draw one inventory card each 3 turns\n')
 
 				elif self.cardType[self.dragid] == 'Inventory':
-					if self.inPlayerChosenArea(dx, dy) and self.canUseInv:
+					if self.inPlayerChosenArea(dx, dy):
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
 						self.GetParent().game.players[0].use(self.cards[self.dragid], self.GetParent().game.textLog)
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
-						self.canUseInv = False
 					elif self.inCPUChosenArea(dx, dy):
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
 						self.GetParent().game.players[1].use(self.cards[self.dragid], self.GetParent().game.textLog)
 						self.updateCPUHp()
 						self.updateCPUStamina()
-						self.canUseInv = False
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
-						if not self.canUseInv:
-							self.GetParent().game.textLog.append('You can only use one inventory item per turn\n')
 				self.dragid = -1
 				self.GetParent().logPanel.updateLog()
 
@@ -710,6 +707,20 @@ class GamePanel(wx.ScrolledWindow):
 			self.cardType[bid] = 'InvBackside'
 			self.backsidesInv[bid] = id
 
+#		id = wx.NewId()
+#		dc.SetId(id)
+#		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+#		dc.SetFont(font)
+#		dc.SetTextForeground('#435353')
+#		text = 'You win!'
+#		dc.DrawText(text, 200, 200)
+#		w, h = self.GetFullTextExtent(text)[0:2]
+#		r = wx.Rect(200, 200, w, h)
+#		r.Inflate(2,2)
+#		dc.SetIdBounds(id, r)
+#		self.winId = id
+#		self.objids.append(id)
+
 		dc.EndDrawing()
 
 # A panel that holds the names and HP of currently chosen pokemon
@@ -810,7 +821,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton1.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0))
+		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0, False))
 		self.attackButton1.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse1)
 
 		self.attackButton2 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -821,7 +832,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton2.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton2, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1))
+		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1, False))
 		self.attackButton2.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse2)
 
 		self.attackButton3 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -832,7 +843,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton3.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton3.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton3, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2))
+		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2, False))
 		self.attackButton3.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse3)
 
 		self.attackButton4 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -843,16 +854,27 @@ class AttackPanel(wx.Panel):
 		self.attackButton4.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton4.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton4, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3))
+		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3, False))
 		self.attackButton4.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
+
+		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
+		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.passButton.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.passButton.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.passButton.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.passButton.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.passButton.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.passButton, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.passButton.Bind(wx.EVT_BUTTON, lambda event: self.attack(-1, True))
+		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
 
-	def attack(self, num):
+	def attack(self, num, passTurn):
 		self.disableAll()
 		self.GetParent().gamePanel.isMyTurn = False
-		self.GetParent().playerAction(num)
+		self.GetParent().playerAction(num, passTurn)
 
 	def onMouse1(self, event):
 		if event.Moving():
@@ -899,10 +921,12 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.Disable()
 		self.attackButton3.Disable()
 		self.attackButton4.Disable()
+		self.passButton.Disable()
 		self.attackButton1.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton2.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton3.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton4.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.passButton.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.Thaw()
 
 	# Usage: c.enableAll()
@@ -913,10 +937,12 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.Enable()
 		self.attackButton3.Enable()
 		self.attackButton4.Enable()
+		self.passButton.Enable()
 		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.Thaw()
 
 # Displays info
@@ -1114,7 +1140,7 @@ class LogPanel(scrolled.ScrolledPanel):
 			text = wx.StaticText(self, label=self.GetParent().game.textLog[i], style=wx.EXPAND)
 			text.SetFont(self.font)
 			text.SetForegroundColour(self.fc)
-			text.Wrap(self.GetSize().width-15)
+			text.Wrap(self.GetSize().width-18)
 			self.vbox.Add(text, flag=wx.EXPAND, border=10)
 			self.numMsg += 1
 		self.SetSizer(self.vbox)
@@ -1186,20 +1212,22 @@ class MainFrame(wx.Frame):
 		turn = 'Turn: ' + str(self.game.turn)
 		self.statusBar.SetStatusText(score + '   |   ' + player1 + '   |   ' + player2 + '   |   ' + turn + '   |   ' + inv)
 
-	def playerAction(self, attackNum):
+	def playerAction(self, attackNum, passTurn):
 	#	self.game.turn += 1
 		self.game.turnCount += 1
-		self.gamePanel.canUseInv = True
 		self.gamePanel.hasDrawnInv = False
 		self.gamePanel.hasDrawnPoke = False
-		if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
-			self.gamePanel.animation1(True)
-			self.gamePanel.updateCPUHp()
-			self.gamePanel.updateCPUStamina()
-			self.gamePanel.updatePlayerHp()
-			self.gamePanel.updatePlayerStamina()
-		self.game.players[0].mainCard.applyEffects()
-		self.checkWin()
+		if not passTurn:
+			if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
+				self.gamePanel.animation1(True)
+				self.gamePanel.updateCPUHp()
+				self.gamePanel.updateCPUStamina()
+				self.gamePanel.updatePlayerHp()
+				self.gamePanel.updatePlayerStamina()
+			self.game.players[0].mainCard.applyEffects()
+			self.checkWin()
+		else:
+			self.game.textLog.append('You passed your turn\n')
 		self.updateStatus()
 		worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
