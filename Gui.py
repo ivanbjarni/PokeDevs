@@ -1058,6 +1058,21 @@ class infoPanel(wx.Panel):
 
 		self.SetSizer(self.vbox1)
 
+		self.name.SetLabel('')
+		self.currentHP.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+
 	# Usage: c.setPokeInfo(card)
 	# Pre  : card is Card
 	# Post : the labels on the infoPanel has been updated to the 
