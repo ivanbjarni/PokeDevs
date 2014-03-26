@@ -452,3 +452,10 @@ class Presets(object):
 
 	def getRandomInvCard(self):
 		return copy.deepcopy(random.choice(self.invCards.values()))
+
+	def getTypeOfName(self, string):
+		for key, val in self.cards.iteritems():
+			if val.name == string:
+				return val.type
+		print "card not found: getCardByName"
+		return -1
