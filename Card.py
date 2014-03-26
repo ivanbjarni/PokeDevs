@@ -53,7 +53,7 @@ class Card(object):
 	# Before: card is Card and atk is Attack
 	# After: b is true if attack succeeds, false otherwise.
 	#		 Also prints out on console what happens.
-	def attack(self, atk, card):
+	def attack(self, atk, card, textLog):
 		if(atk.name == "Metronome"):
 			atk.staminaCost = round(random.random()*metronomeAmount+metronomeBase)
 			atk.damage 		= round(random.random()*metronomeAmount+metronomeBase)
@@ -61,16 +61,20 @@ class Card(object):
 		if(atk.name == "Transform"):
 			scard = self.transformTo(card)
 			print "ditto transformed to "+scard
+			textLog.append("ditto transformed to "+scard+"\n")
 			return True
 		if(self.stamina <= atk.staminaCost):
 			print "Not Enough Stamina "
+			textLog.append("Not Enough Stamina\n")
 			return False
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
+			textLog.append("Uh-oh you are trying to attack with a dead pokemon\n")
 			return False
 			return False
 		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
+			textLog.append(str(self)+" tried to use "+str(atk)+" but he is stunned.\n")
 			return True
 
 		oldhp = self.health
@@ -117,6 +121,8 @@ class Card(object):
 
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
+		textLog.append(str(self)+" used "+str(atk)+message)
+		textLog.append("Damage done: "+str(damage)+"\n")
 		card.health  -= damage
 
 		if(card.isDead() and isLogged):
@@ -130,33 +136,41 @@ class Card(object):
 	# Before: card is inventorycard and user is pokemoncard
 	# After: b is true if useage succeeds, false otherwise.
 	#		 Also prints out on console what happens.
-	def use(self, card):
+	def use(self, card, textLog):
 		if card.stamina > 0:
 			self.stamina += card.stamina
 			print str(self)+ "'s stamina increased by "+str(card.stamina)
+			textLog.append(str(self)+ "'s stamina increased by "+str(card.stamina)+"\n")
 		if card.health > 0:
 			self.health  += card.health
 			print str(self)+"'s health increased by "+str(card.health)
+			textLog.append(str(self)+ "'s health increased by "+str(card.health)+"\n")
 		self.health   = min(self.health , self.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 		if card.stun:
 			self.stun = 0
 			print str(self)+" is not stunned anymore"
+			textLog.append(str(self)+" is not stunned anymore\n")
 		if card.damageBoost > 1:
 			self.setDamageMultiplier(card.damageBoost)
 			print "Damage boost!"
+			textLog.append(str(self)+" got  a damage boost!\n")
 		if card.defenseBoost < 1:
 			self.setDefenseMultiplier(card.defenseBoost)
 			print "Defense boost!"
+			textLog.append(str(self)+" got a defense boost!\n")
 		if card.hitBoost > 0:
 			self.hitDiff += card.hitBoost
 			print "Hit Boost"
+			textLog.append(str(self)+" got a hit boost!\n")
 		if card.critBoost > 0:
 			self.critDiff += card.critBoost
 			print "Crit Boost"
+			textLog.append(str(self)+" got a crit boost!\n")
 		if card.weakExploit != 0:
 			self.weakExploit = card.weakExploit
 			print "Super effective moves boosted"
+			textLog.append(str(self)+" boosted super effective moves!\n")
 
 		return True
 

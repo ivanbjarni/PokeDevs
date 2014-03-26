@@ -36,4 +36,4 @@ turnsBetweenInvCards = 3 		#turns between inventory cards; 3 means every 3rd tur
 #		Constants that are not to be changed
 #---------------------------------------------------
 invCardsMax	= 3					#Maximum amount of inventory cards a player can have
-cardsMax = 6					#Maximum amount of cards a player can hold	
+cardsMax = 6					#Maximum amount of cards a player can hold
