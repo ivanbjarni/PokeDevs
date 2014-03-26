@@ -75,7 +75,7 @@ class Presets(object):
 		44	: Attack("Bite", 15, 10, 0, 0, "normal"),				
 		45	: Attack("Growl", 5, 3, 0, 0, "normal"),				
 		46	: Attack("Roar", 7, 3, 0, 0, "normal"),				
-		47	: Attack("Sing", 0, 7, 0, 2, "normal"),				
+		47	: Attack("Sing", 0, 25, 0, 2, "normal"),				
 		48	: Attack("Supersonic", 5, 35, 0, 2, "normal"),				
 		51	: Attack("Acid", 10, 37, 0, 2, "grass"),				
 		52	: Attack("Ember", 10, 5, 0, 0, "fire"),			
@@ -114,7 +114,7 @@ class Presets(object):
 		98	: Attack("QuickAttack", 12, 10, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 10, -20, 2, "normal"),	
 		105	: Attack("Recover", 0, 20, -30, 0, "normal"),	
-		106	: Attack("Harden", 0, 10, -18, 0, "normal"),	
+		106	: Attack("Harden", 0, 20, -18, 0, "normal"),	
 		107	: Attack("Minimize", 0, 20, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 0, "normal"),	
 		110 : Attack("Withdraw", 0, -18, 10, 0, "normal"),			
@@ -258,10 +258,10 @@ class Presets(object):
 		8	: Card("Wartortle", 59, 100, [self.ga("Tackle"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "grass", "fire"),
 		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("WaterPulse"), self.ga("WaterGun"), self.ga("HydroPump")], "water", "grass", "fire"),
 		10	: Card("Caterpie", 45, 100, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		11	: Card("Metapod", 50, 12000, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "ground", "grass"),
+		11	: Card("Metapod", 50, 85, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "ground", "grass"),
 		12	: Card("Butterfree", 60, 110, [self.ga("Gust"), self.ga("Supersonic"), self.ga("SilverWind"), self.ga("BugBuzz")], "grass", "fire", "grass"),
 		13	: Card("Weedle", 40, 60, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		14	: Card("Kakuna", 45, 80, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "fire", "grass"),
+		14	: Card("Kakuna", 45, 85, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "fire", "grass"),
 		15	: Card("Beedrill", 65, 110, [self.ga("FocusEnergy"), self.ga("Twineedle"), self.ga("Rage"), self.ga("FellStinger")], "grass", "fire", "grass"),
 		16	: Card("Pidgey", 40, 100, [self.ga("Tackle"), self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash")], "normal", "electric", "grass"),
 		17	: Card("Pidgeotto", 63, 105, [self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash"), self.ga("Hurricane")], "normal", "electric", "grass"),
@@ -452,3 +452,10 @@ class Presets(object):
 
 	def getRandomInvCard(self):
 		return copy.deepcopy(random.choice(self.invCards.values()))
+
+	def getTypeOfName(self, string):
+		for key, val in self.cards.iteritems():
+			if val.name == string:
+				return val.type
+		print "card not found: getCardByName"
+		return -1
