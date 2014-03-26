@@ -106,6 +106,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.SetDoubleBuffered(True)
 
 		self.isMyTurn = True 		# Determines wheather you can move cards around
+		self.hasDrawnPoke = False 	# Determines wheather you have drawn a pokemon this round
 		self.canDrawInv = False 	# Determines wheather you can drag an inventory card
 		self.hasDrawnInv = False 	# Determines wheather you have drawn an inventory card this round
 		self.canUseInv = True 		# Determines wheather you can use an inventory card
@@ -121,7 +122,6 @@ class GamePanel(wx.ScrolledWindow):
 		self.playerStaminaID = -1 	# ID for players stamina bar
 		self.CPUHealthID = -1 		# ID for CPU health bar
 		self.CPUStaminaID = -1 		# ID for CPU stamina bar
-		self.what = -1 				# weird
 		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			# Dict of original position of bitmaps by id
 		self.cards = {}				# Dict of cards by id
@@ -276,7 +276,7 @@ class GamePanel(wx.ScrolledWindow):
 
 				elif self.cardType[self.dragid] == 'Backside':
 					slot = self.findEmptySlot(self.slot)
-					if self.inPlayerHandArea(dx, dy) and slot != -1:
+					if self.inPlayerHandArea(dx, dy) and slot != -1 and not self.hasDrawnPoke:
 						id = self.backsides[self.dragid]
 						x = 213 + slot * 127
 						y = 584
@@ -285,10 +285,13 @@ class GamePanel(wx.ScrolledWindow):
 						self.slot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
 						self.GetParent().game.draw(self.GetParent().game.players[0])
+						self.hasDrawnPoke = True
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
+						if self.hasDrawnPoke:
+							self.GetParent().game.textLog.append('You can only draw one pokemon each round\n')
 
 				elif self.cardType[self.dragid] == 'InvBackside':
 					slot = self.findEmptyInvSlot()
@@ -478,6 +481,7 @@ class GamePanel(wx.ScrolledWindow):
 		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
 		if hp == 0:
 			self.GetParent().game.players[1].points += 1
+			self.GetParent().game.textLog.append(self.cards[self.playerChosenID].name + ' fainted\n')
 			self.moveItemToGraveyard(self.playerChosenID, 812, 185)
 			self.slot[self.playerChosenID] = -1
 
@@ -488,6 +492,7 @@ class GamePanel(wx.ScrolledWindow):
 		hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
 		if hp == 0:
 			self.GetParent().game.players[0].points += 1
+			self.GetParent().game.textLog.append(self.cards[self.CPUChosenID].name + ' fainted\n')
 			self.moveItemToGraveyard(self.CPUChosenID, 387, 185)
 			self.slotCPU[self.CPUChosenID] = -1
 
@@ -1103,7 +1108,8 @@ class infoPanel(wx.Panel):
 
 class LogPanel(scrolled.ScrolledPanel):
 	def __init__(self, parent):
-		wx.ScrolledWindow.__init__(self, parent, size=(220, 300), style=wx.SIMPLE_BORDER)
+		wx.ScrolledWindow.__init__(self, parent, size=(220, 300), style=wx.RAISED_BORDER)
+		self.SetBackgroundColour('#151A1A')
 		self.SetDoubleBuffered(True)
 		self.SetAutoLayout(1) 
 		self.SetupScrolling(scroll_x=False, scroll_y=True, scrollToTop=False)
@@ -1130,9 +1136,6 @@ class LogPanel(scrolled.ScrolledPanel):
 		self.Layout()
 		self.FitInside()
 		self.Scroll(-1, self.GetVirtualSize()[1])
-#		print self.GetClientSize()[1]
-#		print self.GetVirtualSize()
-		#print wx.DC.DeviceToLogicalY(self.GetVirtualSize())
 		self.Thaw()
 
 class MainFrame(wx.Frame):
@@ -1195,6 +1198,7 @@ class MainFrame(wx.Frame):
 		self.game.turnCount += 1
 		self.gamePanel.canUseInv = True
 		self.gamePanel.hasDrawnInv = False
+		self.gamePanel.hasDrawnPoke = False
 		if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
 			self.gamePanel.animation1(True)
 			self.gamePanel.updateCPUHp()
