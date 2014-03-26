@@ -1067,28 +1067,13 @@ class infoPanel(wx.Panel):
 	#        info on icard
 	def setInventoryInfo(self, icard):
 		self.Freeze()
-		self.name.SetLabel('-' + str(icard.name) + '-')
-		if(icard.health == 0):
-			self.currentHP.SetLabel(' No HP boost')
-		else:
-			self.currentHP.SetLabel(' HP boost: ' + str(icard.health))
-		if(icard.stamina == 0):
-			self.maxHP.SetLabel(' No stamina boost ')
-		else:
-			self.maxHP.SetLabel(' Stamina boost: ' + str(icard.stamina))
-		if(icard.stun):
-			self.stamina.SetLabel(' Stun off')
-			#self.currentStamina.SetLabel('Stun off')
-			if(icard.damageBoost != 0):
-				self.currentStamina.SetLabel(' Damage boost: ' + str(icard.damageBoost))
-				#self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
-		else:
-			if(icard.damageBoost == 0):
-				self.stamina.SetLabel('')
-				self.currentStamina.SetLabel('')
-				
-			else:
-				self.currentStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		y = icard.getName()
+		x = icard.getInfo()
+		self.name.SetLabel('-' + y + '-')
+		self.currentHP.SetLabel(x)
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
 		self.maxStamina.SetLabel('')
 		self.attacks.SetLabel('')
 		self.attack1.SetLabel('')
