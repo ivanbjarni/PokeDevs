@@ -26,6 +26,7 @@ class AnimEvent(wx.PyEvent):
 		self.moveY = moveY
 		self.done = done
 
+# A worker thread that handles long running task so the GUI doesn't stop functioning
 class Worker(threading.Thread):
 	def __init__(self, wxObject, id, i, j, animation):
 		threading.Thread.__init__(self)
