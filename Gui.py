@@ -1236,11 +1236,13 @@ class MainFrame(wx.Frame):
 		else:
 			canInv = 'No'
 		score = 'Score: Player ' + str(self.game.players[0].points) + ' - ' + str(self.game.players[1].points) + ' CPU'
-		player1 = self.game.players[0].mainCard.name + ': hp: ' + str(self.game.players[0].mainCard.health) + ' st: ' + str(self.game.players[0].mainCard.stamina)
-		player2 = self.game.players[1].mainCard.name + ': hp: ' + str(self.game.players[1].mainCard.health) + ' st: ' + str(self.game.players[1].mainCard.stamina)
+		player1 = self.game.players[0].mainCard
+		player2 = self.game.players[1].mainCard
+		player1str = player1.name + ': hp: ' + str(player1.health) + ' st: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
+		player2str = player2.name + ': hp: ' + str(player2.health) + ' st: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
 		inv = 'Can draw inventory: ' + canInv
 		turn = 'Turn: ' + str(self.game.turn)
-		self.statusBar.SetStatusText(score + '   |   ' + player1 + '   |   ' + player2 + '   |   ' + turn + '   |   ' + inv)
+		self.statusBar.SetStatusText(score + '   |   ' + player1str + '   |   ' + player2str + '   |   ' + turn + '   |   ' + inv)
 
 	def playerAction(self, attackNum, passTurn):
 	#	self.game.turn += 1
@@ -1252,11 +1254,11 @@ class MainFrame(wx.Frame):
 				self.gamePanel.animation1(True)
 				self.gamePanel.updateCPUHp()
 				self.gamePanel.updateCPUStamina()
-				self.gamePanel.updatePlayerHp()
-				self.gamePanel.updatePlayerStamina()
-			self.game.players[0].mainCard.applyEffects()
 		else:
 			self.game.textLog.append('You passed your turn\n')
+		self.game.players[0].mainCard.applyEffects()
+		self.gamePanel.updatePlayerHp()
+		self.gamePanel.updatePlayerStamina()
 		self.updateStatus()
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
@@ -1287,11 +1289,13 @@ class MainFrame(wx.Frame):
 			self.gamePanel.isMyTurn = False
 			self.gamePanel.moveItem(self.gamePanel.winId, 400, 400)
 			self.gamePanel.Update()
+			self.updateStatus()
 			return True
 		elif self.game.players[1].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
 			self.gamePanel.moveItem(self.gamePanel.looseId, 400, 400)
 			self.gamePanel.Update()
+			self.updateStatus()
 			return True
 		return False
 	def onQuit(self, event):
