@@ -84,6 +84,7 @@ class Card(object):
 		self.health   = min(self.health , self.healthMax)
 		card.health   = min(card.health , card.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
+		stun = atk.stun
 
 		message = ""
 		
@@ -108,15 +109,16 @@ class Card(object):
 				damage = 0
 			else:
 				message = ", but it failed!"
-			#make heal and stamina recovery fail as well:
+			#make heal and stamina recovery fail as well as stun and dmg:
 			self.stamina= min(self.stamina,oldsta)
 			self.health = min(self.health ,oldhp)
+			stun = 0;
 		
 		realStunChance = max(stunChance - (card.turnsStunned/turnsToMinStun)*(stunChance-stunChanceMin),stunChanceMin)
-		if(atk.stun!=0 and random.random() < realStunChance):
+		if(stun!=0 and random.random() < realStunChance):
 			card.setStun(atk.stun)
-			message += "(Stun applied for "+str(atk.stun)+" turns)"
-		elif atk.stun!=0:
+			message += "(Stun applied for "+str(stun)+" turns)"
+		elif stun!=0:
 			message += "(Stun not applied.)"
 
 		print str(self)+" used "+str(atk)+message
