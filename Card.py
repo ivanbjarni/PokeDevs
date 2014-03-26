@@ -270,7 +270,7 @@ class Card(object):
 	def findPossibleAttacks(self):
 		possibleAtt = []
 		for x in range(0,4):
-			if self.attacks[x].staminaCost < self.stamina:
+			if self.attacks[x].staminaCost <= self.stamina:
 				possibleAtt.append(x)
 
 		return possibleAtt
