@@ -1263,7 +1263,6 @@ class MainFrame(wx.Frame):
 			self.gamePanel.isMyTurn = False
 			self.gamePanel.moveItem(self.gamePanel.winId, 400, 400)
 			self.gamePanel.Update()
-			self.gamePanel.Update()
 			return True
 		elif self.game.players[1].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
