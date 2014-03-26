@@ -8,6 +8,7 @@ import threading
 import wx.lib.agw.gradientbutton as GB
 import wx.lib.scrolledpanel as scrolled
 import random
+from AI import *
 from constants import *
 
 # Define notification events for threads
@@ -1058,6 +1059,21 @@ class infoPanel(wx.Panel):
 
 		self.SetSizer(self.vbox1)
 
+		self.name.SetLabel('')
+		self.currentHP.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+
 	# Usage: c.setPokeInfo(card)
 	# Pre  : card is Card
 	# Post : the labels on the infoPanel has been updated to the 
@@ -1183,6 +1199,11 @@ class MainFrame(wx.Frame):
 
 		self.fileMenu = wx.Menu()
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+#		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
+#		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
+		
+
+
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
 
@@ -1203,6 +1224,9 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
+#	def OnHelp(self, event):
+#		helpw = HelpFrame()
+#		helpw.Show()
 	def updateStatus(self):
 		self.logPanel.updateLog()
 		drawInv = self.game.drawInvQuest()
@@ -1212,11 +1236,13 @@ class MainFrame(wx.Frame):
 		else:
 			canInv = 'No'
 		score = 'Score: Player ' + str(self.game.players[0].points) + ' - ' + str(self.game.players[1].points) + ' CPU'
-		player1 = self.game.players[0].mainCard.name + ': hp: ' + str(self.game.players[0].mainCard.health) + ' st: ' + str(self.game.players[0].mainCard.stamina)
-		player2 = self.game.players[1].mainCard.name + ': hp: ' + str(self.game.players[1].mainCard.health) + ' st: ' + str(self.game.players[1].mainCard.stamina)
+		player1 = self.game.players[0].mainCard
+		player2 = self.game.players[1].mainCard
+		player1str = player1.name + ': hp: ' + str(player1.health) + ' st: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
+		player2str = player2.name + ': hp: ' + str(player2.health) + ' st: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
 		inv = 'Can draw inventory: ' + canInv
 		turn = 'Turn: ' + str(self.game.turn)
-		self.statusBar.SetStatusText(score + '   |   ' + player1 + '   |   ' + player2 + '   |   ' + turn + '   |   ' + inv)
+		self.statusBar.SetStatusText(score + '   |   ' + player1str + '   |   ' + player2str + '   |   ' + turn + '   |   ' + inv)
 
 	def playerAction(self, attackNum, passTurn):
 	#	self.game.turn += 1
@@ -1228,11 +1254,11 @@ class MainFrame(wx.Frame):
 				self.gamePanel.animation1(True)
 				self.gamePanel.updateCPUHp()
 				self.gamePanel.updateCPUStamina()
-				self.gamePanel.updatePlayerHp()
-				self.gamePanel.updatePlayerStamina()
-			self.game.players[0].mainCard.applyEffects()
 		else:
 			self.game.textLog.append('You passed your turn\n')
+		self.game.players[0].mainCard.applyEffects()
+		self.gamePanel.updatePlayerHp()
+		self.gamePanel.updatePlayerStamina()
 		self.updateStatus()
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
@@ -1255,20 +1281,32 @@ class MainFrame(wx.Frame):
 		self.game.players[1].mainCard.applyEffects()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()
-		self.checkWin()
-		worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
+		if not self.checkWin():
+			worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
 
 	def checkWin(self):
 		if self.game.players[0].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
 			self.gamePanel.moveItem(self.gamePanel.winId, 400, 400)
 			self.gamePanel.Update()
+			self.updateStatus()
 			return True
 		elif self.game.players[1].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
 			self.gamePanel.moveItem(self.gamePanel.looseId, 400, 400)
 			self.gamePanel.Update()
+			self.updateStatus()
 			return True
 		return False
 	def onQuit(self, event):
 		self.Close()
+
+#class HelpFrame(wx.Frame):
+#	def __init__(self):
+#		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
+#		self.SetBackgroundColour('#435353')		
+		#self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		#self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
+		#font = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		#self.help.SetFont(font)
+		
