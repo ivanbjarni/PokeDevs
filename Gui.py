@@ -6,6 +6,7 @@ import os
 import time
 import threading
 import wx.lib.agw.gradientbutton as GB
+import wx.lib.scrolledpanel as scrolled
 import random
 from constants import *
 
@@ -105,6 +106,9 @@ class GamePanel(wx.ScrolledWindow):
 		self.SetDoubleBuffered(True)
 
 		self.isMyTurn = True 		# Determines wheather you can move cards around
+		self.hasDrawnPoke = False 	# Determines wheather you have drawn a pokemon this round
+		self.canDrawInv = False 	# Determines wheather you can drag an inventory card
+		self.hasDrawnInv = False 	# Determines wheather you have drawn an inventory card this round
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.countCPUpokemon = 0 	# Count how many pokemon CPU has drawn
@@ -117,7 +121,8 @@ class GamePanel(wx.ScrolledWindow):
 		self.playerStaminaID = -1 	# ID for players stamina bar
 		self.CPUHealthID = -1 		# ID for CPU health bar
 		self.CPUStaminaID = -1 		# ID for CPU stamina bar
-		self.what = -1 				# weird
+		self.winId = -1 			# ID for text that displays when you win
+		self.loosId = -1 			# ID for text that displays when you loose
 		self.movable = {}			# Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			# Dict of original position of bitmaps by id
 		self.cards = {}				# Dict of cards by id
@@ -240,7 +245,7 @@ class GamePanel(wx.ScrolledWindow):
 				dy = event.GetY()
 
 				if self.cardType[self.dragid] == 'Pokemon': 
-					if self.inPlayerChosenArea(dx, dy) and self.playerChosenID != self.dragid:
+					if self.inPlayerChosenArea(dx, dy) and self.playerChosenID != self.dragid and self.playerChosenID == self.graveyardID:
 						# Switch currently chosen pokemon out for a new one 
 						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 119
 						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
@@ -252,23 +257,27 @@ class GamePanel(wx.ScrolledWindow):
 						if self.playerChosenID != self.graveyardID:
 							self.moveItem(self.playerChosenID, tx, ty)
 							self.slot[self.playerChosenID] = slot
-						else:
-							self.slot[self.playerChosenID] = -1
+	#					else:
+						self.slot[self.playerChosenID] = -1
 						self.moveItem(self.dragid, x, y)
 						self.slot[self.dragid] = -1 ######################
 						self.origpos[self.playerChosenID] = [13 + slot * 127, 384]
 						self.playerChosenID = self.dragid
 						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
+						self.GetParent().updateStatus()
+						self.GetParent().game.textLog.append('You put out ' + self.GetParent().game.players[0].mainCard.name + '\n')
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
+						if self.inPlayerChosenArea(dx, dy):
+							self.GetParent().game.textLog.append('You can not switch out your pokemon')
 
 				elif self.cardType[self.dragid] == 'Backside':
 					slot = self.findEmptySlot(self.slot)
-					if self.inPlayerHandArea(dx, dy) and slot != -1:
+					if self.inPlayerHandArea(dx, dy) and slot != -1 and not self.hasDrawnPoke:
 						id = self.backsides[self.dragid]
 						x = 213 + slot * 127
 						y = 584
@@ -276,39 +285,53 @@ class GamePanel(wx.ScrolledWindow):
 						self.origpos[id] = [x-200, y-200]
 						self.slot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
-						#self.GetParent().game.players[0].hand.cards.append(self.cards[id])
+						self.GetParent().game.draw(self.GetParent().game.players[0])
+						self.hasDrawnPoke = True
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
+						if self.hasDrawnPoke:
+							self.GetParent().game.textLog.append('You can only draw one pokemon each round\n')
 
 				elif self.cardType[self.dragid] == 'InvBackside':
 					slot = self.findEmptyInvSlot()
-					if self.inPlayerInvArea(dx, dy) and slot != -1:
+					if self.inPlayerInvArea(dx, dy) and slot != -1 and self.canDrawInv and not self.hasDrawnInv:
 						id = self.backsidesInv[self.dragid]
 						x = 991
 						y = 215 + slot * 180
 						self.moveItem(id, x, y)
 						self.invSlot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
+						self.hasDrawnInv = True
 						self.GetParent().game.drawInv(self.GetParent().game.players[0])
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
+						self.GetParent().game.textLog.append('You can not draw Inventory things now\n')
+						if self.hasDrawnInv:
+							self.GetParent().game.textLog.append('You can only draw one inventory card each 3 turns\n')
 
 				elif self.cardType[self.dragid] == 'Inventory':
 					if self.inPlayerChosenArea(dx, dy):
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
-						self.GetParent().game.players[0].use(self.cards[self.dragid])
+						self.GetParent().game.players[0].use(self.cards[self.dragid], self.GetParent().game.textLog)
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
+					elif self.inCPUChosenArea(dx, dy):
+						self.moveItem(self.dragid, 0, -1000)
+						self.invSlot[self.dragid] = -1
+						self.GetParent().game.players[1].use(self.cards[self.dragid], self.GetParent().game.textLog)
+						self.updateCPUHp()
+						self.updateCPUStamina()
 					else:
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
 				self.dragid = -1
+				self.GetParent().logPanel.updateLog()
 
 		elif event.Moving():
 			x,y = self.convertEventCoords(event)
@@ -323,6 +346,9 @@ class GamePanel(wx.ScrolledWindow):
 
 	def inPlayerChosenArea(self, dx, dy):
 		return  (110 < dx and dx < 245) and (376 > dy and dy > 182)
+
+	def inCPUChosenArea(self, dx, dy):
+		return (535 < dx and dx < 717) and (376 > dy and dy > 182)
 	
 	def inPlayerHandArea(self, dx, dy):
 		return (3 < dx and dx < 778) and (555 > dy and dy > 308)
@@ -409,6 +435,8 @@ class GamePanel(wx.ScrolledWindow):
 		else:
 			self.isMyTurn = True
 			self.GetParent().attackPanel.enableAll()
+			self.GetParent().game.turn += 1
+			self.GetParent().updateStatus()
 
 	# Usage: g.animation(self, isPlayer)
 	# Pre  : isPlayer is a boolean value that determines if the players or the
@@ -449,7 +477,8 @@ class GamePanel(wx.ScrolledWindow):
 	def updatePlayerHp(self):
 		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
 		if hp == 0:
-			self.GetParent().game.players[0].points += 1
+			self.GetParent().game.players[1].points += 1
+			self.GetParent().game.textLog.append(self.cards[self.playerChosenID].name + ' fainted\n')
 			self.moveItemToGraveyard(self.playerChosenID, 812, 185)
 			self.slot[self.playerChosenID] = -1
 
@@ -459,7 +488,8 @@ class GamePanel(wx.ScrolledWindow):
 	def updateCPUHp(self):
 		hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
 		if hp == 0:
-			self.GetParent().game.players[1].points += 1
+			self.GetParent().game.players[0].points += 1
+			self.GetParent().game.textLog.append(self.cards[self.CPUChosenID].name + ' fainted\n')
 			self.moveItemToGraveyard(self.CPUChosenID, 387, 185)
 			self.slotCPU[self.CPUChosenID] = -1
 
@@ -495,6 +525,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.CPUChosenID = id
 			self.moveItem(id, 744, 395)
 			self.moveItem(bid, 0, -1000)
+			self.Update()
 
 	def findID(self, card):
 		for id in self.cards.iteritems():
@@ -676,6 +707,20 @@ class GamePanel(wx.ScrolledWindow):
 			self.cardType[bid] = 'InvBackside'
 			self.backsidesInv[bid] = id
 
+#		id = wx.NewId()
+#		dc.SetId(id)
+#		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+#		dc.SetFont(font)
+#		dc.SetTextForeground('#435353')
+#		text = 'You win!'
+#		dc.DrawText(text, 200, 200)
+#		w, h = self.GetFullTextExtent(text)[0:2]
+#		r = wx.Rect(200, 200, w, h)
+#		r.Inflate(2,2)
+#		dc.SetIdBounds(id, r)
+#		self.winId = id
+#		self.objids.append(id)
+
 		dc.EndDrawing()
 
 # A panel that holds the names and HP of currently chosen pokemon
@@ -755,7 +800,7 @@ class StatusPanel(wx.Panel):
 # A panel that holds 4 attack buttons
 class AttackPanel(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__(self, parent, size=(1200, 200))
+		wx.Panel.__init__(self, parent, size=(1064, 200))
 
 		self.SetBackgroundColour('#435353')
 
@@ -776,7 +821,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton1.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0))
+		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0, False))
 		self.attackButton1.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse1)
 
 		self.attackButton2 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -787,7 +832,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton2.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton2, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1))
+		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1, False))
 		self.attackButton2.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse2)
 
 		self.attackButton3 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -798,7 +843,7 @@ class AttackPanel(wx.Panel):
 		self.attackButton3.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton3.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton3, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2))
+		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2, False))
 		self.attackButton3.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse3)
 
 		self.attackButton4 = GB.GradientButton(self, -1, label='---', size=(200, 100))
@@ -809,16 +854,27 @@ class AttackPanel(wx.Panel):
 		self.attackButton4.SetPressedBottomColour(wx.Colour(54, 43, 43))
 		self.attackButton4.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.attackButton4, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
-		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3))
+		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3, False))
 		self.attackButton4.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
+
+		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
+		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.passButton.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.passButton.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.passButton.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.passButton.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.passButton.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.passButton, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.passButton.Bind(wx.EVT_BUTTON, lambda event: self.attack(-1, True))
+		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
 
-	def attack(self, num):
+	def attack(self, num, passTurn):
 		self.disableAll()
 		self.GetParent().gamePanel.isMyTurn = False
-		self.GetParent().playerAction(num)
+		self.GetParent().playerAction(num, passTurn)
 
 	def onMouse1(self, event):
 		if event.Moving():
@@ -865,10 +921,12 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.Disable()
 		self.attackButton3.Disable()
 		self.attackButton4.Disable()
+		self.passButton.Disable()
 		self.attackButton1.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton2.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton3.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButton4.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.passButton.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.Thaw()
 
 	# Usage: c.enableAll()
@@ -879,16 +937,18 @@ class AttackPanel(wx.Panel):
 		self.attackButton2.Enable()
 		self.attackButton3.Enable()
 		self.attackButton4.Enable()
+		self.passButton.Enable()
 		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.Thaw()
 
 # Displays info
 class infoPanel(wx.Panel):
 	def __init__(self, parent):
-		wx.Panel.__init__(self, parent, size=(220, 725))
+		wx.Panel.__init__(self, parent, size=(220, 370))
 		self.SetDoubleBuffered(True)
 
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
@@ -906,7 +966,7 @@ class infoPanel(wx.Panel):
 		self.vbox1.Add(self.name, flag=wx.ALIGN_CENTER, border=10)
 
 
-		self.currentHP =  wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
+		self.currentHP = wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
 		self.currentHP.SetFont(font)
 		self.currentHP.SetForegroundColour(fc)
 
@@ -1038,28 +1098,13 @@ class infoPanel(wx.Panel):
 	#        info on icard
 	def setInventoryInfo(self, icard):
 		self.Freeze()
-		self.name.SetLabel('-' + str(icard.name) + '-')
-		if(icard.health == 0):
-			self.currentHP.SetLabel(' No HP boost')
-		else:
-			self.currentHP.SetLabel(' HP boost: ' + str(icard.health))
-		if(icard.stamina == 0):
-			self.maxHP.SetLabel(' No stamina boost ')
-		else:
-			self.maxHP.SetLabel(' Stamina boost: ' + str(icard.stamina))
-		if(icard.stun):
-			self.stamina.SetLabel(' Stun off')
-			#self.currentStamina.SetLabel('Stun off')
-			if(icard.damageBoost != 0):
-				self.currentStamina.SetLabel(' Damage boost: ' + str(icard.damageBoost))
-				#self.maxStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
-		else:
-			if(icard.damageBoost == 0):
-				self.stamina.SetLabel('')
-				self.currentStamina.SetLabel('')
-				
-			else:
-				self.currentStamina.SetLabel('Damage boost: ' + str(icard.damageBoost))
+		y = icard.getName()
+		x = icard.getInfo()
+		self.name.SetLabel('-' + y + '-')
+		self.currentHP.SetLabel(x)
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
 		self.maxStamina.SetLabel('')
 		self.attacks.SetLabel('')
 		self.attack1.SetLabel('')
@@ -1072,26 +1117,44 @@ class infoPanel(wx.Panel):
 		self.Layout()
 		self.Thaw()
 
-class LogPanel(wx.ScrolledWindow):
+class LogPanel(scrolled.ScrolledPanel):
 	def __init__(self, parent):
-		# This needs to be a scrolled window even though it doesn't scroll
-		wx.ScrolledWindow.__init__(self, parent, size=(1060, 560), style=wx.SUNKEN_BORDER)
+		wx.ScrolledWindow.__init__(self, parent, size=(220, 300), style=wx.RAISED_BORDER)
+		self.SetBackgroundColour('#151A1A')
 		self.SetDoubleBuffered(True)
+		self.SetAutoLayout(1) 
+		self.SetupScrolling(scroll_x=False, scroll_y=True, scrollToTop=False)
 
+		self.vbox = wx.BoxSizer(wx.VERTICAL)
+		self.numMsg = 0
+
+		self.font = wx.Font(pointSize=12, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		self.fc = '#CCCCCC'
 		
-	#	with tempfile.TemporaryFile() as tempf:
-	#		proc = subprocess.Popen(['echo', 'a', 'b'], stdout=tempf)
-	#		proc.wait()
-	#		tempf.seek(0)
-   	#		print tempf.read()
+		self.SetSizer(self.vbox)
 
-
+	def updateLog(self):
+		self.Freeze()
+		length = len(self.GetParent().game.textLog)
+		for i in range(self.numMsg, length):
+			text = wx.StaticText(self, label=self.GetParent().game.textLog[i], style=wx.EXPAND)
+			text.SetFont(self.font)
+			text.SetForegroundColour(self.fc)
+			text.Wrap(self.GetSize().width-18)
+			self.vbox.Add(text, flag=wx.EXPAND, border=10)
+			self.numMsg += 1
+		self.SetSizer(self.vbox)
+		self.Layout()
+		self.FitInside()
+		self.Scroll(-1, self.GetVirtualSize()[1])
+		self.Thaw()
 
 class MainFrame(wx.Frame):
 	def __init__(self, game):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
 		self.SetBackgroundColour('#435353')		
-		self.vbox = wx.BoxSizer(wx.VERTICAL)
+		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 
 		self.game = game
@@ -1101,6 +1164,8 @@ class MainFrame(wx.Frame):
 		#self.statusPanel = StatusPanel(self)
 		self.gamePanel = GamePanel(self, wx.ID_ANY)
 		self.attackPanel = AttackPanel(self)
+		self.logPanel = LogPanel(self)
+		self.statusBar = self.CreateStatusBar()
 
 		self.fileMenu = wx.Menu()
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
@@ -1109,27 +1174,53 @@ class MainFrame(wx.Frame):
 
 		self.SetMenuBar(self.menuBar)
 
+		self.updateStatus()
+
 		#self.vbox.Add(self.statusPanel, 0, flag=wx.EXPAND)
-		self.vbox.Add(self.gamePanel, 0, flag=wx.EXPAND)
-		self.vbox.Add(self.attackPanel, 0, flag=wx.EXPAND)
-		self.hbox.Add(self.infoPanel, 0, flag=wx.EXPAND)
-		self.hbox.Add(self.vbox, 0, flag=wx.EXPAND)
+		self.vbox1.Add(self.gamePanel, 0, flag=wx.EXPAND)
+		self.vbox1.Add(self.attackPanel, 0, flag=wx.EXPAND)
+		self.vbox2.Add(self.infoPanel, 0, flag=wx.EXPAND)
+		self.vbox2.Add(self.logPanel, 0, flag=wx.EXPAND)
+		self.hbox.Add(self.vbox1, 0, flag=wx.EXPAND)
+		self.hbox.Add(self.vbox2, 0, flag=wx.EXPAND)
 
 		self.SetAutoLayout(True)
 		self.SetSizer(self.hbox)
 		self.Layout()
 		self.Centre()
 
-	def playerAction(self, attackNum):
-		self.game.turn += 1
+	def updateStatus(self):
+		self.logPanel.updateLog()
+		drawInv = self.game.drawInvQuest()
+		self.gamePanel.canDrawInv = drawInv
+		if drawInv:
+			canInv = 'Yes'
+		else:
+			canInv = 'No'
+		score = 'Score: Player ' + str(self.game.players[0].points) + ' - ' + str(self.game.players[1].points) + ' CPU'
+		player1 = self.game.players[0].mainCard.name + ': hp: ' + str(self.game.players[0].mainCard.health) + ' st: ' + str(self.game.players[0].mainCard.stamina)
+		player2 = self.game.players[1].mainCard.name + ': hp: ' + str(self.game.players[1].mainCard.health) + ' st: ' + str(self.game.players[1].mainCard.stamina)
+		inv = 'Can draw inventory: ' + canInv
+		turn = 'Turn: ' + str(self.game.turn)
+		self.statusBar.SetStatusText(score + '   |   ' + player1 + '   |   ' + player2 + '   |   ' + turn + '   |   ' + inv)
+
+	def playerAction(self, attackNum, passTurn):
+	#	self.game.turn += 1
 		self.game.turnCount += 1
-		if self.game.players[0].attack(attackNum, self.game.players[1]):
-			self.gamePanel.animation1(True)
-			self.gamePanel.updateCPUHp()
-			self.gamePanel.updateCPUStamina()
-			self.gamePanel.updatePlayerHp()
-			self.gamePanel.updatePlayerStamina()
-		self.checkWin()
+		self.gamePanel.hasDrawnInv = False
+		self.gamePanel.hasDrawnPoke = False
+		if not passTurn:
+			if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
+				self.gamePanel.animation1(True)
+				self.gamePanel.updateCPUHp()
+				self.gamePanel.updateCPUStamina()
+				self.gamePanel.updatePlayerHp()
+				self.gamePanel.updatePlayerStamina()
+			self.game.players[0].mainCard.applyEffects()
+			self.checkWin()
+		else:
+			self.game.textLog.append('You passed your turn\n')
+		self.updateStatus()
 		worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
 	def CPUAction(self):
@@ -1141,12 +1232,13 @@ class MainFrame(wx.Frame):
 		if self.game.players[1].mainCard.isDead():
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
+			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
 			self.gamePanel.switchCPUpokemon(newCard)
 			time.sleep(1)
 		if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
-			self.game.players[1].mainCard.applyEffects()
 			self.gamePanel.animation1(False)
 			self.gamePanel.updatePlayerHp()
+		self.game.players[1].mainCard.applyEffects()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()
 		self.checkWin()

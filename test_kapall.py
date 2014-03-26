@@ -13,9 +13,10 @@ class TestPlayer(unittest.TestCase):
 		arni = Player("Arni")
 		villi = Player("Villi")
 		pre = Presets()
+		emptyArray = []
 		arni.mainCard = pre.gc("Charizard")
 		villi.mainCard = pre.gc("Bulbasaur")
-		self.assertTrue(isinstance(arni.attack(2, villi), bool))
+		self.assertTrue(isinstance(arni.attack(2, villi, emptyArray), bool))
 
 	# checks if str method for player is correct
 	def test_playerStr(self):
@@ -65,7 +66,16 @@ class TestDeck(unittest.TestCase):
 		with self.assertRaises(IndexError):
 			# Index = -100 not valid
 			deck.remove(-100)
-			
+	
+	# Testing the add method
+	def test_deckadd(self):
+		pre = Presets()
+		card = pre.gc("Bulbasaur")
+		deck = Deck()
+		deck.add(card)
+		self.assertEqual(deck.cards, [card])
+
+	# Testing the getIndexOf method
 	def test_deckgetIndexOf(self):
 		deck = Deck()
 		pre = Presets()
@@ -91,18 +101,20 @@ class TestCard(unittest.TestCase):
 		pre = Presets()
 		card = pre.gc("Bulbasaur")
 		card2 = pre.gc("Charizard")
+		emptyArray = []
 		# Attack should succeed
-		self.assertTrue(card.attack(card.attacks[0], card2))
+		self.assertTrue(card.attack(card.attacks[0], card2,emptyArray))
 		card.stamina = 0
 		# Attack shuld fail
-		self.assertTrue(not card.attack(card.attacks[0], card2))
+		self.assertTrue(not card.attack(card.attacks[0], card2,emptyArray))
 
 	# Testing if the use method works correctly
 	def test_Carduse(self):
 		pre = Presets()
 		card = pre.gic("Ether")
 		pokemon = pre.gc("Bulbasaur")
-		self.assertTrue(pokemon.use(card))
+		emptyArray = []
+		self.assertTrue(pokemon.use(card, emptyArray))
 
 	# Testing if the hasHeal method is working correctly
 	def test_CardHasHeal(self):
@@ -143,6 +155,20 @@ class TestCard(unittest.TestCase):
 		canStun = pre.gc("Gengar")
 		self.assertEqual(canStun.findStun(), numberShouldBe)
 
+	# Testing find possible attacks method
+	def test_CardFindPossibleAttacks(self):
+		shouldBe = [1,3]
+		pre = Presets()
+		card = pre.gc("Clefairy")
+		card.stamina = 0
+		self.assertEqual(card.findPossibleAttacks(), shouldBe)
+
+	# Testing findHighestDamg method
+	def test_CardFindHighestDamg(self):
+		pre = Presets()
+		shouldBe = 3
+		blastoise = pre.gc("Blastoise")
+		self.assertEqual(blastoise.findHighestDamg(), 3)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestCard)
 unittest.TextTestRunner(verbosity=2).run(suite)
@@ -157,14 +183,19 @@ class TestPresets(unittest.TestCase):
 		self.assertEqual(str(pre.gc("Pikachu")), "Pikachu")
 		self.assertEqual(str(pre.gc(4)), "Charmander")
 		
-		
 	# Checks if ga is working correctly
 	def test_Presetsga(self):
 		pre = Presets()
 		self.assertEqual(str(pre.ga("MudBomb")), "MudBomb")
 		self.assertEqual(str(pre.ga(517)), "Inferno")
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestCard)
+	# Checks if gic is working correctly
+	def test_Presetsgic(self):
+		pre = Presets()
+		self.assertEqual(str(pre.gic("Ether")), "Ether")
+		self.assertEqual(str(pre.gic(4)), "Potion")
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestPresets)
 unittest.TextTestRunner(verbosity=2).run(suite)
 
 # -----------------------------------------------------------------------
@@ -196,6 +227,7 @@ class TestHand(unittest.TestCase):
 		self.assertTrue(hand.isFull())
 		self.assertFalse(hand2.isFull())
 
+	# Testing the getIndexOf method
 	def test_handgetIndexOf(self):
 		hand = Hand()
 		pre = Presets()
@@ -203,6 +235,7 @@ class TestHand(unittest.TestCase):
 		self.assertEqual(hand.getIndexOf("Bulbasaur"), 0)
 		self.assertEqual(hand.getIndexOf("Hundur"), -1)
 
+	# Testing the getNameOfType method
 	def test_handgetNameOfType(self):
 		hand = Hand()
 		pre = Presets()
@@ -212,6 +245,22 @@ class TestHand(unittest.TestCase):
 		self.assertEqual(hand.getNameOfType("fire"), "Charizard")
 		# No one in hand is of type "water" so the method should return "none"
 		self.assertEqual(hand.getNameOfType("water"), "none")
+
+	# Testing the getName of Type method
+	def test_handgetNameOfNotWeakness(self):
+		hand = Hand()
+		pre = Presets()
+		hand.cards = [pre.gc("Bulbasaur"), pre.gc("Charizard")]
+		self.assertEqual(hand.getNameOfNotWeakness("grass"), "Bulbasaur")
+		self.assertEqual(hand.getNameOfNotWeakness("fire"), "Charizard")
+
+	# Testing the getName of Type method
+	def test_handgetNameOfResistance(self):
+		hand = Hand()
+		pre = Presets()
+		hand.cards = [pre.gc("Bulbasaur"), pre.gc("Charizard")]
+		self.assertEqual(hand.getNameOfResistance("water"), "Bulbasaur")
+		self.assertEqual(hand.getNameOfResistance("grass"), "Charizard")
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestHand)
 unittest.TextTestRunner(verbosity=2).run(suite)
@@ -299,4 +348,18 @@ class Testinventory(unittest.TestCase):
 		self.assertEqual(inventory.getIndexOf("Hundur"), -1)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(Testinventory)
+unittest.TextTestRunner(verbosity=2).run(suite)
+
+# -----------------------------------------------------------------------
+# Testing the invCard class
+# -----------------------------------------------------------------------
+class TestinvCard(unittest.TestCase):
+
+	# Testing the getName method
+	def test_invCardgetName(self):
+		pre = Presets()
+		invCard = pre.gic("Ether")
+		self.assertEqual(invCard.getName(), "Ether")
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestinvCard)
 unittest.TextTestRunner(verbosity=2).run(suite)

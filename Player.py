@@ -25,16 +25,16 @@ class Player(object):
 	# Usage: b = p.attack(atk, player)
 	# Before: player is Player and atk is the index nr of attack on main card
 	# After: b is true if attack succeeds, false otherwise
-	def attack(self,  nr,  player):
+	def attack(self,  nr,  player, textLog):
 		atk = self.mainCard.attacks[nr]
-		return self.mainCard.attack(atk, player.mainCard)
+		return self.mainCard.attack(atk, player.mainCard, textLog)
 
 	# Usage: b = p.attack(atk, player)
 	# Before: player is Player and atk is the index nr of attack on main card
 	# After: b is true if attack succeeds, false otherwise
-	def use(self,  card):
+	def use(self,  card, textLog):
 		invcard = card
-		return self.mainCard.use(invcard)
+		return self.mainCard.use(invcard, textLog)
 
 	# Usage: b = p.isAI()
 	# Before: Nothing

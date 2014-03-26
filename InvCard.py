@@ -27,6 +27,28 @@ class InvCard(object):
 		self.hitBoost = hitBoost
 		self.critBoost = critBoost
 
+	def getName(self):
+		return self.name
+	def getInfo(self):
+		info = ""
+		#info += " "+self.name+"\n "
+		if(self.health != 0):
+			info += "HP boost: "+str(self.health)+"\n "
+		if(self.stamina != 0):
+			info += "Sta. boost: "+str(self.stamina)+"\n "
+		if(self.stun):
+			info += "Stun off"+"\n "
+		if(self.damageBoost != 0.0):
+			info += "Dam. boost: "+str(self.damageBoost*100-100)+"%\n "
+		if(self.defenseBoost != 0.0):
+			info += "Def. boost: "+str(self.defenseBoost*100-100)+"%\n "
+		if(self.weakExploit != 0.0):
+			info += "SE. boost: "+str(self.weakExploit)+"\n "
+		if(self.hitBoost != 0.0):
+			info += "Hit boost: "+str(self.hitBoost)+"\n "
+		if(self.critBoost != 0.0):
+			info += "Crit boost: "+str(self.critBoost)
+		return info
 
 	def __str__(self):
 		return self.name
