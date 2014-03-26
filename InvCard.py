@@ -39,15 +39,15 @@ class InvCard(object):
 		if(self.stun):
 			info += "Stun off"+"\n "
 		if(self.damageBoost != 0.0):
-			info += "Dam. boost: "+str(self.damageBoost*100)+"%\n "
+			info += "Dam. boost: "+str(self.damageBoost*100-100)+"%\n "
 		if(self.defenseBoost != 0.0):
-			info += "Def. boost: "+str(self.defenseBoost*100)+"%\n "
+			info += "Def. boost: "+str(self.defenseBoost*100-100)+"%\n "
 		if(self.weakExploit != 0.0):
-			info += "WTF. boost: "+str(self.weakExploit)+"\n "
+			info += "SE. boost: "+str(self.weakExploit)+"\n "
 		if(self.hitBoost != 0.0):
 			info += "Hit boost: "+str(self.hitBoost)+"\n "
 		if(self.critBoost != 0.0):
-			info += "Crit. boost: "+str(self.critBoost)
+			info += "Crit boost: "+str(self.critBoost)
 		return info
 
 	def __str__(self):
