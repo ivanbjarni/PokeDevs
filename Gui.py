@@ -1059,6 +1059,21 @@ class infoPanel(wx.Panel):
 
 		self.SetSizer(self.vbox1)
 
+		self.name.SetLabel('')
+		self.currentHP.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
+
 	# Usage: c.setPokeInfo(card)
 	# Pre  : card is Card
 	# Post : the labels on the infoPanel has been updated to the 
@@ -1184,6 +1199,11 @@ class MainFrame(wx.Frame):
 
 		self.fileMenu = wx.Menu()
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+#		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
+#		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
+		
+
+
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
 
@@ -1204,6 +1224,9 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
+#	def OnHelp(self, event):
+#		helpw = HelpFrame()
+#		helpw.Show()
 	def updateStatus(self):
 		self.logPanel.updateLog()
 		drawInv = self.game.drawInvQuest()
@@ -1273,3 +1296,13 @@ class MainFrame(wx.Frame):
 		return False
 	def onQuit(self, event):
 		self.Close()
+
+#class HelpFrame(wx.Frame):
+#	def __init__(self):
+#		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
+#		self.SetBackgroundColour('#435353')		
+		#self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		#self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
+		#font = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		#self.help.SetFont(font)
+		
