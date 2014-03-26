@@ -41,61 +41,15 @@ class Main(object):
 			else:
 				self.textLog.append("You draw an inventory card. It's a "+str(newCard)+"\n")
 
-	def chooseAttack(self,pYou, pEne):
-		if pYou.isAI():
-			self.chooseAttackAI(pYou, pEne)
-		else:
-			self.chooseAttackPlayer(pYou, pEne)
-
-	def chooseInvCardPlayer(self, pYou, pEne):
-		yourCard = pYou.mainCard
-		hasUsed = False
-		while(not hasUsed):
-			print "Your inventory: "+str(pYou.inv)
-			print "What item do you wan't to use? (Back to go back)"
-			x = raw_input()
-			ind = pYou.inv.getIndexOf(x)
-			if ind != -1:
-				card = pYou.inv.remove(ind)
-				hasUsed = pYou.use(card, self.textLog)
-			elif x == "Back":
-				print "Oh, so you're a tough guy?"
-				hasUsed = True
-			else:
-				print "You don't have a inventorycard "+x+" in your hand."
-
-
-	def chooseAttackPlayer(self, pYou, pEne):
-		yourCard = pYou.mainCard
-		hasAttacked = False
-		while(not hasAttacked):
-			print 'What attack do you want to do 1-4? (0 to pass, 5 to access inventory, other to crash game): ',
-			x = input()
-			if x == 5:
-				if len(pYou.inv.invCards) > 0:
-					self.chooseInvCardPlayer(pYou, pEne)
-				else:
-					print "You don't have any inventorycards!"
-			elif x == 0:
-				print "You passed on your turn"
-				hasAttacked = True
-			elif x==9:
-				yourCard.health -= 9000
-				print "You chose self inflected damage, "+str(yourCard)+" loses 9000hp"
-				hasAttacked = True
-			else:
-				hasAttacked = pYou.attack(x-1,pEne, self.textLog)
-
-
-#Code for AI
-def clefable(self, pYou, pEne):
+	#Code for AI
+	def clefable(self, pYou, pEne):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
 		for x in range(0,4):
 			if pYou.mainCard.attacks[x].name == "Metronome" and pYou.mainCard.attacks[x].staminaCost < pYou.mainCard.stamina:
 				calcAttack = x
 		return pYou.attack(calcAttack, pEne, self.textLog)
 
-def chooseInvCardAI(self, pYou, pEne):
+	def chooseInvCardAI(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasUsed = False 
 		while(not hasUsed):
@@ -169,7 +123,7 @@ def chooseInvCardAI(self, pYou, pEne):
 			hasUsed = True
 
 
-def chooseAttackAI(self, pYou, pEne):		
+	def chooseAttackAI(self, pYou, pEne):		
 		AICard = pYou.mainCard
 		hasAttacked = False
 		if len(pYou.inv.invCards) > 0:
@@ -212,13 +166,60 @@ def chooseAttackAI(self, pYou, pEne):
 							hasAttacked = pYou.use(card, self.textLog)
 					hasAttacked = True
 
-		return hasAttacked			
+		return hasAttacked						
 
 
-# Usage: p = main.chooseCardAI(pYou,pEne):
-# Before: pYou is active player and pEne is enemy player
-# After: p is the pokemon pYou chooses(automatic)
-def chooseCardAI(self, pYou, pEne):
+	def chooseAttack(self,pYou, pEne):
+		if pYou.isAI():
+			self.chooseAttackAI(pYou, pEne)
+		else:
+			self.chooseAttackPlayer(pYou, pEne)
+
+	def chooseInvCardPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasUsed = False
+		while(not hasUsed):
+			print "Your inventory: "+str(pYou.inv)
+			print "What item do you wan't to use? (Back to go back)"
+			x = raw_input()
+			ind = pYou.inv.getIndexOf(x)
+			if ind != -1:
+				card = pYou.inv.remove(ind)
+				hasUsed = pYou.use(card, self.textLog)
+			elif x == "Back":
+				print "Oh, so you're a tough guy?"
+				hasUsed = True
+			else:
+				print "You don't have a inventorycard "+x+" in your hand."
+
+
+	def chooseAttackPlayer(self, pYou, pEne):
+		yourCard = pYou.mainCard
+		hasAttacked = False
+		while(not hasAttacked):
+			print 'What attack do you want to do 1-4? (0 to pass, 5 to access inventory, other to crash game): ',
+			x = input()
+			if x == 5:
+				if len(pYou.inv.invCards) > 0:
+					self.chooseInvCardPlayer(pYou, pEne)
+				else:
+					print "You don't have any inventorycards!"
+			elif x == 0:
+				print "You passed on your turn"
+				hasAttacked = True
+			elif x==9:
+				yourCard.health -= 9000
+				print "You chose self inflected damage, "+str(yourCard)+" loses 9000hp"
+				hasAttacked = True
+			else:
+				hasAttacked = pYou.attack(x-1,pEne, self.textLog)
+
+
+
+	# Usage: p = main.chooseCardAI(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: p is the pokemon pYou chooses(automatic)
+	def chooseCardAI(self, pYou, pEne):
 		 chosen = str(pYou.hand.cards[0])
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
 		 if(pokemon!="none"):
