@@ -63,7 +63,7 @@ class Card(object):
 			print "ditto transformed to "+scard
 			textLog.append("ditto transformed to "+scard+"\n")
 			return True
-		if(self.stamina <= atk.staminaCost):
+		if(self.stamina < atk.staminaCost):
 			print "Not Enough Stamina "
 			textLog.append("Not Enough Stamina\n")
 			return False
