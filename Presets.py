@@ -398,7 +398,7 @@ class Presets(object):
 		148	: Card("Dragonair", 61, 95, [self.ga("Outrage"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		149	: Card("Dragonite", 91, 110, [self.ga("Outrage"), self.ga("Hurricane"), self.ga("DragonDance"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		150	: Card("Mewtwo", 106, 150, [self.ga("Recover"), self.ga("PsychoCut"), self.ga("Psystrike"), self.ga("MeFirst")], "psychic", "none", "normal"),
-		151	: Card("Mew", 100, 150, [self.ga("Recover"), self.ga("MegaPunch"), self.ga("AncientPower"), self.ga("MeFirst")], "psychic", "none", "normal")
+		151	: Card("Mew", 100, 150, [self.ga("Recover"), self.ga("MegaPunch"), self.ga("AncientPower"), self.ga("Psychic")], "psychic", "none", "normal")
 		}
 
 	#Short for get attack
