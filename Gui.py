@@ -8,6 +8,7 @@ import threading
 import wx.lib.agw.gradientbutton as GB
 import wx.lib.scrolledpanel as scrolled
 import random
+from AI import *
 from constants import *
 
 # Define notification events for threads
@@ -1255,8 +1256,8 @@ class MainFrame(wx.Frame):
 		self.game.players[1].mainCard.applyEffects()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()
-		self.checkWin()
-		worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
+		if not self.checkWin():
+			worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
 
 	def checkWin(self):
 		if self.game.players[0].points >= pointsToWin:
