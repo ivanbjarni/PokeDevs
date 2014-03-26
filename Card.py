@@ -63,7 +63,7 @@ class Card(object):
 			print "ditto transformed to "+scard
 			textLog.append("ditto transformed to "+scard+"\n")
 			return True
-		if(self.stamina <= atk.staminaCost):
+		if(self.stamina < atk.staminaCost):
 			print "Not Enough Stamina "
 			textLog.append("Not Enough Stamina\n")
 			return False
@@ -270,7 +270,7 @@ class Card(object):
 	def findPossibleAttacks(self):
 		possibleAtt = []
 		for x in range(0,4):
-			if self.attacks[x].staminaCost < self.stamina:
+			if self.attacks[x].staminaCost <= self.stamina:
 				possibleAtt.append(x)
 
 		return possibleAtt
