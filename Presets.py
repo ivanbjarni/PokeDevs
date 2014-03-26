@@ -25,10 +25,10 @@ class Presets(object):
 	def initInvCards(self):
 		self.invCards = {
 		0	: InvCard("Ether", 0, 15, False, 1,1,0,0,0),
-		1	: InvCard("Elixir", 0, 25, False, 1,1,0,0,0),
-		2	: InvCard("MaxEther", 0, 35, False, 1,1,0,0,0),
-		3	: InvCard("MaxElixir", 0, 45, False, 1,1,0,0,0),
-		4	: InvCard("Potion", 10, 0, False, 1,1,0,0,0),
+		1	: InvCard("Elixir", 0, 35, False, 1,1,0,0,0),
+		2	: InvCard("MaxEther", 0, 55, False, 1,1,0,0,0),
+		3	: InvCard("MaxElixir", 0, 75, False, 1,1,0,0,0),
+		4	: InvCard("Potion", 10, 5, False, 1,1,0,0,0),
 		5	: InvCard("SuperPotion", 25, 0, False, 1,1,0,0,0),
 		6	: InvCard("HyperPotion", 40, 0, False, 1,1,0,0,0),
 		7	: InvCard("MaxPotion", 65, 0, False, 1,1,0,0,0),
