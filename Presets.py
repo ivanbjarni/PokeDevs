@@ -69,10 +69,10 @@ class Presets(object):
 		37	: Attack("Thrash", 50, 90, 0, 0, "normal"),			
 		38	: Attack("DoubleEdge", 17, 12, 0, 0, "normal"),			
 		39	: Attack("TailWhip", 10, 20, 0, 1, "normal"),			
-		40	: Attack("PoisonSting", 15, 17, 0, 1, "normal"),			
+		40	: Attack("PoisonSting", 15, 17, 0, 1, "grass"),			
 		41	: Attack("Twineedle", 13, 10, 0, 0, "grass"),
-		43	: Attack("Leer", 15, 20, 0, 0, "normal"),			
-		44	: Attack("Bite", 15, 10, 0, 0, "normal"),				
+		43	: Attack("Leer", 17, 20, 0, 0, "normal"),			
+		44	: Attack("Bite", 15, 15, 0, 0, "normal"),				
 		45	: Attack("Growl", 5, 3, 0, 0, "normal"),				
 		46	: Attack("Roar", 7, 3, 0, 0, "normal"),				
 		47	: Attack("Sing", 0, 25, 0, 2, "normal"),				
@@ -142,7 +142,7 @@ class Presets(object):
 		158 : Attack("HyperFang", 17, 20, 0, 0, "water"),	
 		161 : Attack("TriAttack", 19, 30, 0, 0, "normal"),	
 		163 : Attack("Slash", 20, 30, 0, 0, "normal"),	
-		171 : Attack("Nightmare", 10, 50, 0, 1, "psychic"),	
+		171 : Attack("Nightmare", 30, 50, 0, 1, "psychic"),	
 		172 : Attack("FlameWheel", 20, 30, 0, 0, "fire"),	
 		173 : Attack("Snore", 0, -35, 0, 0, "normal"),	
 		175 : Attack("Flail", 15, 30, 0, 0, "water"),	
@@ -241,7 +241,7 @@ class Presets(object):
 		580	: Attack("GrassyTerrain", 0, 40, -30, 0, "grass"),
 		583	: Attack("PlayRough", 27, 45, 0, 0, "normal"),
 		585	: Attack("Moonblast", 25, 45, 0, 0, "normal"),
-		678	: Attack("ElectroBall", 18, 20, -5, 0, "electric")
+		678	: Attack("ElectroBall", 18, 20, -12, 0, "electric")
 		
 
 		}
@@ -457,5 +457,5 @@ class Presets(object):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
 				return val.type
-		print "card not found: getCardByName"
+		print "card not found: getTypeOfName"
 		return -1
