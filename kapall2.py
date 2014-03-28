@@ -10,6 +10,7 @@ from util import *
 from Presets import *
 from Main import *
 from Gui import *
+from AI import *
 
 #-------------------
 # Beginning to attempt to hook the Gui up to the Gameplay
