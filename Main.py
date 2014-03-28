@@ -19,6 +19,10 @@ class Main(object):
 	def __init__(self, players):
 		self.players = players
 
+	
+	# Usage: main.draw(pYou)
+	# Before: pYou is active player                         
+	# After: pYou has drawn a pokemoncard             	
 	def draw(self,pYou):
 		#draw a new card if you can
 		if not pYou.hand.isFull() and not pYou.deck.isEmpty():
@@ -30,6 +34,10 @@ class Main(object):
 			else:
 				self.textLog.append("You draw a card. It's a "+str(newCard)+"\n")
 
+	
+	# Usage: main.drawInv(pYou)
+	# Before: pYou is active player                         
+	# After: pYou has drawn an Inventorcard.		
 	def drawInv(self,pYou):
 		#draw a new card if you can
 		if not pYou.inv.isFull() and not pYou.invdeck.isEmpty():
@@ -41,7 +49,7 @@ class Main(object):
 			else:
 				self.textLog.append("You draw an inventory card. It's a "+str(newCard)+"\n")
 
-	#Code for AI
+	#Code for AI so it uses Metronome, given the chanse to.
 	def clefable(self, pYou, pEne):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
 		for x in range(0,4):
@@ -49,6 +57,9 @@ class Main(object):
 				calcAttack = x
 		return pYou.attack(calcAttack, pEne, self.textLog)
 
+	# Usage: main.chooseInvCardAI(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: The AI chooses what inventorycard to use based on "logic"	
 	def chooseInvCardAI(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasUsed = False 
@@ -123,6 +134,9 @@ class Main(object):
 			hasUsed = True
 
 
+	# Usage: main.chooseAttackAI(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: The AI chooses what to do based on "logic"
 	def chooseAttackAI(self, pYou, pEne):		
 		AICard = pYou.mainCard
 		hasAttacked = False
@@ -139,10 +153,10 @@ class Main(object):
 			hasAttacked = pYou.attack(calcAttack, pEne, self.textLog)
 		else:
 			while(not hasAttacked):	
-				#AI checks if it needs to and can heal
 				heal = pYou.mainCard.findHeal()
 				stamina = pYou.mainCard.findStamina()
 				stun = pYou.mainCard.findStun()
+				#AI checks if it needs to and can heal
 				if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal() and pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
 					hasAttacked = pYou.attack(heal, pEne, self.textLog)
 				#AI gets more stamina if it needs it and has the ability to
@@ -168,13 +182,83 @@ class Main(object):
 
 		return hasAttacked						
 
+	
+	# Usage: main.chooseAttackAIrandom(pYou, pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After:  The AI picks some random attack
+	def chooseAttackAIrandom(self, pYou, pEne):
+		AICard = pYou.mainCard
+		hasAttacked = False
+		arasir = len(pYou.mainCard.findPossibleAttacks())
+		if len(pYou.inv.invCards) > 0:
+			print "I have inventory things!"
+			self.chooseInvCardAI(pYou, pEne)	
+		#AI can't attack if his pokemon is stunned
+		if AICard.isStunned():
+			print str(AICard.name)+" is stunned"
+			self.textLog.append(str(AICard)+" is stunned\n")
+			hasAttacked = True
+		elif arasir > 0:
+			hasAttacked = pYou.attack(randint(0,arasir-1), pEne, self.textLog)
+		else:
+			print str(AICard)+" is too busy playing this awesome new Pokemongame..."
+			print "He also lacks Stamina"
+			self.textLog.append(str(AICard)+" lacks stamina"+"\n")
+			if len(pYou.inv.invCards) == invCardsMax:
+				throwaway = pYou.inv.getIndexOf(pYou.inv.invCards[randint(0,2)].name)
+				if throwaway != -1:
+					card = pYou.inv.remove(throwaway)
+					hasAttacked = pYou.use(card, self.textLog)
+			hasAttacked = True
 
+		return hasAttacked		
+
+	
+
+	# Usage: main.chooseCardAIrandom(pYou, pEne, number):
+	# Before: pYou is active player and pEne is enemy player.
+	# After: AI chooses a random card from hand. 
+	def chooseCardAIrandom(self, pYou, pEne):
+		howmany = len(pYou.hand.cards)
+		IPickYou = randint(0, howmany-1)
+		chosen = str(pYou.hand.cards[IPickYou])
+		ind = pYou.hand.getIndexOf(chosen)
+		return pYou.hand.remove(ind)
+
+
+	# Usage: main.chooselogic(pYou, pEne, number):
+	# Before: pYou is active player and pEne is enemy player, number is some integer between 0 and 10
+	# After: If playername is computer, the AI chooses next attack for player.
+	#		If not, the game waits for input from human player.
+	def chooselogic(self, pYou, pEne, number, logic):
+		decision = randint(0,11)
+		if(decision > number and logic == "attack"):
+			return self.chooseAttackAIrandom(pYou, pEne)
+		elif(decision <= number and logic == "attack"):
+			return self.chooseAttackAI(pYou, pEne)
+		elif(decision > number and logic == "card"):
+			return self.chooseCardAIrandom(pYou, pEne)
+		elif(decision <= number and logic == "card"):
+			return self.chooseCardAI(pYou, pEne)
+
+
+	# Usage: main.chooseAttack(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: The computer either chooses a random attack or a logical one
 	def chooseAttack(self,pYou, pEne):
 		if pYou.isAI():
 			self.chooseAttackAI(pYou, pEne)
+		elif pYou.isAIEasy():
+			self.chooselogic(pYou, pEne, 4, "attack")
+		elif pYou.isAINormal():
+			self.chooselogic(pYou, pEne, 7, "attack" )	
 		else:
 			self.chooseAttackPlayer(pYou, pEne)
 
+	
+	# Usage: main.chooseInvCardPlayer(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: The chosen inventorycard has been applied to main card		
 	def chooseInvCardPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasUsed = False
@@ -191,8 +275,10 @@ class Main(object):
 				hasUsed = True
 			else:
 				print "You don't have a inventorycard "+x+" in your hand."
-
-
+	
+	# Usage: p = main.chooseCardPlayer(pYou,pEne):
+	# Before: pYou is active player and pEne is enemy player
+	# After: p is the pokemon pYou chooses
 	def chooseAttackPlayer(self, pYou, pEne):
 		yourCard = pYou.mainCard
 		hasAttacked = False
@@ -241,6 +327,12 @@ class Main(object):
 	def chooseCard(self, pYou, pEne):
 		if pYou.isAI():
 			return self.chooseCardAI(pYou, pEne)
+		elif pYou.isAIEasy():
+			#return self.chooseCardAIrandom(pYou, pEne)
+			return self.chooselogic(pYou, pEne, 4, "card" )
+		elif pYou.isAINormal():
+			#return self.chooseCardAIrandom(pYou, pEne)
+			return self.chooselogic(pYou, pEne, 7, "card")	
 		else:
 			return self.chooseCardPlayer(pYou, pEne)
 

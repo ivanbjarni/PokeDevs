@@ -14,7 +14,7 @@ from Main import *
 presets = Presets()
 
 #create player 1 give him a hand, random mainCard and a random 10card deck
-p1 = Player("computer")
+p1 = Player("normalcomputer")
 p1.hand = Hand()
 p1.inv = Inventory()
 p1.deck = Deck()
@@ -27,7 +27,7 @@ for i in xrange(0,5000):
 
 
 #create player 1 give him a hand, random mainCard and a random 10card deck
-p2 = Player("computer")
+p2 = Player("easycomputer")
 p2.hand = Hand()
 p2.inv = Inventory()
 p2.deck = Deck()
