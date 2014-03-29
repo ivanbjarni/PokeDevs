@@ -45,9 +45,9 @@ class InvCard(object):
 		if(self.weakExploit != 0.0):
 			info += "SE. boost: "+str(self.weakExploit*100)+"%\n"
 		if(self.hitBoost != 0.0):
-			info += "Hit boost: "+str(self.hitBoost100)+"%\n"
+			info += "Hit boost: "+str(self.hitBoost*100)+"%\n"
 		if(self.critBoost != 0.0):
-			info += "Crit boost: "+str(self.critBoost100)+"%\n"
+			info += "Crit boost: "+str(self.critBoost*100)+"%\n"
 		return info
 
 	def __str__(self):

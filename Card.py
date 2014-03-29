@@ -306,7 +306,7 @@ class Card(object):
 	# After: c is stunned for stun turns
 	def setStun(self,turns):
 		self.stun = turns
-		self.turnsStunned = turns
+		self.turnsStunned += turns
 
 	# Usage: b = c.hasStamina()
 	# Before: Nothing
