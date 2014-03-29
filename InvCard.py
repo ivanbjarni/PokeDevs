@@ -33,21 +33,21 @@ class InvCard(object):
 		info = ""
 		#info += " "+self.name+"\n "
 		if(self.health != 0):
-			info += "HP boost: "+str(self.health)+"\n "
+			info += "HP boost: "+str(self.health)+"\n"
 		if(self.stamina != 0):
-			info += "Sta. boost: "+str(self.stamina)+"\n "
+			info += "Sta. boost: "+str(self.stamina)+"\n"
 		if(self.stun):
-			info += "Stun off"+"\n "
-		if(self.damageBoost != 0.0):
-			info += "Dam. boost: "+str(self.damageBoost*100-100)+"%\n "
-		if(self.defenseBoost != 0.0):
-			info += "Def. boost: "+str(self.defenseBoost*100-100)+"%\n "
+			info += "Stun off"+"\n"
+		if(self.damageBoost*100-100 != 0.0):
+			info += "Dam. boost: "+str(self.damageBoost*100-100)+"%\n"
+		if(self.defenseBoost*100-100 != 0.0):
+			info += "Def. boost: "+str(self.defenseBoost*100-100)+"%\n"
 		if(self.weakExploit != 0.0):
-			info += "SE. boost: "+str(self.weakExploit)+"\n "
+			info += "SE. boost: "+str(self.weakExploit*100)+"%\n"
 		if(self.hitBoost != 0.0):
-			info += "Hit boost: "+str(self.hitBoost)+"\n "
+			info += "Hit boost: "+str(self.hitBoost100)+"%\n"
 		if(self.critBoost != 0.0):
-			info += "Crit boost: "+str(self.critBoost)
+			info += "Crit boost: "+str(self.critBoost100)+"%\n"
 		return info
 
 	def __str__(self):

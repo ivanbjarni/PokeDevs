@@ -406,7 +406,8 @@ class Presets(object):
 
 	def initDecks(self):
 		DreamTeamIvan = Deck()
-		DreamTeamIvan.setCards([self.gc("Muk"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Rapidash"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		DreamTeamIvan.setCards([self.gc("Muk"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		
 		self.decks = {
 		27 	: DreamTeamIvan
 		}
