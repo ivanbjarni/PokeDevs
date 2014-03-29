@@ -405,10 +405,16 @@ class Presets(object):
 
 
 	def initDecks(self):
+		#Ivan's favorite team
 		DreamTeamIvan = Deck()
 		DreamTeamIvan.setCards([self.gc("Muk"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		
+		#The best according to 45 minutes of data collection on the 25/03/14
+		TheElite = Deck()
+		TheELite.setCards([self.gc("Pidgeot"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Fearow"),self.gc("Mewtwo"),self.gc("Slowbro"),self.gc("Dragonite"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Vileplume")])
+
 		self.decks = {
+		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
 
