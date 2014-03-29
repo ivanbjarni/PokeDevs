@@ -355,7 +355,7 @@ class Card(object):
 	# Before: card is card
 	# After: c has transformed to card but still retains his health percent
 	def transformTo(self, card):
-		ratio = self.health/self.healthMax
+		ratio = float(self.health)/float(self.healthMax)
 		self.health = card.healthMax * ratio
 		self.healthMax = card.healthMax
 		self.stamina = card.staminaMax
