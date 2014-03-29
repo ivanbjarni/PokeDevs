@@ -10,8 +10,8 @@ class Presets(object):
 	invDecks	= []		#invDecks 	Predefined InvDecks of Invcards to be used
 	invCards	= []		#
 	decks		= []		#Decks		Predefined decks of cards to be used
-	cards		= []		#Cards		Predefined cards to be used
-	attacks 	= []		#Attacks 	Predefined attacks to be used
+	cards		= []		#Cards		Predefined cards to be used, Dictionary where key is the pokemon's entry in the national pokedex
+	attacks 	= []		#Attacks 	Predefined attacks to be used, Dictionary where key is the official move id
 
 
 	def __init__(self):
@@ -213,7 +213,7 @@ class Presets(object):
 		435 : Attack("Discharge", 0, 55, -55, 0, "electric"),				
 		436 : Attack("LavaPlume", 25, 35, -10, 0, "fire"),				
 		437 : Attack("LeafStorm", 35, 50, 0, 0, "grass"),				
-		441 : Attack("GunkShot", 20, 55, 0, 1, "grass"),				
+		441 : Attack("GunkShot", 20, 40, 0, 1, "grass"),				
 		443 : Attack("MagnetBomb", 50, 20, 35, 2, "electric"),				
 		445 : Attack("Captivate", 30, 40, 0, 0, "normal"),				
 		450 : Attack("BugBite", 15, 7, 0, 0, "grass"),				
