@@ -411,9 +411,15 @@ class Presets(object):
 		
 		#The best according to 45 minutes of data collection on the 25/03/14
 		TheElite = Deck()
-		TheELite.setCards([self.gc("Pidgeot"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Fearow"),self.gc("Mewtwo"),self.gc("Slowbro"),self.gc("Dragonite"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Vileplume")])
+		TheElite.setCards([self.gc("Pidgeot"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Fearow"),self.gc("Mewtwo"),self.gc("Slowbro"),self.gc("Dragonite"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Vileplume")])
+
+		#the first 10 of ash's pokemon according to the anime
+		TeamAsh = Deck()
+		TeamAsh.setCards([self.gc("Pikachu"),self.gc("Butterfree"),self.gc("Pidgeot"),self.gc("Bulbasaur"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Kingler"),self.gc("Primeape"),self.gc("Muk"),self.gc("Tauros")])
+
 
 		self.decks = {
+		1 	: TeamAsh,
 		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
