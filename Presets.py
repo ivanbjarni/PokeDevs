@@ -18,6 +18,7 @@ class Presets(object):
 		self.initInvCards()
 		self.initAttacks()
 		self.initCards()
+		self.initDecks()
 
 	def __str__(self):
 		return "presets"
@@ -404,8 +405,8 @@ class Presets(object):
 
 
 	def initDecks(self):
-		DreamTeamIvan = newDeck()
-		DreamTeamIvan.setCards([self.gc("Muk"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Polywhirl"),self.gc("Dragonyte"),self.gc("Hypno"),self.gc("Rapidash"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		DreamTeamIvan = Deck()
+		DreamTeamIvan.setCards([self.gc("Muk"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Rapidash"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		self.decks = {
 		27 	: DreamTeamIvan
 		}
@@ -437,7 +438,7 @@ class Presets(object):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
 				return copy.deepcopy(val)
-		print "card not found: getCardByName"
+		print "card not found: getCardByName"+string
 		return -1
 
 	#Short for get invCard (short for inventory card)
@@ -451,7 +452,7 @@ class Presets(object):
 		for key, val in self.invCards.iteritems():
 			if val.name == string:
 				return val
-		print "card not found: getCardByName"
+		print "invcard not found: getCardByName"+string
 		return -1
 
 	def getRandomAttack(self):

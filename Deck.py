@@ -56,5 +56,5 @@ class Deck(object):
 	def isEmpty(self):
 		return not self.cards
 
-	def setCards(cards):
+	def setCards(self, cards):
 		self.cards = cards
