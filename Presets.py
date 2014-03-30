@@ -421,7 +421,7 @@ class Presets(object):
 		TheCuties = Deck()
 		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Seel"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
 
-		#Only water and fighting pokemon
+		#Only water and fighting pokemon kinda
 		FishAndFighters = Deck()
 		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Golem"),self.gc("Kangaskhan")])
 
@@ -431,7 +431,11 @@ class Presets(object):
 
 		#only flying types
 		SkyTerror = Deck()
-		SkyTerror.setCards([self.gc("Pidgey"),self.gc("Pidgeotto"),self.gc("Pidgeot"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Moltres"),self.gc("Farfetch"),self.gc("Aerodactyl"),self.gc("Spearow"),self.gc("Fearow")])
+		SkyTerror.setCards([self.gc("Pidgey"),self.gc("Pidgeotto"),self.gc("Pidgeot"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Moltres"),self.gc("Farfetch'd"),self.gc("Aerodactyl"),self.gc("Spearow"),self.gc("Fearow")])
+
+		#only starter pokemons and their evolved forms
+		TheStarters = Deck()
+		SkyTerror.setCards([self.gc("Pikachu"),self.gc("Bulbasaur"),self.gc("Ivysaur"),self.gc("Venusaur"),self.gc("Charmander"),self.gc("Charmeleon"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Wartortle"),self.gc("Blastoise")])
 
 		self.decks = {
 		1 	: TeamAsh,
@@ -439,6 +443,7 @@ class Presets(object):
 		3 	: FishAndFighters,
 		4 	: TheLegends,
 		5 	: SkyTerror,
+		6 	: TheStarters,
 		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
@@ -501,4 +506,18 @@ class Presets(object):
 			if val.name == string:
 				return val.type
 		print "card not found: getTypeOfName"
+		return -1
+
+	#Short for get Deck
+	def gd(self, deck):
+		if isNumber(deck):
+			return copy.deepcopy(self.decks[deck])
+		else:
+			return self.getCardByName(deck)
+
+	def getDeckByName(self, string):
+		for key, val in self.decks.iteritems():
+			if val.name == string:
+				return copy.deepcopy(val)
+		print "deck not found: getDeckByName"+string
 		return -1
