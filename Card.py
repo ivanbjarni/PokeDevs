@@ -212,9 +212,9 @@ class Card(object):
 		res += str(self.stamina) + '/'+ str(self.staminaMax)
 		res += '\nAttacks: \n'
 		res += self.getAttacks()
-		res += 'Type: '+str(self.poketype)+'\n'
-		res += 'Wkn: '+str(self.weakness)+'\n'
-		res += 'Res: '+str(self.resistance)+'\n'
+		res += 'Type: '+str(self.poketype).title()+'\n'
+		res += 'Wkn: '+str(self.weakness).title()+'\n'
+		res += 'Res: '+str(self.resistance).title()+'\n'
 		return res
 
 	# Usage: b = c.hasHeal()

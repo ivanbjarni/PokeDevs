@@ -60,6 +60,6 @@ class Attack(object):
 			res += 'Stun: '+str(self.stun)+' turn\n'
 		elif self.stun>1:
 			res += 'Stun: '+str(self.stun)+' turns\n'
-		res += 'Type:' +str(self.poketype)
+		res += 'Type:' +str(self.poketype).title()
 		return res
 		
