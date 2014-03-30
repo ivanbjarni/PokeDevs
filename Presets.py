@@ -407,35 +407,43 @@ class Presets(object):
 	def initDecks(self):
 		#Ivan's favorite team
 		DreamTeamIvan = Deck()
+		DreamTeamIvan.name = "DreamTeamIvan"
 		DreamTeamIvan.setCards([self.gc("Sandslash"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		
 		#The best according to 45 minutes of data collection on the 25/03/14
 		TheElite = Deck()
+		TheElite.name = "TheElite"
 		TheElite.setCards([self.gc("Pidgeot"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Fearow"),self.gc("Mewtwo"),self.gc("Slowbro"),self.gc("Dragonite"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Vileplume")])
 
 		#the first 10 of ash's pokemon according to the anime
 		TeamAsh = Deck()
+		TeamAsh.name = "TeamAsh"
 		TeamAsh.setCards([self.gc("Pikachu"),self.gc("Butterfree"),self.gc("Pidgeot"),self.gc("Bulbasaur"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Kingler"),self.gc("Primeape"),self.gc("Muk"),self.gc("Tauros")])
 
 		#only cute pokemon
 		TheCuties = Deck()
+		TheCuties.name = "TheCuties"
 		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Seel"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
 
 		#Only water and fighting pokemon kinda
 		FishAndFighters = Deck()
+		FishAndFighters.name = "FishAndFighters"
 		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Golem"),self.gc("Kangaskhan")])
 
 		#The legendairy pokemon
 		TheLegends = Deck()
+		TheLegends.name = "TheLegends"
 		TheLegends.setCards([self.gc("Mew"),self.gc("Mewtwo"),self.gc("Moltres"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Dragonite"),self.gc("Dragonair"),self.gc("Aerodactyl"),self.gc("Omastar"),self.gc("Kabutops")])
 
 		#only flying types
 		SkyTerror = Deck()
+		SkyTerror.name = "SkyTerror"
 		SkyTerror.setCards([self.gc("Pidgey"),self.gc("Pidgeotto"),self.gc("Pidgeot"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Moltres"),self.gc("Farfetch'd"),self.gc("Aerodactyl"),self.gc("Spearow"),self.gc("Fearow")])
 
 		#only starter pokemons and their evolved forms
 		TheStarters = Deck()
-		SkyTerror.setCards([self.gc("Pikachu"),self.gc("Bulbasaur"),self.gc("Ivysaur"),self.gc("Venusaur"),self.gc("Charmander"),self.gc("Charmeleon"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Wartortle"),self.gc("Blastoise")])
+		TheStarters.name = "TheStarters"
+		TheStarters.setCards([self.gc("Pikachu"),self.gc("Bulbasaur"),self.gc("Ivysaur"),self.gc("Venusaur"),self.gc("Charmander"),self.gc("Charmeleon"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Wartortle"),self.gc("Blastoise")])
 
 		self.decks = {
 		1 	: TeamAsh,
@@ -513,7 +521,7 @@ class Presets(object):
 		if isNumber(deck):
 			return copy.deepcopy(self.decks[deck])
 		else:
-			return self.getCardByName(deck)
+			return self.getDeckByName(deck)
 
 	def getDeckByName(self, string):
 		for key, val in self.decks.iteritems():
