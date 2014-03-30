@@ -407,7 +407,7 @@ class Presets(object):
 	def initDecks(self):
 		#Ivan's favorite team
 		DreamTeamIvan = Deck()
-		DreamTeamIvan.setCards([self.gc("Mew"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		DreamTeamIvan.setCards([self.gc("Sandslash"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		
 		#The best according to 45 minutes of data collection on the 25/03/14
 		TheElite = Deck()
@@ -421,8 +421,24 @@ class Presets(object):
 		TheCuties = Deck()
 		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Seel"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
 
+		#Only water and fighting pokemon
+		FishAndFighters = Deck()
+		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Golem"),self.gc("Kangaskhan")])
+
+		#The legendairy pokemon
+		TheLegends = Deck()
+		TheLegends.setCards([self.gc("Mew"),self.gc("Mewtwo"),self.gc("Moltres"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Dragonite"),self.gc("Dragonair"),self.gc("Aerodactyl"),self.gc("Omastar"),self.gc("Kabutops")])
+
+		#only flying types
+		SkyTerror = Deck()
+		SkyTerror.setCards([self.gc("Pidgey"),self.gc("Pidgeotto"),self.gc("Pidgeot"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Moltres"),self.gc("Farfetch"),self.gc("Aerodactyl"),self.gc("Spearow"),self.gc("Fearow")])
+
 		self.decks = {
 		1 	: TeamAsh,
+		2 	: TheCuties,
+		3 	: FishAndFighters,
+		4 	: TheLegends,
+		5 	: SkyTerror,
 		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
