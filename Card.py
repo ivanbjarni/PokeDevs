@@ -45,7 +45,7 @@ class Card(object):
 	def getAttacks(self):
 		s=""
 		for a in self.attacks:
-			s += " - "
+			s += "- "
 			s += str(a) + "\n"
 		return s
 
@@ -204,6 +204,18 @@ class Card(object):
 	# After: returns a short info about the card as string
 	def shortInfo(self):
 		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"
+
+	def getInfo(self):
+		res = ''
+		res += 'HP: '+str(self.health)+'/'+str(self.healthMax)+'\n'
+		res += 'Stamina: '
+		res += str(self.stamina) + '/'+ str(self.staminaMax)
+		res += '\nAttacks: \n'
+		res += self.getAttacks()
+		res += 'Type: '+str(self.poketype)+'\n'
+		res += 'Wkn: '+str(self.weakness)+'\n'
+		res += 'Res: '+str(self.resistance)+'\n'
+		return res
 
 	# Usage: b = c.hasHeal()
 	# Before: Nothing
