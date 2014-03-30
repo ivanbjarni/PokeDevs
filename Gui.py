@@ -1108,9 +1108,15 @@ class infoPanel(wx.Panel):
 		self.currentHP.SetLabel(' Damage: ' + str(attack.damage))
 		self.maxHP.SetLabel('')
 		self.stamina.SetLabel(' St. cost: ' + str(attack.staminaCost))
-		self.currentStamina.SetLabel(' HP cost: ' + str(attack.healthCost))
+		if attack.healthCost>=0:
+			self.currentStamina.SetLabel(' HP cost: ' + str(attack.healthCost))
+		else:
+			self.currentStamina.SetLabel(' Heal: ' + str(-attack.healthCost))
 		self.maxStamina.SetLabel('')
-		self.attacks.SetLabel(' Stun: ' + str(attack.stun))
+		if attack.stun>0:
+			self.attacks.SetLabel(' Stun: ' + str(attack.stun) + ' turns')
+		else:
+			self.attacks.SetLabel('')
 		self.attack1.SetLabel(' Type: ' + str(attack.poketype).title())
 		self.attack2.SetLabel('')
 		self.attack3.SetLabel('')
