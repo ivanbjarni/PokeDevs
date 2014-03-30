@@ -297,7 +297,15 @@ class Card(object):
 					if x in attacknumberlist and bestDamage == self.attacks[x].damage:
 						return x
 			else:
-				return nonattackdamagelist[0]
+				for x in range(0, len(nonattackdamagelist)):
+					picked = nonattackdamagelist[x]
+					if self.health < self.healthMax * 0.85 and self.attacks[picked].healthCost < 0:
+						return picked
+					elif self.stamina < self.staminaMax * 0.85 and self.attacks[picked].staminaCost < 0:
+						return picked
+					elif self.attacks[picked].stun > 0:
+						return picked
+				return nonattackdamagelist[0]		
 		else:
 			return 0
 

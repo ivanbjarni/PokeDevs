@@ -49,6 +49,13 @@ class Main(object):
 			else:
 				self.textLog.append("You draw an inventory card. It's a "+str(newCard)+"\n")
 
+	# Code for AI so it only uses HelpingHand at the right times
+	def HelpingHand(self, pYou, pEne, stun):
+		if pEne.mainCard.health < pEne.mainCard.healthMax * 0.9 and pYou.mainCard.attacks[stun].name == "HelpingHand":
+			return False
+		else:
+			return True
+
 	#Code for AI so it uses Metronome, given the chanse to.
 	def clefable(self, pYou, pEne):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
@@ -163,12 +170,25 @@ class Main(object):
 				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
 					hasAttacked = pYou.attack(stamina, pEne, self.textLog) 	
 				#AI decides if it wants to stun enemy
-				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina:	
+				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina and self.HelpingHand(pYou, pEne, stun):	
 					hasAttacked = pYou.attack(stun, pEne, self.textLog)
 				elif (pYou.mainCard.name == "Clefable" or pYou.mainCard.name == "Clefairy") and len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = self.clefable(pYou, pEne)
 				elif len(pYou.mainCard.findPossibleAttacks()) > 0:
-					hasAttacked = pYou.attack(calcAttack, pEne, self.textLog)
+					if pYou.mainCard.attacks[calcAttack].stun > 0 and pEne.mainCard.isStunned():
+						print "Well, I'm collecting stamina"
+						hasAttacked = True
+					elif pYou.mainCard.health > pYou.mainCard.healthMax * 0.85 and pYou.mainCard.attacks[calcAttack].healthCost < 0 and pYou.mainCard.attacks[calcAttack].damage == 0:
+						print "Well, I'm collecting stamina"
+						hasAttacked = True
+					elif pYou.mainCard.stamina > pYou.mainCard.staminaMax * 0.85 and pYou.mainCard.attacks[calcAttack].staminaCost < 0  and pYou.mainCard.attacks[calcAttack].damage == 0:
+						print "Well, I'm collecting stamina"
+						hasAttacked = True
+					elif pEne.mainCard.health < pEne.mainCard.healthMax * 0.9 and pYou.mainCard.attacks[calcAttack].name == "HelpingHand":
+						print "Well, I'm collecting stamina"
+						hasAttacked = True
+					else:
+						hasAttacked = pYou.attack(calcAttack, pEne, self.textLog)
 				else:
 					print str(AICard)+" is too busy playing this awesome new Pokemongame..."
 					print "He also lacks Stamina"
