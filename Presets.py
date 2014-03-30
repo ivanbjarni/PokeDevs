@@ -417,6 +417,9 @@ class Presets(object):
 		TeamAsh = Deck()
 		TeamAsh.setCards([self.gc("Pikachu"),self.gc("Butterfree"),self.gc("Pidgeot"),self.gc("Bulbasaur"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Kingler"),self.gc("Primeape"),self.gc("Muk"),self.gc("Tauros")])
 
+		#only cute pokemon
+		TheCuties = Deck()
+		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Seel"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
 
 		self.decks = {
 		1 	: TeamAsh,
