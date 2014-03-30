@@ -15,7 +15,7 @@ missChance = 0.1				#chance that a move misses
 typeEffectiveness = 0.7			#how much % of damage a move does if the pokemon is not that type, normal moves excluded
 stunChance = 0.8				#chance that attacks with stun apply stun
 stunChanceMin = 0.1				#chance that attacks with stun apply stun after the pokemon has been repeatedly stunned
-turnsToMinStun = 10				#How many turns pokemon has to been stunned to reach minimum stun chance
+turnsToMinStun = 8				#How many turns pokemon has to been stunned to reach minimum stun chance
 metronomeAmount = 42			#Amount that metronome can range
 metronomeBase = -20				#Starting amount for metronome
 pointsToWin = 6					#points needed to win
@@ -26,7 +26,7 @@ defEachTurn = 0.5				#amount the defence multiplier is raised by at the end of e
 staminaEachRound = 7 			#amount of stamina regained each round
 AIChanceToStun = 0.35 			#likelyhood of ai using stun providing he has a pokemon with stun and you are not already stunned
 turnsBetweenInvCards = 3 		#turns between inventory cards; 3 means every 3rd turn, not every 4th turn(this only counts your turns, not opponent's)
-#turnsToPenalty = 50				#turns untill pokemon recieves penalty for being too long on the field (this only counts your turns, not opponent's)
+#turnsToPenalty = 30				#turns untill pokemon recieves penalty for being too long on the field (this only counts your turns, not opponent's)
 #defPenaltyMax =	0.3				#maximum defense penalty a card gets
 #defPenaltyTime = 20				#turns untill penalty reaches penalty max (this only counts your turns, not opponent's)
 

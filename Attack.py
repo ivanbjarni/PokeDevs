@@ -41,3 +41,25 @@ class Attack(object):
 		elif(self.staminaCost>0):
 			s+="This move uses "+str(self.staminaCost)+" stamina. "
 		return s
+
+	# Usage: s=atk.info()
+	# Before: nothing
+	# After: s is a string that describes the attack
+	def getInfo(self):
+		res = ''
+		res += 'Damage: '+str(self.damage)+'\n'
+		if self.staminaCost>=0:
+			res += 'St.Cost: '+str(self.staminaCost)+'\n'
+		else:
+			res += 'Rest: '+str(-self.staminaCost)+'\n'
+		if self.healthCost>=0:
+			res += 'Hp.Cost: '+str(self.healthCost)+'\n'
+		else:
+			res += 'Heal: '+str(-self.healthCost)+'\n'
+		if self.stun==1:
+			res += 'Stun: '+str(self.stun)+' turn\n'
+		elif self.stun>1:
+			res += 'Stun: '+str(self.stun)+' turns\n'
+		res += 'Type:' +str(self.poketype)
+		return res
+		

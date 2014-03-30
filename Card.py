@@ -45,7 +45,7 @@ class Card(object):
 	def getAttacks(self):
 		s=""
 		for a in self.attacks:
-			s += " - "
+			s += "- "
 			s += str(a) + "\n"
 		return s
 
@@ -205,6 +205,18 @@ class Card(object):
 	def shortInfo(self):
 		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"
 
+	def getInfo(self):
+		res = ''
+		res += 'HP: '+str(self.health)+'/'+str(self.healthMax)+'\n'
+		res += 'Stamina: '
+		res += str(self.stamina) + '/'+ str(self.staminaMax)
+		res += '\nAttacks: \n'
+		res += self.getAttacks()
+		res += 'Type: '+str(self.poketype)+'\n'
+		res += 'Wkn: '+str(self.weakness)+'\n'
+		res += 'Res: '+str(self.resistance)+'\n'
+		return res
+
 	# Usage: b = c.hasHeal()
 	# Before: Nothing
 	# After: Returns True if Pokemon can heal it self, else False	
@@ -314,7 +326,7 @@ class Card(object):
 	# After: c is stunned for stun turns
 	def setStun(self,turns):
 		self.stun = turns
-		self.turnsStunned = turns
+		self.turnsStunned += turns
 
 	# Usage: b = c.hasStamina()
 	# Before: Nothing
@@ -363,7 +375,7 @@ class Card(object):
 	# Before: card is card
 	# After: c has transformed to card but still retains his health percent
 	def transformTo(self, card):
-		ratio = self.health/self.healthMax
+		ratio = float(self.health)/float(self.healthMax)
 		self.health = card.healthMax * ratio
 		self.healthMax = card.healthMax
 		self.stamina = card.staminaMax
