@@ -453,13 +453,32 @@ class Presets(object):
 		#psychic and fire pokemon
 		MindFire = Deck()
 		MindFire.name = "MindFire"
-		MindFire.setCards([self.gc("Abra"),self.gc("Kadabra"),self.gc("Alakazam"),self.gc("Haunter"),self.gc("Gengar"),self.gc("Ponyta"),self.gc("Moltres"),self.gc("Rapidash"),self.gc("Charmeleon"),self.gc("Vulpix")])
+		MindFire.setCards([self.gc("Abra"),self.gc("Kadabra"),self.gc("Alakazam"),self.gc("Hypno"),self.gc("Drowzee"),self.gc("Ponyta"),self.gc("Moltres"),self.gc("Rapidash"),self.gc("Charmeleon"),self.gc("Vulpix")])
 
 		#grass and normal pokemon
 		MoonGarden = Deck()
 		MoonGarden.name = "MoonGarden"
 		MoonGarden.setCards([self.gc("Clefairy"),self.gc("Clefable"),self.gc("Chansey"),self.gc("Zubat"),self.gc("Golbat"),self.gc("Paras"),self.gc("Parasect"),self.gc("Oddish"),self.gc("Gloom"),self.gc("Vileplume")])
 
+		#only bug pokemon
+		BugParadise = Deck()
+		BugParadise.name = "BugParadise"
+		BugParadise.setCards([self.gc("Venonat"),self.gc("Venomoth"),self.gc("Caterpie"),self.gc("Metapod"),self.gc("Butterfree"),self.gc("Weedle"),self.gc("Kakuna"),self.gc("Beedrill"),self.gc("Pinsir"),self.gc("Scyther")])
+
+		#Only pink and purple pokemon
+		PinkAndPurple = Deck()
+		PinkAndPurple.name = "PinkAndPurple"
+		PinkAndPurple.setCards([self.gc("Slowpoke"),self.gc("Slowbro"),self.gc("Koffing"),self.gc("Weezing"),self.gc("Gastly"),self.gc("Haunter"),self.gc("Gengar"),self.gc("Grimer"),self.gc("Muk"),self.gc("NidoranM")])
+
+		#thunder and grass pokemon
+		ElectricForest = Deck()
+		ElectricForest.name = "ElectricForest"
+		ElectricForest.setCards([self.gc("Bellsprout"),self.gc("Weepinbell"),self.gc("Victreebell"),self.gc("Exeggcute"),self.gc("Exeggutor"),self.gc("Electabuzz"),self.gc("Jolteon"),self.gc("Pikachu"),self.gc("Raichu"),self.gc("Vileplume")])
+
+		#only pokemon that are made out of rock and metal
+		RockAndMetal = Deck()
+		RockAndMetal.name = "RockAndMetal"
+		RockAndMetal.setCards([self.gc("Porygon"),self.gc("Magnemite"),self.gc("Magneton"),self.gc("Voltorb"),self.gc("Electrode"),self.gc("Rhyhorn"),self.gc("Rhydon"),self.gc("Geodude"),self.gc("Graveler"),self.gc("Golem")])
 
 		self.decks = {
 		1 	: TeamAsh,
@@ -471,6 +490,10 @@ class Presets(object):
 		7 	: TheBigOnes,
 		8 	: MindFire,
 		9 	: MoonGarden,
+		10 	: BugParadise,
+		11 	: PinkAndPurple,
+		12 	: ElectricForest,
+		13 	: RockAndMetal,
 		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
