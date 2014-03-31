@@ -56,6 +56,37 @@ class Main(object):
 		else:
 			return True
 
+	#Checks if the staminaboost of maincard could be fatal
+	def notdie(self, pYou):
+		if pYou.mainCard.hasStaminaBoost():
+			sboost = pYou.mainCard.findStamina()
+			if pYou.mainCard.attacks[sboost].healthCost > 0 and pYou.mainCard.health < 0.5 * pYou.mainCard.healthMax:
+				return False
+			else:
+				return True
+		else:
+			return True
+
+	def willstun(self, pYou, pEne, stun):
+		if pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina and self.HelpingHand(pYou, pEne, stun):
+			return True
+		else:
+			return False	
+
+	#AI checks if it needs to and can heal
+	def willheal(self, pYou, heal):		
+		if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal() and pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
+			return True
+		else:
+			return False		
+
+	#AI checks if it needs to and can increase stamina
+	def willstaminaboost(self, pYou, stamina):
+		if pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina and self.notdie(pYou):
+			return True
+		else:
+			return False 
+
 	#Code for AI so it uses Metronome, given the chanse to.
 	def clefable(self, pYou, pEne):
 		calcAttack = pYou.mainCard.findClosestAttack(pEne.mainCard.health)   
@@ -71,6 +102,9 @@ class Main(object):
 		yourCard = pYou.mainCard
 		hasUsed = False 
 		while(not hasUsed):
+			heal = pYou.mainCard.findHeal()
+			stamina = pYou.mainCard.findStamina()
+			stun = pYou.mainCard.findStun()
 			offset = 0
 			for j in range(0,len(pYou.inv.invCards)):
 				i = j - offset
@@ -98,7 +132,7 @@ class Main(object):
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card, self.textLog)
 						offset += 1
-				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned():
+				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned() and not self.willheal(pYou, heal) and not self.willstaminaboost(pYou, stamina):
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
@@ -164,13 +198,13 @@ class Main(object):
 				stamina = pYou.mainCard.findStamina()
 				stun = pYou.mainCard.findStun()
 				#AI checks if it needs to and can heal
-				if pYou.mainCard.needsHeal() and pYou.mainCard.hasHeal() and pYou.mainCard.attacks[heal].staminaCost < pYou.mainCard.stamina:
+				if self.willheal(pYou, heal):
 					hasAttacked = pYou.attack(heal, pEne, self.textLog)
 				#AI gets more stamina if it needs it and has the ability to
-				elif pYou.mainCard.needsStamina() and pYou.mainCard.hasStaminaBoost() and pYou.mainCard.attacks[stamina].staminaCost < pYou.mainCard.stamina:
+				elif self.willstaminaboost(pYou, stamina):
 					hasAttacked = pYou.attack(stamina, pEne, self.textLog) 	
 				#AI decides if it wants to stun enemy
-				elif pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina and self.HelpingHand(pYou, pEne, stun):	
+				elif self.willstun(pYou, pEne, stun):	
 					hasAttacked = pYou.attack(stun, pEne, self.textLog)
 				elif (pYou.mainCard.name == "Clefable" or pYou.mainCard.name == "Clefairy") and len(pYou.mainCard.findPossibleAttacks()) > 0:
 					hasAttacked = self.clefable(pYou, pEne)

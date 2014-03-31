@@ -26,8 +26,8 @@ for i in xrange(0,5000):
 	p1.invdeck.add(presets.getRandomInvCard())
 
 
-#create player 1 give him a hand, random mainCard and a random 10card deck
-p2 = Player("computer")
+#create player 2 give him a hand, random mainCard and a random 10card deck
+p2 = Player("easycomputer")
 p2.hand = Hand()
 p2.inv = Inventory()
 p2.deck = Deck()
