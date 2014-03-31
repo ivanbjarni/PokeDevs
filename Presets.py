@@ -494,7 +494,7 @@ class Presets(object):
 		11 	: PinkAndPurple,
 		12 	: ElectricForest,
 		13 	: RockAndMetal,
-		13 	: TheElite,
+		14 	: TheElite,
 		27 	: DreamTeamIvan
 		}
 
