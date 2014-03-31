@@ -130,7 +130,7 @@ class Presets(object):
 		123 : Attack("Smog", 10, 27, 0, 1, "grass"),	
 		124 : Attack("Sludge", 18, 30, 0, 0, "grass"),	
 		125 : Attack("BoneClub", 30, 0, 15, 0, "normal"),	
-		126 : Attack("FireBlast", 18, 40, 0, 1, "fire"),	
+		126 : Attack("FireBlast", 18, 30, 0, 1, "fire"),	
 		127 : Attack("Waterfall", 25, 45, 0, 0, "water"),	
 		141 : Attack("LeechLife", 15, 20, -15, 0, "grass"),	
 		143 : Attack("SkyAttack", 15, 20, 0, 0, "normal"),	
