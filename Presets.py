@@ -186,7 +186,7 @@ class Presets(object):
 		324 : Attack("SignalBeam", 15, 18, 0, 0, "grass"),			
 		325 : Attack("ShadowPunch", 8, -10, -5, 0, "psychic"),			
 		331 : Attack("BulletSeed", 12, 15, 0, 0, "grass"),			
-		332 : Attack("AerialAce", 30, 0, 25, 0, "normal"),			
+		332 : Attack("AerialAce", 30, 0, 18, 0, "normal"),			
 		346 : Attack("WaterSport", 12, 10, -25, 0, "normal"),			
 		349 : Attack("DragonDance", 0, 20, -30, 0, "normal"),			
 		350 : Attack("RockBlast", 20, 18, 0, 0, "ground"),			
@@ -342,7 +342,7 @@ class Presets(object):
 		90	: Card("Shellder", 30, 80, [self.ga("Tackle"), self.ga("Withdraw"), self.ga("Whirlpool"), self.ga("HydroPump")], "water", "grass", "fire"),
 		91	: Card("Cloyster", 50, 100, [self.ga("HydroPump"), self.ga("Withdraw"), self.ga("AuroraBeam"), self.ga("ToxicSpikes")], "water", "grass", "fire"),
 		92	: Card("Gastly", 30, 70, [self.ga("Lick"), self.ga("Hypnosis"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
-		93	: Card("Hunter", 45, 80, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
+		93	: Card("Haunter", 45, 80, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
 		94	: Card("Gengar", 60, 95, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowPunch"), self.ga("Hex")], "psychic", "psychic", "ground"),
 		95	: Card("Onix", 35, 90, [self.ga("Harden"), self.ga("Dig"), self.ga("DoubleEdge"), self.ga("Sandstorm")], "ground", "water", "electric"),
 		96	: Card("Drowzee", 60, 80, [self.ga("Confusion"), self.ga("Psybeam"), self.ga("ZenHeadbutt"), self.ga("Meditate")], "psychic", "grass", "ground"),
@@ -423,12 +423,12 @@ class Presets(object):
 		#only cute pokemon
 		TheCuties = Deck()
 		TheCuties.name = "TheCuties"
-		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Seel"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
+		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Clefairy"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
 
 		#Only water and fighting pokemon kinda
 		FishAndFighters = Deck()
 		FishAndFighters.name = "FishAndFighters"
-		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Golem"),self.gc("Kangaskhan")])
+		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Machop"),self.gc("Machamp")])
 
 		#The legendairy pokemon
 		TheLegends = Deck()
@@ -445,6 +445,22 @@ class Presets(object):
 		TheStarters.name = "TheStarters"
 		TheStarters.setCards([self.gc("Pikachu"),self.gc("Bulbasaur"),self.gc("Ivysaur"),self.gc("Venusaur"),self.gc("Charmander"),self.gc("Charmeleon"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Wartortle"),self.gc("Blastoise")])
 
+		#only big pokemons
+		TheBigOnes = Deck()
+		TheBigOnes.name = "TheBigOnes"
+		TheBigOnes.setCards([self.gc("Snorlax"),self.gc("Dragonite"),self.gc("Gyarados"),self.gc("Kangaskhan"),self.gc("Tentacruel"),self.gc("Zapdos"),self.gc("Moltres"),self.gc("Articuno"),self.gc("Kabutops"),self.gc("Lapras")])
+
+		#psychic and fire pokemon
+		MindFire = Deck()
+		MindFire.name = "MindFire"
+		MindFire.setCards([self.gc("Abra"),self.gc("Kadabra"),self.gc("Alakazam"),self.gc("Haunter"),self.gc("Gengar"),self.gc("Ponyta"),self.gc("Moltres"),self.gc("Rapidash"),self.gc("Charmeleon"),self.gc("Vulpix")])
+
+		#grass and normal pokemon
+		MoonGarden = Deck()
+		MoonGarden.name = "MoonGarden"
+		MoonGarden.setCards([self.gc("Clefairy"),self.gc("Clefable"),self.gc("Chansey"),self.gc("Zubat"),self.gc("Golbat"),self.gc("Paras"),self.gc("Parasect"),self.gc("Oddish"),self.gc("Gloom"),self.gc("Vileplume")])
+
+
 		self.decks = {
 		1 	: TeamAsh,
 		2 	: TheCuties,
@@ -452,6 +468,9 @@ class Presets(object):
 		4 	: TheLegends,
 		5 	: SkyTerror,
 		6 	: TheStarters,
+		7 	: TheBigOnes,
+		8 	: MindFire,
+		9 	: MoonGarden,
 		13 	: TheElite,
 		27 	: DreamTeamIvan
 		}
