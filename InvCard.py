@@ -41,7 +41,7 @@ class InvCard(object):
 		if(self.damageBoost*100-100 != 0.0):
 			info += "Dam. boost: "+str(self.damageBoost*100-100)+"%\n"
 		if(self.defenseBoost*100-100 != 0.0):
-			info += "Def. boost: "+str(self.defenseBoost*100-100)+"%\n"
+			info += "Def. boost: "+str(100-self.defenseBoost*100)+"%\n"
 		if(self.weakExploit != 0.0):
 			info += "SE. boost: "+str(self.weakExploit*100)+"%\n"
 		if(self.hitBoost != 0.0):

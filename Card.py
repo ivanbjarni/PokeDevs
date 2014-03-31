@@ -147,6 +147,10 @@ class Card(object):
 			self.health  += card.health
 			print str(self)+"'s health increased by "+str(card.health)
 			textLog.append(str(self)+ "'s health increased by "+str(card.health)+"\n")
+		if card.health < 0:
+			self.health  += card.health
+			print str(self)+"'s health decreased by "+str(card.health)
+			textLog.append(str(self)+ "'s health decreased by "+str(card.health)+"\n")
 		self.health   = min(self.health , self.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 		if card.stun:
