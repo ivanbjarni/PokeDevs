@@ -7,6 +7,7 @@ import random
 
 class Deck(object):
 	cards 		= []		#Card[]		List of cards in the deck
+	name 		= ""		#String 	a name to identify the deck in presets
 
 	def __init__(self):
 		self.cards = []
@@ -55,3 +56,6 @@ class Deck(object):
 	# After: bool is true if deck is empty else false
 	def isEmpty(self):
 		return not self.cards
+
+	def setCards(self, cards):
+		self.cards = cards

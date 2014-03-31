@@ -10,14 +10,15 @@ class Presets(object):
 	invDecks	= []		#invDecks 	Predefined InvDecks of Invcards to be used
 	invCards	= []		#
 	decks		= []		#Decks		Predefined decks of cards to be used
-	cards		= []		#Cards		Predefined cards to be used
-	attacks 	= []		#Attacks 	Predefined attacks to be used
+	cards		= []		#Cards		Predefined cards to be used, Dictionary where key is the pokemon's entry in the national pokedex
+	attacks 	= []		#Attacks 	Predefined attacks to be used, Dictionary where key is the official move id
 
 
 	def __init__(self):
 		self.initInvCards()
 		self.initAttacks()
 		self.initCards()
+		self.initDecks()
 
 	def __str__(self):
 		return "presets"
@@ -69,18 +70,18 @@ class Presets(object):
 		37	: Attack("Thrash", 50, 90, 0, 0, "normal"),			
 		38	: Attack("DoubleEdge", 17, 12, 0, 0, "normal"),			
 		39	: Attack("TailWhip", 10, 20, 0, 1, "normal"),			
-		40	: Attack("PoisonSting", 15, 17, 0, 1, "normal"),			
+		40	: Attack("PoisonSting", 15, 20, 0, 1, "grass"),			
 		41	: Attack("Twineedle", 13, 10, 0, 0, "grass"),
-		43	: Attack("Leer", 15, 20, 0, 0, "normal"),			
-		44	: Attack("Bite", 15, 10, 0, 0, "normal"),				
+		43	: Attack("Leer", 17, 20, 0, 0, "normal"),			
+		44	: Attack("Bite", 15, 15, 0, 0, "normal"),				
 		45	: Attack("Growl", 5, 3, 0, 0, "normal"),				
 		46	: Attack("Roar", 7, 3, 0, 0, "normal"),				
-		47	: Attack("Sing", 0, 7, 0, 2, "normal"),				
+		47	: Attack("Sing", 0, 25, 0, 2, "normal"),				
 		48	: Attack("Supersonic", 5, 35, 0, 2, "normal"),				
 		51	: Attack("Acid", 10, 37, 0, 2, "grass"),				
 		52	: Attack("Ember", 10, 5, 0, 0, "fire"),			
 		53	: Attack("Flamethrower", 16, 25, 0, 0, "fire"),			
-		55	: Attack("WaterGun", 18, 20, 0, 0, "water"),			
+		55	: Attack("WaterGun", 18, 14, 0, 0, "water"),			
 		56	: Attack("HydroPump", 50, 65, 0, 0, "water"),			
 		58	: Attack("IceBeam", 40, 60, 0, 0, "water"),			
 		59	: Attack("Blizzard", 40, 50, 25, 0, "water"),			
@@ -96,13 +97,13 @@ class Presets(object):
 		72	: Attack("MegaDrain", 22, 15, -22, 0, "grass"),			
 		74	: Attack("Growth", 0, -10, -7, 0, "normal"),			
 		75	: Attack("RazorLeaf", 18, 20, 0, 0, "grass"),			
-		76	: Attack("SolarBeam", 34, 55, 0, 0, "grass"),			
+		76	: Attack("SolarBeam", 47, 35, 10, 0, "grass"),			
 		78	: Attack("StunSpore", 0, 68, 0, 3, "grass"),			
 		79	: Attack("SleepPowder", 0, 20, 0, 1, "grass"),			
 		80	: Attack("PetalDance", 15, 20, 0, 0, "grass"),			
-		81	: Attack("StringShot", 10, 18, 0, 1, "grass"),			
+		81	: Attack("StringShot", 10, 14, 0, 1, "grass"),			
 		83	: Attack("FireSpin", 20, 25, 0, 0, "fire"),				
-		84	: Attack("ThunderShock", 15, 20, 0, 0, "electric"),				
+		84	: Attack("ThunderShock", 18, 20, 0, 0, "electric"),				
 		85	: Attack("Thunderbolt", 30, 50, 0, 0, "electric"),				
 		89	: Attack("Earthquake", 50, 80, 0, 0, "ground"),				
 		90	: Attack("Fissure", 40, 90, 0, 1, "ground"),				
@@ -114,7 +115,7 @@ class Presets(object):
 		98	: Attack("QuickAttack", 12, 10, 0, 0, "normal"),	
 		99	: Attack("Rage", 0, 10, -20, 2, "normal"),	
 		105	: Attack("Recover", 0, 20, -30, 0, "normal"),	
-		106	: Attack("Harden", 0, 10, -18, 0, "normal"),	
+		106	: Attack("Harden", 0, 20, -18, 0, "normal"),	
 		107	: Attack("Minimize", 0, 20, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 0, "normal"),	
 		110 : Attack("Withdraw", 0, -18, 10, 0, "normal"),			
@@ -129,9 +130,9 @@ class Presets(object):
 		123 : Attack("Smog", 10, 27, 0, 1, "grass"),	
 		124 : Attack("Sludge", 18, 30, 0, 0, "grass"),	
 		125 : Attack("BoneClub", 30, 0, 15, 0, "normal"),	
-		126 : Attack("FireBlast", 18, 40, 0, 1, "fire"),	
+		126 : Attack("FireBlast", 18, 30, 0, 1, "fire"),	
 		127 : Attack("Waterfall", 25, 45, 0, 0, "water"),	
-		141 : Attack("LeechLife", 15, 20, -15, 0, "normal"),	
+		141 : Attack("LeechLife", 15, 20, -15, 0, "grass"),	
 		143 : Attack("SkyAttack", 15, 20, 0, 0, "normal"),	
 		144 : Attack("Transform", 1, 0, 0, 0, "normal"),	
 		145 : Attack("Bubble", 10, 5, 0, 0, "water"),	
@@ -139,10 +140,11 @@ class Presets(object):
 		150 : Attack("Splash", 7, 8, 0, 0, "water"),	
 		152 : Attack("Crabhammer", 35, 50, 10, 0, "water"),	
 		155 : Attack("Bonemerang", 20, 30, 0, 0, "ground"),	
+		157 : Attack("RockSlide", 17, 20, 0, 0, "ground"),	
 		158 : Attack("HyperFang", 17, 20, 0, 0, "water"),	
 		161 : Attack("TriAttack", 19, 30, 0, 0, "normal"),	
 		163 : Attack("Slash", 20, 30, 0, 0, "normal"),	
-		171 : Attack("Nightmare", 10, 50, 0, 1, "psychic"),	
+		171 : Attack("Nightmare", 30, 50, 0, 1, "psychic"),	
 		172 : Attack("FlameWheel", 20, 30, 0, 0, "fire"),	
 		173 : Attack("Snore", 0, -35, 0, 0, "normal"),	
 		175 : Attack("Flail", 15, 30, 0, 0, "water"),	
@@ -156,7 +158,7 @@ class Presets(object):
 		202 : Attack("GigaDrain", 30, 50, -30, 0, "grass"),	
 		203 : Attack("Endure", 0, 40, -40, 0, "normal"),	
 		207 : Attack("Swagger", 0, -35, 0, 0, "normal"),	
-		209 : Attack("Spark", 15, 20, 0, 0, "electric"),	
+		209 : Attack("Spark", 10, 15, 0, 0, "electric"),	
 		210 : Attack("FuryCutter", 10, 40, 0, 0, "grass"),	
 		219 : Attack("Safeguard", 0, 25, -25, 1, "normal"),	
 		222 : Attack("Magnitude", 18, 30, 0, 1, "ground"),	
@@ -166,36 +168,36 @@ class Presets(object):
 		238 : Attack("CrossChop", 33, 50, 0, 1, "ground"),			
 		240 : Attack("RainDance", 5, -12, -5, 0, "water"),			
 		241 : Attack("SunnyDay", -5, 20, -30, 0, "fire"),			
-		246 : Attack("AncientPower", 8, 32, -30, 0, "normal"),			
+		246 : Attack("AncientPower", 8, 32, -30, 0, "ground"),			
 		247 : Attack("ShadowBall", 5, -23, 0, 0, "psychic"),			
 		250 : Attack("Whirlpool", 15, 15, -5, 0, "water"),			
 		252 : Attack("FakeOut", 12, 7, 0, 0, "normal"),			
 		253 : Attack("Uproar", 30, 40, 0, 0, "normal"),			
 		264 : Attack("FocusPunch", 15, 15, 0, 0, "ground"),			
 		268 : Attack("Charge", 0, -30, 5, 0, "electric"),			
-		270 : Attack("HelpingHand", -30, 50, 0, 2, "normal"),			
+		270 : Attack("HelpingHand", -30, 18, 0, 2, "normal"),			
 		276 : Attack("Superpower", 7, 20, -20, 0, "normal"),			
 		279 : Attack("Revenge", 15, 20, 0, 0, "normal"),			
 		283 : Attack("Endeavor", 15, 20, -10, 0, "normal"),			
 		291 : Attack("Dive", 5, 5, -10, 0, "water"),			
 		304 : Attack("HyperVoice", 15, 20, 0, 0, "normal"),			
-		305 : Attack("PoisonFang", 20, 30, 0, 1, "normal"),			
+		305 : Attack("PoisonFang", 20, 30, 0, 1, "grass"),			
 		318 : Attack("SilverWind", 20, 10, -10, 0, "grass"),			
 		324 : Attack("SignalBeam", 15, 18, 0, 0, "grass"),			
 		325 : Attack("ShadowPunch", 8, -10, -5, 0, "psychic"),			
 		331 : Attack("BulletSeed", 12, 15, 0, 0, "grass"),			
-		332 : Attack("AerialAce", 30, 0, 25, 0, "normal"),			
+		332 : Attack("AerialAce", 30, 0, 18, 0, "normal"),			
 		346 : Attack("WaterSport", 12, 10, -25, 0, "normal"),			
 		349 : Attack("DragonDance", 0, 20, -30, 0, "normal"),			
 		350 : Attack("RockBlast", 20, 18, 0, 0, "ground"),			
-		352 : Attack("WaterPulse", 30, 20, 0, 0, "water"),			
+		352 : Attack("WaterPulse", 28, 30, 0, 0, "water"),			
 		361 : Attack("HealingWish", -5, 5, -20, 0, "normal"),			
 		362 : Attack("Brine", 15, 8, 0, 0, "water"),			
 		364 : Attack("Feint", 0, -20, 10, 0, "normal"),			
-		370 : Attack("CloseCombat", 30, 40, 0, 0, "normal"),			
+		370 : Attack("CloseCombat", 30, 40, 0, 0, "ground"),			
 		382 : Attack("MeFirst", 0, 30, 0, 2, "normal"),			
 		390 : Attack("ToxicSpikes", 15, 28, 0, 1, "grass"),			
-		394 : Attack("FlareBlitz", 40, 40, 0, 0, "fire"),				
+		394 : Attack("FlareBlitz", 30, 40, 0, 1, "fire"),				
 		401 : Attack("AquaTail", 15, 25, 0, 0, "water"),				
 		402 : Attack("SeedBomb", 25, 40, 0, 0, "grass"),				
 		403 : Attack("AirSlash", 25, 35, 0, 0, "normal"),				
@@ -211,7 +213,7 @@ class Presets(object):
 		435 : Attack("Discharge", 0, 55, -55, 0, "electric"),				
 		436 : Attack("LavaPlume", 25, 35, -10, 0, "fire"),				
 		437 : Attack("LeafStorm", 35, 50, 0, 0, "grass"),				
-		441 : Attack("GunkShot", 20, 55, 0, 1, "grass"),				
+		441 : Attack("GunkShot", 20, 40, 0, 1, "grass"),				
 		443 : Attack("MagnetBomb", 50, 20, 35, 2, "electric"),				
 		445 : Attack("Captivate", 30, 40, 0, 0, "normal"),				
 		450 : Attack("BugBite", 15, 7, 0, 0, "grass"),				
@@ -228,9 +230,9 @@ class Presets(object):
 		498	: Attack("ChipAway", 30, 45, 0, 0, "normal"),			
 		505	: Attack("HealPulse", 0, 10, -25, 0, "psychic"),			
 		506	: Attack("Hex", 15, 35, -25, 1, "psychic"),			
-		512	: Attack("Acrobatics", 20, 35, 0, 0, "normal"),			
+		512	: Attack("Acrobatics", 18, 15, 0, 0, "normal"),			
 		515	: Attack("FinalGambit", 40, 0, 25, 0, "normal"),			
-		517	: Attack("Inferno", 25, 40, 0, 0, "fire"),				
+		517	: Attack("Inferno", 40, 40, 0, 0, "fire"),				
 		531	: Attack("HeartStamp", 25, 40, 0, 0, "psychic"),				
 		540	: Attack("Psystrike", 15, 30, 0, 1, "psychic"),				
 		542	: Attack("Hurricane", 25, 50, 0, 1, "normal"),				
@@ -241,7 +243,7 @@ class Presets(object):
 		580	: Attack("GrassyTerrain", 0, 40, -30, 0, "grass"),
 		583	: Attack("PlayRough", 27, 45, 0, 0, "normal"),
 		585	: Attack("Moonblast", 25, 45, 0, 0, "normal"),
-		678	: Attack("ElectroBall", 18, 20, -5, 0, "electric")
+		678	: Attack("ElectroBall", 18, 20, -12, 0, "electric")
 		
 
 		}
@@ -258,10 +260,10 @@ class Presets(object):
 		8	: Card("Wartortle", 59, 100, [self.ga("Tackle"), self.ga("RapidSpin"), self.ga("Withdraw"), self.ga("WaterPulse")], "water", "grass", "fire"),
 		9	: Card("Blastoise", 79, 105, [self.ga("Bubble"), self.ga("WaterPulse"), self.ga("WaterGun"), self.ga("HydroPump")], "water", "grass", "fire"),
 		10	: Card("Caterpie", 45, 100, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		11	: Card("Metapod", 50, 12000, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "ground", "grass"),
+		11	: Card("Metapod", 50, 85, [self.ga("Tackle"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "ground", "grass"),
 		12	: Card("Butterfree", 60, 110, [self.ga("Gust"), self.ga("Supersonic"), self.ga("SilverWind"), self.ga("BugBuzz")], "grass", "fire", "grass"),
 		13	: Card("Weedle", 40, 60, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Empty")], "grass", "ground", "grass"),
-		14	: Card("Kakuna", 45, 80, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "fire", "grass"),
+		14	: Card("Kakuna", 45, 85, [self.ga("PoisonSting"), self.ga("StringShot"), self.ga("BugBite"), self.ga("Harden")], "grass", "fire", "grass"),
 		15	: Card("Beedrill", 65, 110, [self.ga("FocusEnergy"), self.ga("Twineedle"), self.ga("Rage"), self.ga("FellStinger")], "grass", "fire", "grass"),
 		16	: Card("Pidgey", 40, 100, [self.ga("Tackle"), self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash")], "normal", "electric", "grass"),
 		17	: Card("Pidgeotto", 63, 105, [self.ga("Gust"), self.ga("WingAttack"), self.ga("AirSlash"), self.ga("Hurricane")], "normal", "electric", "grass"),
@@ -340,7 +342,7 @@ class Presets(object):
 		90	: Card("Shellder", 30, 80, [self.ga("Tackle"), self.ga("Withdraw"), self.ga("Whirlpool"), self.ga("HydroPump")], "water", "grass", "fire"),
 		91	: Card("Cloyster", 50, 100, [self.ga("HydroPump"), self.ga("Withdraw"), self.ga("AuroraBeam"), self.ga("ToxicSpikes")], "water", "grass", "fire"),
 		92	: Card("Gastly", 30, 70, [self.ga("Lick"), self.ga("Hypnosis"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
-		93	: Card("Hunter", 45, 80, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
+		93	: Card("Haunter", 45, 80, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowBall"), self.ga("Hex")], "psychic", "psychic", "ground"),
 		94	: Card("Gengar", 60, 95, [self.ga("Lick"), self.ga("Nightmare"), self.ga("ShadowPunch"), self.ga("Hex")], "psychic", "psychic", "ground"),
 		95	: Card("Onix", 35, 90, [self.ga("Harden"), self.ga("Dig"), self.ga("DoubleEdge"), self.ga("Sandstorm")], "ground", "water", "electric"),
 		96	: Card("Drowzee", 60, 80, [self.ga("Confusion"), self.ga("Psybeam"), self.ga("ZenHeadbutt"), self.ga("Meditate")], "psychic", "grass", "ground"),
@@ -386,10 +388,10 @@ class Presets(object):
 		136	: Card("Flareon", 65, 120, [self.ga("Ember"), self.ga("HelpingHand"), self.ga("LavaPlume"), self.ga("FireFang")], "fire", "ground", "grass"),
 		137	: Card("Porygon", 65, 85, [self.ga("Tackle"), self.ga("Psybeam"), self.ga("Recover"), self.ga("TriAttack")], "normal", "ground", "psychic"),
 		138	: Card("Omanyte", 35, 75, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("RockBlast")], "ground", "ground", "normal"),
-		139	: Card("Omastar", 70, 90, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("Leer"), self.ga("HydroPump")], "ground", "grass", "normal"),
-		140	: Card("Kabuto", 30, 75, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("Harden")], "ground", "ground", "normal"),
+		139	: Card("Omastar", 70, 90, [self.ga("Withdraw"), self.ga("WaterGun"), self.ga("RockBlast"), self.ga("HydroPump")], "ground", "grass", "normal"),
+		140	: Card("Kabuto", 30, 75, [self.ga("RockBlast"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("Harden")], "ground", "ground", "normal"),
 		141	: Card("Kabutops", 60, 95, [self.ga("Scratch"), self.ga("Absorb"), self.ga("AquaJet"), self.ga("AncientPower")], "ground", "grass", "normal"),
-		142	: Card("Aerodactyl", 80, 100, [self.ga("WingAttack"), self.ga("Roar"), self.ga("HyperBeam"), self.ga("AncientPower")], "ground", "electric", "ground"),
+		142	: Card("Aerodactyl", 80, 100, [self.ga("WingAttack"), self.ga("RockSlide"), self.ga("HyperBeam"), self.ga("AncientPower")], "ground", "electric", "ground"),
 		143	: Card("Snorlax", 160, 80, [self.ga("Tackle"), self.ga("ChipAway"), self.ga("GigaImpact"), self.ga("Snore")], "normal", "ground", "psychic"),
 		144	: Card("Articuno", 90, 90, [self.ga("IceBeam"), self.ga("Blizzard"), self.ga("Gust"), self.ga("AncientPower")], "water", "grass", "ground"),
 		145	: Card("Zapdos", 90, 90, [self.ga("ThunderShock"), self.ga("DrillPeck"), self.ga("Discharge"), self.ga("ZapCannon")], "electric", "water", "ground"),
@@ -398,8 +400,104 @@ class Presets(object):
 		148	: Card("Dragonair", 61, 95, [self.ga("Outrage"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		149	: Card("Dragonite", 91, 110, [self.ga("Outrage"), self.ga("Hurricane"), self.ga("DragonDance"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		150	: Card("Mewtwo", 106, 150, [self.ga("Recover"), self.ga("PsychoCut"), self.ga("Psystrike"), self.ga("MeFirst")], "psychic", "none", "normal"),
-		151	: Card("Mew", 100, 150, [self.ga("Recover"), self.ga("MegaPunch"), self.ga("AncientPower"), self.ga("MeFirst")], "psychic", "none", "normal")
+		151	: Card("Mew", 100, 150, [self.ga("Recover"), self.ga("MegaPunch"), self.ga("AncientPower"), self.ga("Psychic")], "psychic", "none", "normal")
 		}
+
+
+	def initDecks(self):
+		#Ivan's favorite team
+		DreamTeamIvan = Deck()
+		DreamTeamIvan.name = "DreamTeamIvan"
+		DreamTeamIvan.setCards([self.gc("Sandslash"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		
+		#The best according to 45 minutes of data collection on the 25/03/14
+		TheElite = Deck()
+		TheElite.name = "TheElite"
+		TheElite.setCards([self.gc("Pidgeot"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Fearow"),self.gc("Mewtwo"),self.gc("Slowbro"),self.gc("Dragonite"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Vileplume")])
+
+		#the first 10 of ash's pokemon according to the anime
+		TeamAsh = Deck()
+		TeamAsh.name = "TeamAsh"
+		TeamAsh.setCards([self.gc("Pikachu"),self.gc("Butterfree"),self.gc("Pidgeot"),self.gc("Bulbasaur"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Kingler"),self.gc("Primeape"),self.gc("Muk"),self.gc("Tauros")])
+
+		#only cute pokemon
+		TheCuties = Deck()
+		TheCuties.name = "TheCuties"
+		TheCuties.setCards([self.gc("Wigglytuff"),self.gc("Eevee"),self.gc("Dewgong"),self.gc("Ninetales"),self.gc("Jigglypuff"),self.gc("Clefairy"),self.gc("Oddish"),self.gc("Ponyta"),self.gc("Vulpix"),self.gc("Chansey")])
+
+		#Only water and fighting pokemon kinda
+		FishAndFighters = Deck()
+		FishAndFighters.name = "FishAndFighters"
+		FishAndFighters.setCards([self.gc("Goldeen"),self.gc("Starmie"),self.gc("Seaking"),self.gc("Shellder"),self.gc("Poliwhirl"),self.gc("Poliwrath"),self.gc("Hitmonlee"),self.gc("Hitmonchan"),self.gc("Machop"),self.gc("Machamp")])
+
+		#The legendairy pokemon
+		TheLegends = Deck()
+		TheLegends.name = "TheLegends"
+		TheLegends.setCards([self.gc("Mew"),self.gc("Mewtwo"),self.gc("Moltres"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Dragonite"),self.gc("Dragonair"),self.gc("Aerodactyl"),self.gc("Omastar"),self.gc("Kabutops")])
+
+		#only flying types
+		SkyTerror = Deck()
+		SkyTerror.name = "SkyTerror"
+		SkyTerror.setCards([self.gc("Pidgey"),self.gc("Pidgeotto"),self.gc("Pidgeot"),self.gc("Zapdos"),self.gc("Articuno"),self.gc("Moltres"),self.gc("Farfetch'd"),self.gc("Aerodactyl"),self.gc("Spearow"),self.gc("Fearow")])
+
+		#only starter pokemons and their evolved forms
+		TheStarters = Deck()
+		TheStarters.name = "TheStarters"
+		TheStarters.setCards([self.gc("Pikachu"),self.gc("Bulbasaur"),self.gc("Ivysaur"),self.gc("Venusaur"),self.gc("Charmander"),self.gc("Charmeleon"),self.gc("Charizard"),self.gc("Squirtle"),self.gc("Wartortle"),self.gc("Blastoise")])
+
+		#only big pokemons
+		TheBigOnes = Deck()
+		TheBigOnes.name = "TheBigOnes"
+		TheBigOnes.setCards([self.gc("Snorlax"),self.gc("Dragonite"),self.gc("Gyarados"),self.gc("Kangaskhan"),self.gc("Tentacruel"),self.gc("Zapdos"),self.gc("Moltres"),self.gc("Articuno"),self.gc("Kabutops"),self.gc("Lapras")])
+
+		#psychic and fire pokemon
+		MindFire = Deck()
+		MindFire.name = "MindFire"
+		MindFire.setCards([self.gc("Abra"),self.gc("Kadabra"),self.gc("Alakazam"),self.gc("Hypno"),self.gc("Drowzee"),self.gc("Ponyta"),self.gc("Moltres"),self.gc("Rapidash"),self.gc("Charmeleon"),self.gc("Vulpix")])
+
+		#grass and normal pokemon
+		MoonGarden = Deck()
+		MoonGarden.name = "MoonGarden"
+		MoonGarden.setCards([self.gc("Clefairy"),self.gc("Clefable"),self.gc("Chansey"),self.gc("Zubat"),self.gc("Golbat"),self.gc("Paras"),self.gc("Parasect"),self.gc("Oddish"),self.gc("Gloom"),self.gc("Vileplume")])
+
+		#only bug pokemon
+		BugParadise = Deck()
+		BugParadise.name = "BugParadise"
+		BugParadise.setCards([self.gc("Venonat"),self.gc("Venomoth"),self.gc("Caterpie"),self.gc("Metapod"),self.gc("Butterfree"),self.gc("Weedle"),self.gc("Kakuna"),self.gc("Beedrill"),self.gc("Pinsir"),self.gc("Scyther")])
+
+		#Only pink and purple pokemon
+		PinkAndPurple = Deck()
+		PinkAndPurple.name = "PinkAndPurple"
+		PinkAndPurple.setCards([self.gc("Slowpoke"),self.gc("Slowbro"),self.gc("Koffing"),self.gc("Weezing"),self.gc("Gastly"),self.gc("Haunter"),self.gc("Gengar"),self.gc("Grimer"),self.gc("Muk"),self.gc("NidoranM")])
+
+		#thunder and grass pokemon
+		ElectricForest = Deck()
+		ElectricForest.name = "ElectricForest"
+		ElectricForest.setCards([self.gc("Bellsprout"),self.gc("Weepinbell"),self.gc("Victreebell"),self.gc("Exeggcute"),self.gc("Exeggutor"),self.gc("Electabuzz"),self.gc("Jolteon"),self.gc("Pikachu"),self.gc("Raichu"),self.gc("Vileplume")])
+
+		#only pokemon that are made out of rock and metal
+		RockAndMetal = Deck()
+		RockAndMetal.name = "RockAndMetal"
+		RockAndMetal.setCards([self.gc("Porygon"),self.gc("Magnemite"),self.gc("Magneton"),self.gc("Voltorb"),self.gc("Electrode"),self.gc("Rhyhorn"),self.gc("Rhydon"),self.gc("Geodude"),self.gc("Graveler"),self.gc("Golem")])
+
+		self.decks = {
+		1 	: TeamAsh,
+		2 	: TheCuties,
+		3 	: FishAndFighters,
+		4 	: TheLegends,
+		5 	: SkyTerror,
+		6 	: TheStarters,
+		7 	: TheBigOnes,
+		8 	: MindFire,
+		9 	: MoonGarden,
+		10 	: BugParadise,
+		11 	: PinkAndPurple,
+		12 	: ElectricForest,
+		13 	: RockAndMetal,
+		14 	: TheElite,
+		27 	: DreamTeamIvan
+		}
+
 
 	#Short for get attack
 	def ga(self, attack):
@@ -427,7 +525,7 @@ class Presets(object):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
 				return copy.deepcopy(val)
-		print "card not found: getCardByName"
+		print "card not found: getCardByName"+string
 		return -1
 
 	#Short for get invCard (short for inventory card)
@@ -441,7 +539,7 @@ class Presets(object):
 		for key, val in self.invCards.iteritems():
 			if val.name == string:
 				return val
-		print "card not found: getCardByName"
+		print "invcard not found: getCardByName"+string
 		return -1
 
 	def getRandomAttack(self):
@@ -452,3 +550,24 @@ class Presets(object):
 
 	def getRandomInvCard(self):
 		return copy.deepcopy(random.choice(self.invCards.values()))
+
+	def getTypeOfName(self, string):
+		for key, val in self.cards.iteritems():
+			if val.name == string:
+				return val.type
+		print "card not found: getTypeOfName"
+		return -1
+
+	#Short for get Deck
+	def gd(self, deck):
+		if isNumber(deck):
+			return copy.deepcopy(self.decks[deck])
+		else:
+			return self.getDeckByName(deck)
+
+	def getDeckByName(self, string):
+		for key, val in self.decks.iteritems():
+			if val.name == string:
+				return copy.deepcopy(val)
+		print "deck not found: getDeckByName"+string
+		return -1

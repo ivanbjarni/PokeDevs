@@ -822,25 +822,55 @@ class AttackPanel(wx.Panel):
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.attackButtons = []
-
 		# Some different variations of buttons, don't know what looks best
 
 		# This button looks nicer than the generic button but I'm not 100% sure it's compatable with
 		# other operating systems than windows
 		# The label also doesn't center on this button if it is multiline
-		for i in xrange(0,4):
-			element = GB.GradientButton(self, -1, label='---', size=(200, 100))
-			self.attackButtons.insert(i,element)
-			self.attackButtons[i].SetTopStartColour(wx.Colour(168-30*i, 184, 184))
-			self.attackButtons[i].SetTopEndColour(wx.Colour(70-10*i, 89, 89))
-			self.attackButtons[i].SetBottomStartColour(wx.Colour(66-10*i, 82, 82))
-			self.attackButtons[i].SetPressedTopColour(wx.Colour(88, 110, 110))
-			self.attackButtons[i].SetPressedBottomColour(wx.Colour(54, 43, 43))
-			self.attackButtons[i].SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
-			self.attackButtons[i].Bind(wx.EVT_BUTTON, lambda event, index=i: self.attack(index, False))
-			self.attackButtons[i].Bind(wx.EVT_MOUSE_EVENTS, lambda event, index=i: self.onMouseBtn(event,index))
-			self.hbox.Add(self.attackButtons[i], flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton1 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		#self.attackButton1.SetTopStartColour(wx.Colour('#A8B8B8'))
+		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton1.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton1.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton1.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton1.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0, False))
+		self.attackButton1.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse1)
+
+		self.attackButton2 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton2.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton2.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton2.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton2.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton2.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton2, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1, False))
+		self.attackButton2.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse2)
+
+		self.attackButton3 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton3.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton3.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton3.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton3.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton3.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton3, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2, False))
+		self.attackButton3.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse3)
+
+		self.attackButton4 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton4.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton4.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton4.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton4.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton4.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton4, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3, False))
+		self.attackButton4.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
@@ -851,7 +881,7 @@ class AttackPanel(wx.Panel):
 		self.passButton.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.passButton, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 		self.passButton.Bind(wx.EVT_BUTTON, lambda event: self.attack(-1, True))
-		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMousePass)
+		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
@@ -861,15 +891,28 @@ class AttackPanel(wx.Panel):
 		self.GetParent().gamePanel.isMyTurn = False
 		self.GetParent().playerAction(num, passTurn)
 
-	def onMouseBtn(self, event, btnNr):
+	def onMouse1(self, event):
 		if event.Moving():
-			attack = self.GetParent().game.players[0].mainCard.attacks[btnNr]
+			attack = self.GetParent().game.players[0].mainCard.attacks[0]
 			self.GetParent().infoPanel.setAttackInfo(attack)
 		event.Skip()
 
-	def onMousePass(self, event):
+	def onMouse2(self, event):
 		if event.Moving():
-			self.GetParent().infoPanel.setPassInfo()
+			attack = self.GetParent().game.players[0].mainCard.attacks[1]
+			self.GetParent().infoPanel.setAttackInfo(attack)
+		event.Skip()
+
+	def onMouse3(self, event):
+		if event.Moving():
+			attack = self.GetParent().game.players[0].mainCard.attacks[2]
+			self.GetParent().infoPanel.setAttackInfo(attack)
+		event.Skip()
+
+	def onMouse4(self, event):
+		if event.Moving():
+			attack = self.GetParent().game.players[0].mainCard.attacks[3]
+			self.GetParent().infoPanel.setAttackInfo(attack)
 		event.Skip()
 
 	# Usage: c.setAttackLabels(card)
@@ -878,10 +921,10 @@ class AttackPanel(wx.Panel):
 	#        attacks on card
 	def setLabels(self, card):
 		self.Freeze()
-		self.attackButtons[0].SetLabel(card.attacks[0].name)
-		self.attackButtons[1].SetLabel(card.attacks[1].name)
-		self.attackButtons[2].SetLabel(card.attacks[2].name)
-		self.attackButtons[3].SetLabel(card.attacks[3].name)
+		self.attackButton1.SetLabel(card.attacks[0].name)
+		self.attackButton2.SetLabel(card.attacks[1].name)
+		self.attackButton3.SetLabel(card.attacks[2].name)
+		self.attackButton4.SetLabel(card.attacks[3].name)
 		self.Layout()
 		self.Thaw()
 
@@ -889,15 +932,15 @@ class AttackPanel(wx.Panel):
 	# Post : all of the attack buttons have been disabled
 	def disableAll(self):
 		self.Freeze()
-		self.attackButtons[0].Disable()
-		self.attackButtons[1].Disable()
-		self.attackButtons[2].Disable()
-		self.attackButtons[3].Disable()
+		self.attackButton1.Disable()
+		self.attackButton2.Disable()
+		self.attackButton3.Disable()
+		self.attackButton4.Disable()
 		self.passButton.Disable()
-		self.attackButtons[0].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[1].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[2].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[3].SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton1.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton2.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton3.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton4.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.passButton.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.Thaw()
 
@@ -905,15 +948,15 @@ class AttackPanel(wx.Panel):
 	# Post : all of the attack buttons have been enabled
 	def enableAll(self):
 		self.Freeze()
-		self.attackButtons[0].Enable()
-		self.attackButtons[1].Enable()
-		self.attackButtons[2].Enable()
-		self.attackButtons[3].Enable()
+		self.attackButton1.Enable()
+		self.attackButton2.Enable()
+		self.attackButton3.Enable()
+		self.attackButton4.Enable()
 		self.passButton.Enable()
-		self.attackButtons[0].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[1].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[2].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[3].SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.Thaw()
 
@@ -926,10 +969,10 @@ class infoPanel(wx.Panel):
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
 		self.vboxatt = wx.BoxSizer(wx.VERTICAL)
-		self.hboxTooltip = wx.BoxSizer(wx.HORIZONTAL)
+		self.hboxHealth = wx.BoxSizer(wx.HORIZONTAL)
 		self.hboxStamina = wx.BoxSizer(wx.HORIZONTAL)
 		titlefont = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-		font = wx.Font(pointSize=17, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		font = wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
 		fc = '#CCCCCC'
 
 		self.name = wx.StaticText(self, label='Name', style=wx.ALIGN_LEFT)
@@ -937,17 +980,99 @@ class infoPanel(wx.Panel):
 		self.name.SetForegroundColour(fc)
 		self.vbox1.Add(self.name, flag=wx.ALIGN_CENTER, border=10)
 
-		self.tooltip = wx.StaticText(self, label='tooltip', style=wx.ALIGN_LEFT)
-		self.tooltip.SetFont(font)
-		self.tooltip.SetForegroundColour(fc)
 
-		self.hboxTooltip.Add(self.tooltip, flag=wx.ALIGN_CENTER, border=10)
-		self.vbox1.Add(self.hboxTooltip, flag=wx.ALIGN_LEFT, border=10)
+		self.currentHP = wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
+		self.currentHP.SetFont(font)
+		self.currentHP.SetForegroundColour(fc)
+
+		self.maxHP =  wx.StaticText(self, label='maxHP', style=wx.ALIGN_LEFT)
+		self.maxHP.SetFont(font)
+		self.maxHP.SetForegroundColour(fc)
+
+		self.hboxHealth.Add(self.currentHP, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxHealth.Add(self.maxHP, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxHealth, flag=wx.ALIGN_LEFT, border=10)
+#
+		self.stamina = wx.StaticText(self, label='Stamina', style=wx.ALIGN_LEFT)
+		self.stamina.SetFont(font)
+		self.stamina.SetForegroundColour(fc)
+		self.vbox.Add(self.stamina, flag=wx.ALIGN_CENTER, border=10)
+#		
+
+		self.currentStamina = wx.StaticText(self, label='currentStamina', style=wx.ALIGN_LEFT)
+		self.currentStamina.SetFont(font)
+		self.currentStamina.SetForegroundColour(fc)
+
+		self.maxStamina = wx.StaticText(self, label='maxStamina', style=wx.ALIGN_LEFT)
+		self.maxStamina.SetFont(font)
+		self.maxStamina.SetForegroundColour(fc)
+
+		self.hboxStamina.Add(self.currentStamina, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxStamina.Add(self.maxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox.Add(self.hboxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.vbox, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attacks = wx.StaticText(self, label='ATTACKS:', style=wx.ALIGN_LEFT)
+		self.attacks.SetFont(font)
+		self.attacks.SetForegroundColour(fc)
+		self.vbox1.Add(self.attacks, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack1 = wx.StaticText(self, label='ATTACK1', style=wx.ALIGN_LEFT)
+		self.attack1.SetFont(font)
+		self.attack1.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack1, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack2 = wx.StaticText(self, label='ATTACK2', style=wx.ALIGN_LEFT)
+		self.attack2.SetFont(font)
+		self.attack2.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack2, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack3 = wx.StaticText(self, label='ATTACK3', style=wx.ALIGN_LEFT)
+		self.attack3.SetFont(font)
+		self.attack3.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack3, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack4 = wx.StaticText(self, label='ATTACK4', style=wx.ALIGN_LEFT)
+		self.attack4.SetFont(font)
+		self.attack4.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack4, flag=wx.ALIGN_LEFT, border=10)
+
+		self.vbox1.Add(self.vboxatt, flag=wx.ALIGN_LEFT, border=10)
+
+		self.type = wx.StaticText(self, label='Type', style=wx.ALIGN_LEFT)
+		self.type.SetFont(font)
+		self.type.SetForegroundColour(fc)
+		self.vbox1.Add(self.type, flag=wx.ALIGN_LEFT, border=10)
+
+		self.weakness = wx.StaticText(self, label='Weakness', style=wx.ALIGN_LEFT)
+		self.weakness.SetFont(font)
+		self.weakness.SetForegroundColour(fc)
+		self.vbox1.Add(self.weakness, flag=wx.ALIGN_LEFT, border=10)
+
+		self.resistance = wx.StaticText(self, label='Resistance', style=wx.ALIGN_LEFT)
+		self.resistance.SetFont(font)
+		self.resistance.SetForegroundColour(fc)
+		self.vbox1.Add(self.resistance, flag=wx.ALIGN_LEFT, border=10)
 
 		self.SetSizer(self.vbox1)
 
 		self.name.SetLabel('')
-		self.tooltip.SetLabel('')
+		self.currentHP.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 
 	# Usage: c.setPokeInfo(card)
 	# Pre  : card is Card
@@ -956,9 +1081,22 @@ class infoPanel(wx.Panel):
 	def setPokeInfo(self, pcard):
 		self.Freeze()
 		self.name.SetLabel('-'+str(pcard.name)+'-')
-		self.tooltip.SetLabel(pcard.getInfo())
+		self.currentHP.SetLabel(' HP:' + str(pcard.health) + '/')
+		self.maxHP.SetLabel(str(pcard.healthMax))
+		self.stamina.SetLabel(' Stamina:')
+		self.currentStamina.SetLabel(' ' + str(pcard.stamina) + '/')
+		self.maxStamina.SetLabel(' ' + str(pcard.staminaMax))
+		self.attacks.SetLabel(' Attacks: ')
+		self.attack1.SetLabel(' -' + str(pcard.attacks[0]))
+		self.attack2.SetLabel(' -' + str(pcard.attacks[1]))
+		self.attack3.SetLabel(' -' + str(pcard.attacks[2]))
+		self.attack4.SetLabel(' -' + str(pcard.attacks[3]))
+		self.type.SetLabel(' Type: ' + str(pcard.poketype).title())
+		self.weakness.SetLabel(' Wkn: ' + str(pcard.weakness).title())
+		self.resistance.SetLabel(' Res: ' + str(pcard.resistance).title())
 		self.Layout()
 		self.Thaw()
+
 
 	# Usage: c.setAttackInfo(attack)
 	# Pre  : card is Attack
@@ -967,20 +1105,28 @@ class infoPanel(wx.Panel):
 	def setAttackInfo(self, attack):
 		self.Freeze()
 		self.name.SetLabel('-' + str(attack.name) + '-')
-		self.tooltip.SetLabel(attack.getInfo())
+		self.currentHP.SetLabel(' Damage: ' + str(attack.damage))
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel(' St. cost: ' + str(attack.staminaCost))
+		if attack.healthCost>=0:
+			self.currentStamina.SetLabel(' HP cost: ' + str(attack.healthCost))
+		else:
+			self.currentStamina.SetLabel(' Heal: ' + str(-attack.healthCost))
+		self.maxStamina.SetLabel('')
+		if attack.stun>0:
+			self.attacks.SetLabel(' Stun: ' + str(attack.stun) + ' turns')
+		else:
+			self.attacks.SetLabel('')
+		self.attack1.SetLabel(' Type: ' + str(attack.poketype).title())
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 		self.Layout()
-		self.Thaw() 
+		self.Thaw()
 
-	# Usage: c.setPassInfo()
-	# Pre  : card is Attack
-	# Post : the labels on the infoPanel have been updated to indicate that 
-	#		 player wants to pass on his turn
-	def setPassInfo(self):
-		self.Freeze()
-		self.name.SetLabel('- Pass -')
-		self.tooltip.SetLabel('If you prefer\nnot to attack\nyour enemy you\ncan pass on\nyour turn.')
-		self.Layout()
-		self.Thaw() 
 
 	# Usage: c.setInventoryInfo(icard)
 	# Pre  : card is invCard
@@ -988,8 +1134,22 @@ class infoPanel(wx.Panel):
 	#        info on icard
 	def setInventoryInfo(self, icard):
 		self.Freeze()
-		self.name.SetLabel('-' + icard.getName() + '-')
-		self.tooltip.SetLabel(icard.getInfo())
+		y = icard.getName()
+		x = icard.getInfo()
+		self.name.SetLabel('-' + y + '-')
+		self.currentHP.SetLabel(x)
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 		self.Layout()
 		self.Thaw()
 

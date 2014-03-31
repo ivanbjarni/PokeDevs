@@ -45,7 +45,7 @@ class Card(object):
 	def getAttacks(self):
 		s=""
 		for a in self.attacks:
-			s += " - "
+			s += "- "
 			s += str(a) + "\n"
 		return s
 
@@ -84,6 +84,7 @@ class Card(object):
 		self.health   = min(self.health , self.healthMax)
 		card.health   = min(card.health , card.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
+		stun = atk.stun
 
 		message = ""
 		
@@ -108,15 +109,16 @@ class Card(object):
 				damage = 0
 			else:
 				message = ", but it failed!"
-			#make heal and stamina recovery fail as well:
+			#make heal and stamina recovery fail as well as stun and dmg:
 			self.stamina= min(self.stamina,oldsta)
 			self.health = min(self.health ,oldhp)
+			stun = 0;
 		
 		realStunChance = max(stunChance - (card.turnsStunned/turnsToMinStun)*(stunChance-stunChanceMin),stunChanceMin)
-		if(atk.stun!=0 and random.random() < realStunChance):
+		if(stun!=0 and random.random() < realStunChance):
 			card.setStun(atk.stun)
-			message += "(Stun applied for "+str(atk.stun)+" turns)"
-		elif atk.stun!=0:
+			message += "(Stun applied for "+str(stun)+" turns)"
+		elif stun!=0:
 			message += "(Stun not applied.)"
 
 		print str(self)+" used "+str(atk)+message
@@ -202,6 +204,18 @@ class Card(object):
 	# After: returns a short info about the card as string
 	def shortInfo(self):
 		return self.name+" (hp:"+str(self.health)+"/"+str(self.healthMax)+" sta:"+str(self.stamina)+"/"+str(self.staminaMax)+")"
+
+	def getInfo(self):
+		res = ''
+		res += 'HP: '+str(self.health)+'/'+str(self.healthMax)+'\n'
+		res += 'Stamina: '
+		res += str(self.stamina) + '/'+ str(self.staminaMax)
+		res += '\nAttacks: \n'
+		res += self.getAttacks()
+		res += 'Type: '+str(self.poketype).title()+'\n'
+		res += 'Wkn: '+str(self.weakness).title()+'\n'
+		res += 'Res: '+str(self.resistance).title()+'\n'
+		return res
 
 	# Usage: b = c.hasHeal()
 	# Before: Nothing
@@ -295,7 +309,15 @@ class Card(object):
 					if x in attacknumberlist and bestDamage == self.attacks[x].damage:
 						return x
 			else:
-				return nonattackdamagelist[0]
+				for x in range(0, len(nonattackdamagelist)):
+					picked = nonattackdamagelist[x]
+					if self.health < self.healthMax * 0.85 and self.attacks[picked].healthCost < 0:
+						return picked
+					elif self.stamina < self.staminaMax * 0.85 and self.attacks[picked].staminaCost < 0:
+						return picked
+					elif self.attacks[picked].stun > 0:
+						return picked
+				return nonattackdamagelist[0]		
 		else:
 			return 0
 
@@ -304,7 +326,7 @@ class Card(object):
 	# After: c is stunned for stun turns
 	def setStun(self,turns):
 		self.stun = turns
-		self.turnsStunned = turns
+		self.turnsStunned += turns
 
 	# Usage: b = c.hasStamina()
 	# Before: Nothing
@@ -353,7 +375,7 @@ class Card(object):
 	# Before: card is card
 	# After: c has transformed to card but still retains his health percent
 	def transformTo(self, card):
-		ratio = self.health/self.healthMax
+		ratio = float(self.health)/float(self.healthMax)
 		self.health = card.healthMax * ratio
 		self.healthMax = card.healthMax
 		self.stamina = card.staminaMax
