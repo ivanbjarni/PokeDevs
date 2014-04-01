@@ -1051,11 +1051,11 @@ class MainFrame(wx.Frame):
 
 		m_yourDeck = wx.Menu()
 		for key,val in presets.decks.iteritems():
-			m_yourDeck.Append(wx.ID_ANY, str(val.name))
+			m_yourDeck.AppendRadioItem(-1, str(val.name))
 		
 		m_enemDeck = wx.Menu()
 		for key,val in presets.decks.iteritems():
-			m_enemDeck.Append(wx.ID_ANY, str(val.name))
+			m_enemDeck.AppendRadioItem(-1, str(val.name))
 
 
 		self.fileMenu.AppendMenu(wx.ID_ANY, 'Y&our Deck', m_yourDeck)
