@@ -410,6 +410,17 @@ class Presets(object):
 		DreamTeamIvan.name = "DreamTeamIvan"
 		DreamTeamIvan.setCards([self.gc("Sandslash"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		
+		#Vilhelm's favorite team
+		DreamTeamVilhelm = Deck()
+		DreamTeamVilhelm.name = "DreamTeamVilhelm"
+		DreamTeamVilhelm.setCards([self.gc("Pidgeot"),self.gc("Muk"),self.gc("Chansey"),self.gc("Mewtwo"),self.gc("Alakazam"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Kangaskhan")])
+
+		#Saevar's favorite team
+		DreamTeamSaevar = Deck()
+		DreamTeamSaevar.name = "DreamTeamSaevar"
+		DreamTeamSaevar.setCards([self.gc("Alakazam"),self.gc("Gengar"),self.gc("Machamp"),self.gc("Charizard"),self.gc("Blastoise"),self.gc("Raichu"),self.gc("Victreebell"),self.gc("Gyarados"),self.gc("Pidgeotto"),self.gc("Hitmonchan")])
+
+
 		#The best according to 45 minutes of data collection on the 25/03/14
 		TheElite = Deck()
 		TheElite.name = "TheElite"
@@ -495,7 +506,9 @@ class Presets(object):
 		12 	: ElectricForest,
 		13 	: RockAndMetal,
 		14 	: TheElite,
-		27 	: DreamTeamIvan
+		27 	: DreamTeamIvan,
+		38  : DreamTeamVilhelm,
+		49 	: DreamTeamSaevar
 		}
 
 
@@ -572,7 +585,7 @@ class Presets(object):
 			return self.getDeckByName(deck)
 
 	def getDeckByName(self, string):
-		if string == "random":
+		if string == "Random":
 			return self.getRandomDeck()
 		for key, val in self.decks.iteritems():
 			if val.name == string:

@@ -1035,8 +1035,8 @@ class MainFrame(wx.Frame):
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 		presets = Presets()
-		hmnDeck = "random"
-		cpuDeck = "random"
+		hmnDeck = "Random"
+		cpuDeck = "Random"
 
 
 		self.game = game
@@ -1053,10 +1053,12 @@ class MainFrame(wx.Frame):
 		m_newGame = self.fileMenu.Append(wx.ID_EXIT, "&New Game\tAlt+N", "Start a new game!")
 
 		m_yourDeck = wx.Menu()
+		m_yourDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
 			m_yourDeck.AppendRadioItem(-1, str(val.name))
 		
 		m_enemDeck = wx.Menu()
+		m_enemDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
 			m_enemDeck.AppendRadioItem(-1, str(val.name))
 
