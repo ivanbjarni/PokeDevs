@@ -10,6 +10,7 @@ import wx.lib.scrolledpanel as scrolled
 import random
 from AI import *
 from constants import *
+from Presets import *
 
 # Define notification events for threads
 EVT_ANIM_ID = wx.NewId()
@@ -1033,6 +1034,7 @@ class MainFrame(wx.Frame):
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
+		presets = Presets()
 
 		self.game = game
 
@@ -1045,7 +1047,23 @@ class MainFrame(wx.Frame):
 		self.statusBar = self.CreateStatusBar()
 
 		self.fileMenu = wx.Menu()
+		m_newGame = self.fileMenu.Append(wx.ID_EXIT, "&New Game\tAlt+N", "Start a new game!")
+
+		m_yourDeck = wx.Menu()
+		for key,val in presets.decks.iteritems():
+			m_yourDeck.Append(wx.ID_ANY, str(val.name))
+		
+		m_enemDeck = wx.Menu()
+		for key,val in presets.decks.iteritems():
+			m_enemDeck.Append(wx.ID_ANY, str(val.name))
+
+
+		self.fileMenu.AppendMenu(wx.ID_ANY, 'Y&our Deck', m_yourDeck)
+		self.fileMenu.AppendMenu(wx.ID_ANY, 'E&nemy Deck', m_enemDeck)
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+
+
+
 #		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
 #		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
 		
@@ -1053,6 +1071,7 @@ class MainFrame(wx.Frame):
 
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
+		self.Bind(wx.EVT_MENU, self.onQuit, m_newGame)
 
 		self.SetMenuBar(self.menuBar)
 
