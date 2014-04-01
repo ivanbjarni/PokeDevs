@@ -10,7 +10,6 @@ import wx.lib.scrolledpanel as scrolled
 import random
 from AI import *
 from constants import *
-from Presets import *
 
 # Define notification events for threads
 EVT_ANIM_ID = wx.NewId()
@@ -19,7 +18,7 @@ def EVT_ANIM(win, func):
 	win.Connect(-1, -1, EVT_ANIM_ID, func)
  
 class AnimEvent(wx.PyEvent):
-    def __init__(self, id, dx, dy, moveY, done, barFinished):
+    def __init__(self, id, dx, dy, moveY, done):
 		wx.PyEvent.__init__(self)
 		self.SetEventType(EVT_ANIM_ID)
 		self.id = id
@@ -27,7 +26,6 @@ class AnimEvent(wx.PyEvent):
 		self.dy = dy
 		self.moveY = moveY
 		self.done = done
-		self.barFinished = barFinished
 
 # A worker thread that handles long running task so the GUI doesn't stop functioning
 class Worker(threading.Thread):
@@ -60,7 +58,7 @@ class Worker(threading.Thread):
 				dy = random.randint(1, 21) - 10
 
 				self.anim.append([dx, dy])
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, dx, dy, -1, False, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, dx, dy, -1, False))
 
 				if self.i > 0:
 					self.i -= 1
@@ -69,7 +67,7 @@ class Worker(threading.Thread):
 			else:
 				dx, dy = self.anim.pop()
 
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, -dx, -dy, -1, False, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, -dx, -dy, -1, False))
 				self.i += 1
 
 	def bar(self):
@@ -77,29 +75,28 @@ class Worker(threading.Thread):
 			while self.i < self.j:
 				time.sleep(0.005)
 				self.i += 1
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 1, self.i, False, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 1, self.i, False))
 				#self.i += 1
 		else:
 			while self.i > self.j:
 				time.sleep(0.005)
 				self.i -= 1
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, self.i, False, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, self.i, False))
 				#self.i -= 1
-		wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, False, True))
 
 	def wait(self, i):
 		if i != -1:
 			waitingTime = random.randint(1,3)
 			time.sleep(waitingTime)
 			try:
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True))
 			except:
 				'Program exited'
 		else:
 			waitingTime = 1
 			time.sleep(waitingTime)
 			try:
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, -1, True, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, -1, True))
 			except:
 				'Program exited'
 
@@ -114,7 +111,6 @@ class GamePanel(wx.ScrolledWindow):
 		self.hasDrawnPoke = False 	# Determines wheather you have drawn a pokemon this round
 		self.canDrawInv = False 	# Determines wheather you can drag an inventory card
 		self.hasDrawnInv = False 	# Determines wheather you have drawn an inventory card this round
-		self.workerFinished = True  # False if a worker thread is still updating gui
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.countCPUpokemon = 0 	# Count how many pokemon CPU has drawn
@@ -141,7 +137,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.invSlot = {} 			# Dict of slot number for inventory cards by
 		self.slotCPU = {}			# Dict of slot number for CPU cards by id
 		self.anim = []				# List of moves for animations
-		self.lastpos = (0,0)		# Latest position of the mouse while dragging
+		self.lastpos = (0,0)		# Lates position of the mouse while dragging
 		self.startpos = (0,0)		# Position of the mouse when clicked
 		self.backsideBmp = None		# Bitmap of the backside of a pokemon card
 		self.backsideInvBmp = None 	# Bitmap of the backside of an inventory card
@@ -433,19 +429,16 @@ class GamePanel(wx.ScrolledWindow):
 	def updateDisplay(self, msg):
 		if msg.moveY != -1:
 			self.origpos[msg.id][1] = msg.moveY
-		
 		if not msg.done:
 			self.moveItem(msg.id, msg.dx, msg.dy)
 			self.Update()
 		elif msg.done and msg.dy != -1:
 			self.GetParent().CPUAction()
-		elif not msg.barFinished:
+		else:
 			self.isMyTurn = True
 			self.GetParent().attackPanel.enableAll()
 			self.GetParent().game.turn += 1
 			self.GetParent().updateStatus()
-		elif msg.barFinished:
-			self.workerFinished = True
 
 	# Usage: g.animation(self, isPlayer)
 	# Pre  : isPlayer is a boolean value that determines if the players or the
@@ -829,25 +822,55 @@ class AttackPanel(wx.Panel):
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 
-		self.attackButtons = []
-
 		# Some different variations of buttons, don't know what looks best
 
 		# This button looks nicer than the generic button but I'm not 100% sure it's compatable with
 		# other operating systems than windows
 		# The label also doesn't center on this button if it is multiline
-		for i in xrange(0,4):
-			element = GB.GradientButton(self, -1, label='---', size=(200, 100))
-			self.attackButtons.insert(i,element)
-			self.attackButtons[i].SetTopStartColour(wx.Colour(168-30*i, 184, 184))
-			self.attackButtons[i].SetTopEndColour(wx.Colour(70-10*i, 89, 89))
-			self.attackButtons[i].SetBottomStartColour(wx.Colour(66-10*i, 82, 82))
-			self.attackButtons[i].SetPressedTopColour(wx.Colour(88, 110, 110))
-			self.attackButtons[i].SetPressedBottomColour(wx.Colour(54, 43, 43))
-			self.attackButtons[i].SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
-			self.attackButtons[i].Bind(wx.EVT_BUTTON, lambda event, index=i: self.attack(index, False))
-			self.attackButtons[i].Bind(wx.EVT_MOUSE_EVENTS, lambda event, index=i: self.onMouseBtn(event,index))
-			self.hbox.Add(self.attackButtons[i], flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton1 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		#self.attackButton1.SetTopStartColour(wx.Colour('#A8B8B8'))
+		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton1.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton1.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton1.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton1.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton1.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton1, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton1.Bind(wx.EVT_BUTTON, lambda event: self.attack(0, False))
+		self.attackButton1.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse1)
+
+		self.attackButton2 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton2.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton2.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton2.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton2.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton2.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton2, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton2.Bind(wx.EVT_BUTTON, lambda event: self.attack(1, False))
+		self.attackButton2.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse2)
+
+		self.attackButton3 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton3.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton3.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton3.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton3.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton3.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton3, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton3.Bind(wx.EVT_BUTTON, lambda event: self.attack(2, False))
+		self.attackButton3.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse3)
+
+		self.attackButton4 = GB.GradientButton(self, -1, label='---', size=(200, 100))
+		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton4.SetTopEndColour(wx.Colour(70, 89, 89))
+		self.attackButton4.SetBottomStartColour(wx.Colour(66, 82, 82))
+		self.attackButton4.SetPressedTopColour(wx.Colour(88, 110, 110))
+		self.attackButton4.SetPressedBottomColour(wx.Colour(54, 43, 43))
+		self.attackButton4.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
+		self.hbox.Add(self.attackButton4, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
+		self.attackButton4.Bind(wx.EVT_BUTTON, lambda event: self.attack(3, False))
+		self.attackButton4.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
@@ -858,7 +881,7 @@ class AttackPanel(wx.Panel):
 		self.passButton.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.passButton, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 		self.passButton.Bind(wx.EVT_BUTTON, lambda event: self.attack(-1, True))
-		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMousePass)
+		self.passButton.Bind(wx.EVT_MOUSE_EVENTS, self.onMouse4)
 
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
@@ -867,17 +890,29 @@ class AttackPanel(wx.Panel):
 		self.disableAll()
 		self.GetParent().gamePanel.isMyTurn = False
 		self.GetParent().playerAction(num, passTurn)
-		self.setLabels(self.GetParent().game.players[0].mainCard)
 
-	def onMouseBtn(self, event, btnNr):
+	def onMouse1(self, event):
 		if event.Moving():
-			attack = self.GetParent().game.players[0].mainCard.attacks[btnNr]
+			attack = self.GetParent().game.players[0].mainCard.attacks[0]
 			self.GetParent().infoPanel.setAttackInfo(attack)
 		event.Skip()
 
-	def onMousePass(self, event):
+	def onMouse2(self, event):
 		if event.Moving():
-			self.GetParent().infoPanel.setPassInfo()
+			attack = self.GetParent().game.players[0].mainCard.attacks[1]
+			self.GetParent().infoPanel.setAttackInfo(attack)
+		event.Skip()
+
+	def onMouse3(self, event):
+		if event.Moving():
+			attack = self.GetParent().game.players[0].mainCard.attacks[2]
+			self.GetParent().infoPanel.setAttackInfo(attack)
+		event.Skip()
+
+	def onMouse4(self, event):
+		if event.Moving():
+			attack = self.GetParent().game.players[0].mainCard.attacks[3]
+			self.GetParent().infoPanel.setAttackInfo(attack)
 		event.Skip()
 
 	# Usage: c.setAttackLabels(card)
@@ -886,10 +921,10 @@ class AttackPanel(wx.Panel):
 	#        attacks on card
 	def setLabels(self, card):
 		self.Freeze()
-		self.attackButtons[0].SetLabel(card.attacks[0].name)
-		self.attackButtons[1].SetLabel(card.attacks[1].name)
-		self.attackButtons[2].SetLabel(card.attacks[2].name)
-		self.attackButtons[3].SetLabel(card.attacks[3].name)
+		self.attackButton1.SetLabel(card.attacks[0].name)
+		self.attackButton2.SetLabel(card.attacks[1].name)
+		self.attackButton3.SetLabel(card.attacks[2].name)
+		self.attackButton4.SetLabel(card.attacks[3].name)
 		self.Layout()
 		self.Thaw()
 
@@ -897,15 +932,15 @@ class AttackPanel(wx.Panel):
 	# Post : all of the attack buttons have been disabled
 	def disableAll(self):
 		self.Freeze()
-		self.attackButtons[0].Disable()
-		self.attackButtons[1].Disable()
-		self.attackButtons[2].Disable()
-		self.attackButtons[3].Disable()
+		self.attackButton1.Disable()
+		self.attackButton2.Disable()
+		self.attackButton3.Disable()
+		self.attackButton4.Disable()
 		self.passButton.Disable()
-		self.attackButtons[0].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[1].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[2].SetTopStartColour(wx.Colour(66, 82, 82))
-		self.attackButtons[3].SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton1.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton2.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton3.SetTopStartColour(wx.Colour(66, 82, 82))
+		self.attackButton4.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.passButton.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.Thaw()
 
@@ -913,15 +948,15 @@ class AttackPanel(wx.Panel):
 	# Post : all of the attack buttons have been enabled
 	def enableAll(self):
 		self.Freeze()
-		self.attackButtons[0].Enable()
-		self.attackButtons[1].Enable()
-		self.attackButtons[2].Enable()
-		self.attackButtons[3].Enable()
+		self.attackButton1.Enable()
+		self.attackButton2.Enable()
+		self.attackButton3.Enable()
+		self.attackButton4.Enable()
 		self.passButton.Enable()
-		self.attackButtons[0].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[1].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[2].SetTopStartColour(wx.Colour(168, 184, 184))
-		self.attackButtons[3].SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton1.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton2.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton3.SetTopStartColour(wx.Colour(168, 184, 184))
+		self.attackButton4.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.Thaw()
 
@@ -934,10 +969,10 @@ class infoPanel(wx.Panel):
 		self.vbox = wx.BoxSizer(wx.VERTICAL)
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
 		self.vboxatt = wx.BoxSizer(wx.VERTICAL)
-		self.hboxTooltip = wx.BoxSizer(wx.HORIZONTAL)
+		self.hboxHealth = wx.BoxSizer(wx.HORIZONTAL)
 		self.hboxStamina = wx.BoxSizer(wx.HORIZONTAL)
 		titlefont = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-		font = wx.Font(pointSize=17, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		font = wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
 		fc = '#CCCCCC'
 
 		self.name = wx.StaticText(self, label='Name', style=wx.ALIGN_LEFT)
@@ -945,17 +980,99 @@ class infoPanel(wx.Panel):
 		self.name.SetForegroundColour(fc)
 		self.vbox1.Add(self.name, flag=wx.ALIGN_CENTER, border=10)
 
-		self.tooltip = wx.StaticText(self, label='tooltip', style=wx.ALIGN_LEFT)
-		self.tooltip.SetFont(font)
-		self.tooltip.SetForegroundColour(fc)
 
-		self.hboxTooltip.Add(self.tooltip, flag=wx.ALIGN_CENTER, border=10)
-		self.vbox1.Add(self.hboxTooltip, flag=wx.ALIGN_LEFT, border=10)
+		self.currentHP = wx.StaticText(self, label='currentHP', style=wx.ALIGN_LEFT)
+		self.currentHP.SetFont(font)
+		self.currentHP.SetForegroundColour(fc)
+
+		self.maxHP =  wx.StaticText(self, label='maxHP', style=wx.ALIGN_LEFT)
+		self.maxHP.SetFont(font)
+		self.maxHP.SetForegroundColour(fc)
+
+		self.hboxHealth.Add(self.currentHP, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxHealth.Add(self.maxHP, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.hboxHealth, flag=wx.ALIGN_LEFT, border=10)
+#
+		self.stamina = wx.StaticText(self, label='Stamina', style=wx.ALIGN_LEFT)
+		self.stamina.SetFont(font)
+		self.stamina.SetForegroundColour(fc)
+		self.vbox.Add(self.stamina, flag=wx.ALIGN_CENTER, border=10)
+#		
+
+		self.currentStamina = wx.StaticText(self, label='currentStamina', style=wx.ALIGN_LEFT)
+		self.currentStamina.SetFont(font)
+		self.currentStamina.SetForegroundColour(fc)
+
+		self.maxStamina = wx.StaticText(self, label='maxStamina', style=wx.ALIGN_LEFT)
+		self.maxStamina.SetFont(font)
+		self.maxStamina.SetForegroundColour(fc)
+
+		self.hboxStamina.Add(self.currentStamina, flag=wx.ALIGN_CENTER, border=10)
+		self.hboxStamina.Add(self.maxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox.Add(self.hboxStamina, flag=wx.ALIGN_CENTER, border=10)
+
+		self.vbox1.Add(self.vbox, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attacks = wx.StaticText(self, label='ATTACKS:', style=wx.ALIGN_LEFT)
+		self.attacks.SetFont(font)
+		self.attacks.SetForegroundColour(fc)
+		self.vbox1.Add(self.attacks, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack1 = wx.StaticText(self, label='ATTACK1', style=wx.ALIGN_LEFT)
+		self.attack1.SetFont(font)
+		self.attack1.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack1, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack2 = wx.StaticText(self, label='ATTACK2', style=wx.ALIGN_LEFT)
+		self.attack2.SetFont(font)
+		self.attack2.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack2, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack3 = wx.StaticText(self, label='ATTACK3', style=wx.ALIGN_LEFT)
+		self.attack3.SetFont(font)
+		self.attack3.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack3, flag=wx.ALIGN_LEFT, border=10)
+
+		self.attack4 = wx.StaticText(self, label='ATTACK4', style=wx.ALIGN_LEFT)
+		self.attack4.SetFont(font)
+		self.attack4.SetForegroundColour(fc)
+		self.vboxatt.Add(self.attack4, flag=wx.ALIGN_LEFT, border=10)
+
+		self.vbox1.Add(self.vboxatt, flag=wx.ALIGN_LEFT, border=10)
+
+		self.type = wx.StaticText(self, label='Type', style=wx.ALIGN_LEFT)
+		self.type.SetFont(font)
+		self.type.SetForegroundColour(fc)
+		self.vbox1.Add(self.type, flag=wx.ALIGN_LEFT, border=10)
+
+		self.weakness = wx.StaticText(self, label='Weakness', style=wx.ALIGN_LEFT)
+		self.weakness.SetFont(font)
+		self.weakness.SetForegroundColour(fc)
+		self.vbox1.Add(self.weakness, flag=wx.ALIGN_LEFT, border=10)
+
+		self.resistance = wx.StaticText(self, label='Resistance', style=wx.ALIGN_LEFT)
+		self.resistance.SetFont(font)
+		self.resistance.SetForegroundColour(fc)
+		self.vbox1.Add(self.resistance, flag=wx.ALIGN_LEFT, border=10)
 
 		self.SetSizer(self.vbox1)
 
 		self.name.SetLabel('')
-		self.tooltip.SetLabel('')
+		self.currentHP.SetLabel('')
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 
 	# Usage: c.setPokeInfo(card)
 	# Pre  : card is Card
@@ -964,9 +1081,22 @@ class infoPanel(wx.Panel):
 	def setPokeInfo(self, pcard):
 		self.Freeze()
 		self.name.SetLabel('-'+str(pcard.name)+'-')
-		self.tooltip.SetLabel(pcard.getInfo())
+		self.currentHP.SetLabel(' HP:' + str(pcard.health) + '/')
+		self.maxHP.SetLabel(str(pcard.healthMax))
+		self.stamina.SetLabel(' Stamina:')
+		self.currentStamina.SetLabel(' ' + str(pcard.stamina) + '/')
+		self.maxStamina.SetLabel(' ' + str(pcard.staminaMax))
+		self.attacks.SetLabel(' Attacks: ')
+		self.attack1.SetLabel(' -' + str(pcard.attacks[0]))
+		self.attack2.SetLabel(' -' + str(pcard.attacks[1]))
+		self.attack3.SetLabel(' -' + str(pcard.attacks[2]))
+		self.attack4.SetLabel(' -' + str(pcard.attacks[3]))
+		self.type.SetLabel(' Type: ' + str(pcard.poketype).title())
+		self.weakness.SetLabel(' Wkn: ' + str(pcard.weakness).title())
+		self.resistance.SetLabel(' Res: ' + str(pcard.resistance).title())
 		self.Layout()
 		self.Thaw()
+
 
 	# Usage: c.setAttackInfo(attack)
 	# Pre  : card is Attack
@@ -975,20 +1105,28 @@ class infoPanel(wx.Panel):
 	def setAttackInfo(self, attack):
 		self.Freeze()
 		self.name.SetLabel('-' + str(attack.name) + '-')
-		self.tooltip.SetLabel(attack.getInfo())
+		self.currentHP.SetLabel(' Damage: ' + str(attack.damage))
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel(' St. cost: ' + str(attack.staminaCost))
+		if attack.healthCost>=0:
+			self.currentStamina.SetLabel(' HP cost: ' + str(attack.healthCost))
+		else:
+			self.currentStamina.SetLabel(' Heal: ' + str(-attack.healthCost))
+		self.maxStamina.SetLabel('')
+		if attack.stun>0:
+			self.attacks.SetLabel(' Stun: ' + str(attack.stun) + ' turns')
+		else:
+			self.attacks.SetLabel('')
+		self.attack1.SetLabel(' Type: ' + str(attack.poketype).title())
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 		self.Layout()
-		self.Thaw() 
+		self.Thaw()
 
-	# Usage: c.setPassInfo()
-	# Pre  : card is Attack
-	# Post : the labels on the infoPanel have been updated to indicate that 
-	#		 player wants to pass on his turn
-	def setPassInfo(self):
-		self.Freeze()
-		self.name.SetLabel('- Pass -')
-		self.tooltip.SetLabel('If you prefer\nnot to attack\nyour enemy you\ncan pass on\nyour turn.')
-		self.Layout()
-		self.Thaw() 
 
 	# Usage: c.setInventoryInfo(icard)
 	# Pre  : card is invCard
@@ -996,8 +1134,22 @@ class infoPanel(wx.Panel):
 	#        info on icard
 	def setInventoryInfo(self, icard):
 		self.Freeze()
-		self.name.SetLabel('-' + icard.getName() + '-')
-		self.tooltip.SetLabel(icard.getInfo())
+		y = icard.getName()
+		x = icard.getInfo()
+		self.name.SetLabel('-' + y + '-')
+		self.currentHP.SetLabel(x)
+		self.maxHP.SetLabel('')
+		self.stamina.SetLabel('')
+		self.currentStamina.SetLabel('')
+		self.maxStamina.SetLabel('')
+		self.attacks.SetLabel('')
+		self.attack1.SetLabel('')
+		self.attack2.SetLabel('')
+		self.attack3.SetLabel('')
+		self.attack4.SetLabel('')
+		self.type.SetLabel('')
+		self.weakness.SetLabel('')
+		self.resistance.SetLabel('')
 		self.Layout()
 		self.Thaw()
 
@@ -1040,7 +1192,6 @@ class MainFrame(wx.Frame):
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
-		presets = Presets()
 
 		self.game = game
 
@@ -1053,31 +1204,14 @@ class MainFrame(wx.Frame):
 		self.statusBar = self.CreateStatusBar()
 
 		self.fileMenu = wx.Menu()
-		m_newGame = self.fileMenu.Append(wx.ID_EXIT, "&New Game\tAlt+N", "Start a new game!")
-
-		m_yourDeck = wx.Menu()
-		for key,val in presets.decks.iteritems():
-			m_yourDeck.AppendRadioItem(-1, str(val.name))
-		
-		m_enemDeck = wx.Menu()
-		for key,val in presets.decks.iteritems():
-			m_enemDeck.AppendRadioItem(-1, str(val.name))
-
-
-		self.fileMenu.AppendMenu(wx.ID_ANY, 'Y&our Deck', m_yourDeck)
-		self.fileMenu.AppendMenu(wx.ID_ANY, 'E&nemy Deck', m_enemDeck)
-
-		self.fileMenu.AppendSeparator()
-
-		#Helpmenu:
-		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
-		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
-
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+#		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
+#		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
+		
+
 
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
-		self.Bind(wx.EVT_MENU, self.onQuit, m_newGame)
 
 		self.SetMenuBar(self.menuBar)
 
@@ -1096,10 +1230,9 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
-	def OnHelp(self, event):
-		helpw = HelpFrame()
-		helpw.Show()
-
+#	def OnHelp(self, event):
+#		helpw = HelpFrame()
+#		helpw.Show()
 	def updateStatus(self):
 		self.logPanel.updateLog()
 		drawInv = self.game.drawInvQuest()
@@ -1111,18 +1244,14 @@ class MainFrame(wx.Frame):
 		score = 'Score: Player ' + str(self.game.players[0].points) + ' - ' + str(self.game.players[1].points) + ' CPU'
 		player1 = self.game.players[0].mainCard
 		player2 = self.game.players[1].mainCard
-		player1str = player1.name + ': hp: ' + str(player1.health) + ' sta: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
-		player2str = player2.name + ': hp: ' + str(player2.health) + ' sta: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
+		player1str = player1.name + ': hp: ' + str(player1.health) + ' st: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
+		player2str = player2.name + ': hp: ' + str(player2.health) + ' st: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
 		inv = 'Can draw inventory: ' + canInv
 		turn = 'Turn: ' + str(self.game.turn)
 		self.statusBar.SetStatusText(score + '   |   ' + player1str + '   |   ' + player2str + '   |   ' + turn + '   |   ' + inv)
 
 	def playerAction(self, attackNum, passTurn):
-		if self.game.players[0].mainCard.isDead():
-			self.game.textLog.append('You must choose a new pokemon!\n')
-			self.attackPanel.enableAll()
-			self.updateStatus()
-			return
+	#	self.game.turn += 1
 		self.game.turnCount += 1
 		self.gamePanel.hasDrawnInv = False
 		self.gamePanel.hasDrawnPoke = False
@@ -1152,20 +1281,9 @@ class MainFrame(wx.Frame):
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
 			self.gamePanel.switchCPUpokemon(newCard)
 			time.sleep(1)
-		if not self.game.players[0].mainCard.isDead():
-			if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
-				self.gamePanel.animation1(False)
-				self.gamePanel.updatePlayerHp()
-				if self.game.players[1].mainCard.isDead():
-					newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
-					self.gamePanel.updateCPUHp()
-					self.gamePanel.workerFinished = False
-					self.game.players[1].mainCard = newCard
-					self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
-					self.gamePanel.switchCPUpokemon(newCard)
-					time.sleep(1) # laga
-				#	while not self.gamePanel.workerFinished:
-				#		pass
+		if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
+			self.gamePanel.animation1(False)
+			self.gamePanel.updatePlayerHp()
 		self.game.players[1].mainCard.applyEffects()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()
@@ -1189,19 +1307,12 @@ class MainFrame(wx.Frame):
 	def onQuit(self, event):
 		self.Close()
 
-class HelpFrame(wx.Frame):
-	def __init__(self):
-		wx.Frame.__init__(self, None, title="Pokemon", size=(850, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
-		self.SetBackgroundColour('#435353')		
-		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
-		self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
-		font = wx.Font(pointSize=12, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-		self.help.SetFont(font)
-		fc = '#CCCCCC'
-		self.help.SetForegroundColour(fc)
-		with open("instructions.txt") as myFile:
-			data = myFile.read()
-
-		self.help.SetLabel(data)
-		
+#class HelpFrame(wx.Frame):
+#	def __init__(self):
+#		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
+#		self.SetBackgroundColour('#435353')		
+		#self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		#self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
+		#font = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		#self.help.SetFont(font)
 		

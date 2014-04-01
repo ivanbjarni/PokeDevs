@@ -41,3 +41,15 @@ class Player(object):
 	# After: b is true if player is ai(name is "computer"), false otherwise
 	def isAI(self):
 		return (self.name == "computer")
+
+	# Usage: b = p.isAI()
+	# Before: Nothing
+	# After: b is true if player is ai(name is "computer"), false otherwise
+	def isAIEasy(self):
+		return (self.name == "easycomputer")
+
+	# Usage: b = p.isAI()
+	# Before: Nothing
+	# After: b is true if player is ai(name is "computer"), false otherwise
+	def isAINormal(self):
+		return (self.name == "normalcomputer")
