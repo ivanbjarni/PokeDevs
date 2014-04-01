@@ -11,6 +11,11 @@ import random
 from AI import *
 from constants import *
 from Presets import *
+from Player import *
+from Deck import *
+from Inventory import *
+from InvDeck import *
+from Main import *
 
 # Define notification events for threads
 EVT_ANIM_ID = wx.NewId()
@@ -1035,6 +1040,7 @@ class MainFrame(wx.Frame):
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 		presets = Presets()
+
 		hmnDeck = "Random"
 		cpuDeck = "Random"
 
@@ -1055,12 +1061,14 @@ class MainFrame(wx.Frame):
 		m_yourDeck = wx.Menu()
 		m_yourDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
-			m_yourDeck.AppendRadioItem(-1, str(val.name))
+			m_element = m_yourDeck.AppendRadioItem(-1, str(val.name))
+			self.Bind(wx.EVT_MENU, self.OnNewSelectedYourDeck, m_element)
 		
 		m_enemDeck = wx.Menu()
 		m_enemDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
-			m_enemDeck.AppendRadioItem(-1, str(val.name))
+			m_element = m_enemDeck.AppendRadioItem(-1, str(val.name))
+			self.Bind(wx.EVT_MENU, self.OnNewSelectedEnemDeck, m_element)
 
 
 		self.fileMenu.AppendMenu(wx.ID_ANY, 'Y&our Deck', m_yourDeck)
@@ -1076,7 +1084,7 @@ class MainFrame(wx.Frame):
 
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
-		self.Bind(wx.EVT_MENU, self.onQuit, m_newGame)
+		self.Bind(wx.EVT_MENU, self.OnNewGame, m_newGame)
 
 		self.SetMenuBar(self.menuBar)
 
@@ -1094,6 +1102,17 @@ class MainFrame(wx.Frame):
 		self.SetSizer(self.hbox)
 		self.Layout()
 		self.Centre()
+
+	def OnNewSelectedYourDeck(self, event):
+		item = self.GetMenuBar().FindItemById(event.GetId())
+		hmnDeck = item.GetText()
+
+	def OnNewSelectedEnemDeck(self, event):
+		item = self.GetMenuBar().FindItemById(event.GetId())
+		cpuDeck = item.GetText()
+
+	def OnNewGame(self, event):	
+		print "get ekki of erfitt. gamla draslid er alltaf entha undir nyja dotinu"
 
 	def OnHelp(self, event):
 		helpw = HelpFrame()
