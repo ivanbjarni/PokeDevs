@@ -24,7 +24,7 @@ if __name__=="__main__":
 	p1 = Player("player1")
 	p1.hand = Hand()
 	p1.inv = Inventory()
-	p1.deck = presets.gd("random")
+	p1.deck = presets.gd("Random")
 	p1.invdeck = InvDeck()
 	p1.mainCard = p1.deck.cards[0]
 	for i in xrange(0,100):
