@@ -860,6 +860,7 @@ class AttackPanel(wx.Panel):
 		self.disableAll()
 		self.GetParent().gamePanel.isMyTurn = False
 		self.GetParent().playerAction(num, passTurn)
+		self.setLabels(self.GetParent().game.players[0].mainCard)
 
 	def onMouseBtn(self, event, btnNr):
 		if event.Moving():
