@@ -24,12 +24,8 @@ if __name__=="__main__":
 	p1 = Player("player1")
 	p1.hand = Hand()
 	p1.inv = Inventory()
-	p1.deck = Deck()
+	p1.deck = presets.gd("random")
 	p1.invdeck = InvDeck()
-	for i in xrange(0,10):
-		p1.deck.add(presets.getRandomCard())
-	#p1.deck = presets.gd("MindFire")
-	#p1.deck.shuffle()
 	p1.mainCard = p1.deck.cards[0]
 	for i in xrange(0,100):
 		p1.invdeck.add(presets.getRandomInvCard())

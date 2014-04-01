@@ -1035,6 +1035,9 @@ class MainFrame(wx.Frame):
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
 		presets = Presets()
+		hmnDeck = "random"
+		cpuDeck = "random"
+
 
 		self.game = game
 

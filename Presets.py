@@ -545,6 +545,12 @@ class Presets(object):
 	def getRandomAttack(self):
 		return random.choice(self.attaks.values())
 
+	def getRandomDeck(self):
+		randDeck = Deck()
+		for i in xrange(0,10):
+			randDeck.add(self.getRandomCard())
+		return randDeck
+
 	def getRandomCard(self):
 		return copy.deepcopy(random.choice(self.cards.values()))
 
@@ -566,6 +572,8 @@ class Presets(object):
 			return self.getDeckByName(deck)
 
 	def getDeckByName(self, string):
+		if string == "random":
+			return self.getRandomDeck()
 		for key, val in self.decks.iteritems():
 			if val.name == string:
 				return copy.deepcopy(val)
