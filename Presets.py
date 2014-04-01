@@ -159,7 +159,7 @@ class Presets(object):
 		203 : Attack("Endure", 0, 40, -40, 0, "normal"),	
 		207 : Attack("Swagger", 0, -35, 0, 0, "normal"),	
 		209 : Attack("Spark", 10, 15, 0, 0, "electric"),	
-		210 : Attack("FuryCutter", 10, 40, 0, 0, "grass"),	
+		210 : Attack("FuryCutter", 14, 25, 0, 1, "grass"),	
 		219 : Attack("Safeguard", 0, 25, -25, 1, "normal"),	
 		222 : Attack("Magnitude", 18, 30, 0, 1, "ground"),	
 		223 : Attack("DynamicPunch", 45, 55, 3, 0, "ground"),	
