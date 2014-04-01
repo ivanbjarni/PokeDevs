@@ -1045,8 +1045,9 @@ class MainFrame(wx.Frame):
 
 		self.fileMenu = wx.Menu()
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
-#		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
-#		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
+		#Helpmenu:
+		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
+		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
 		
 
 
@@ -1070,9 +1071,10 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
-#	def OnHelp(self, event):
-#		helpw = HelpFrame()
-#		helpw.Show()
+	def OnHelp(self, event):
+		helpw = HelpFrame()
+		helpw.Show()
+
 	def updateStatus(self):
 		self.logPanel.updateLog()
 		drawInv = self.game.drawInvQuest()
@@ -1147,12 +1149,19 @@ class MainFrame(wx.Frame):
 	def onQuit(self, event):
 		self.Close()
 
-#class HelpFrame(wx.Frame):
-#	def __init__(self):
-#		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
-#		self.SetBackgroundColour('#435353')		
-		#self.vbox1 = wx.BoxSizer(wx.VERTICAL)
-		#self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
-		#font = wx.Font(pointSize=22, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-		#self.help.SetFont(font)
+class HelpFrame(wx.Frame):
+	def __init__(self):
+		wx.Frame.__init__(self, None, title="Pokemon", size=(850, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
+		self.SetBackgroundColour('#435353')		
+		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
+		self.help = wx.StaticText(self, label='help', style=wx.ALIGN_LEFT)
+		font = wx.Font(pointSize=12, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
+		self.help.SetFont(font)
+		fc = '#CCCCCC'
+		self.help.SetForegroundColour(fc)
+		with open("instructions.txt") as myFile:
+			data = myFile.read()
+
+		self.help.SetLabel(data)
+		
 		
