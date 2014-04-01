@@ -18,7 +18,7 @@ def EVT_ANIM(win, func):
 	win.Connect(-1, -1, EVT_ANIM_ID, func)
  
 class AnimEvent(wx.PyEvent):
-    def __init__(self, id, dx, dy, moveY, done):
+    def __init__(self, id, dx, dy, moveY, done, barFinished):
 		wx.PyEvent.__init__(self)
 		self.SetEventType(EVT_ANIM_ID)
 		self.id = id
@@ -26,6 +26,7 @@ class AnimEvent(wx.PyEvent):
 		self.dy = dy
 		self.moveY = moveY
 		self.done = done
+		self.barFinished = barFinished
 
 # A worker thread that handles long running task so the GUI doesn't stop functioning
 class Worker(threading.Thread):
@@ -58,7 +59,7 @@ class Worker(threading.Thread):
 				dy = random.randint(1, 21) - 10
 
 				self.anim.append([dx, dy])
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, dx, dy, -1, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, dx, dy, -1, False, False))
 
 				if self.i > 0:
 					self.i -= 1
@@ -67,7 +68,7 @@ class Worker(threading.Thread):
 			else:
 				dx, dy = self.anim.pop()
 
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, -dx, -dy, -1, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, -dx, -dy, -1, False, False))
 				self.i += 1
 
 	def bar(self):
@@ -75,28 +76,29 @@ class Worker(threading.Thread):
 			while self.i < self.j:
 				time.sleep(0.005)
 				self.i += 1
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 1, self.i, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 1, self.i, False, False))
 				#self.i += 1
 		else:
 			while self.i > self.j:
 				time.sleep(0.005)
 				self.i -= 1
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, self.i, False))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, self.i, False, False))
 				#self.i -= 1
+		wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, False, True))
 
 	def wait(self, i):
 		if i != -1:
 			waitingTime = random.randint(1,3)
 			time.sleep(waitingTime)
 			try:
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True, False))
 			except:
 				'Program exited'
 		else:
 			waitingTime = 1
 			time.sleep(waitingTime)
 			try:
-				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, -1, True))
+				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, -1, -1, True, False))
 			except:
 				'Program exited'
 
@@ -111,6 +113,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.hasDrawnPoke = False 	# Determines wheather you have drawn a pokemon this round
 		self.canDrawInv = False 	# Determines wheather you can drag an inventory card
 		self.hasDrawnInv = False 	# Determines wheather you have drawn an inventory card this round
+		self.workerFinished = True  # False if a worker thread is still updating gui
 		self.hitradius = 5			# How many pixels you can be "off" when trying to click on something
 		self.objids = []			# ID's of movable objects on the screen
 		self.countCPUpokemon = 0 	# Count how many pokemon CPU has drawn
@@ -137,7 +140,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.invSlot = {} 			# Dict of slot number for inventory cards by
 		self.slotCPU = {}			# Dict of slot number for CPU cards by id
 		self.anim = []				# List of moves for animations
-		self.lastpos = (0,0)		# Lates position of the mouse while dragging
+		self.lastpos = (0,0)		# Latest position of the mouse while dragging
 		self.startpos = (0,0)		# Position of the mouse when clicked
 		self.backsideBmp = None		# Bitmap of the backside of a pokemon card
 		self.backsideInvBmp = None 	# Bitmap of the backside of an inventory card
@@ -429,16 +432,19 @@ class GamePanel(wx.ScrolledWindow):
 	def updateDisplay(self, msg):
 		if msg.moveY != -1:
 			self.origpos[msg.id][1] = msg.moveY
+		
 		if not msg.done:
 			self.moveItem(msg.id, msg.dx, msg.dy)
 			self.Update()
 		elif msg.done and msg.dy != -1:
 			self.GetParent().CPUAction()
-		else:
+		elif not msg.barFinished:
 			self.isMyTurn = True
 			self.GetParent().attackPanel.enableAll()
 			self.GetParent().game.turn += 1
 			self.GetParent().updateStatus()
+		elif msg.barFinished:
+			self.workerFinished = True
 
 	# Usage: g.animation(self, isPlayer)
 	# Pre  : isPlayer is a boolean value that determines if the players or the
@@ -1238,14 +1244,18 @@ class MainFrame(wx.Frame):
 		score = 'Score: Player ' + str(self.game.players[0].points) + ' - ' + str(self.game.players[1].points) + ' CPU'
 		player1 = self.game.players[0].mainCard
 		player2 = self.game.players[1].mainCard
-		player1str = player1.name + ': hp: ' + str(player1.health) + ' st: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
-		player2str = player2.name + ': hp: ' + str(player2.health) + ' st: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
+		player1str = player1.name + ': hp: ' + str(player1.health) + ' sta: ' + str(player1.stamina) + ' stun: ' + str(player1.stun)
+		player2str = player2.name + ': hp: ' + str(player2.health) + ' sta: ' + str(player2.stamina) + ' stun: ' + str(player2.stun)
 		inv = 'Can draw inventory: ' + canInv
 		turn = 'Turn: ' + str(self.game.turn)
 		self.statusBar.SetStatusText(score + '   |   ' + player1str + '   |   ' + player2str + '   |   ' + turn + '   |   ' + inv)
 
 	def playerAction(self, attackNum, passTurn):
-	#	self.game.turn += 1
+		if self.game.players[0].mainCard.isDead():
+			self.game.textLog.append('You must choose a new pokemon!\n')
+			self.attackPanel.enableAll()
+			self.updateStatus()
+			return
 		self.game.turnCount += 1
 		self.gamePanel.hasDrawnInv = False
 		self.gamePanel.hasDrawnPoke = False
@@ -1275,9 +1285,20 @@ class MainFrame(wx.Frame):
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
 			self.gamePanel.switchCPUpokemon(newCard)
 			time.sleep(1)
-		if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
-			self.gamePanel.animation1(False)
-			self.gamePanel.updatePlayerHp()
+		if not self.game.players[0].mainCard.isDead():
+			if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
+				self.gamePanel.animation1(False)
+				self.gamePanel.updatePlayerHp()
+				if self.game.players[1].mainCard.isDead():
+					newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
+					self.gamePanel.updateCPUHp()
+					self.gamePanel.workerFinished = False
+					self.game.players[1].mainCard = newCard
+					self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
+					self.gamePanel.switchCPUpokemon(newCard)
+					time.sleep(1) # laga
+				#	while not self.gamePanel.workerFinished:
+				#		pass
 		self.game.players[1].mainCard.applyEffects()
 		self.gamePanel.updateCPUHp()
 		self.gamePanel.updateCPUStamina()

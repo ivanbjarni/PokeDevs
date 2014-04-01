@@ -122,6 +122,10 @@ class Card(object):
 		print str(self)+" used "+str(atk)+message
 		print "Damage done: "+str(damage)
 		textLog.append(str(self)+" used "+str(atk)+message)
+		if atk.healthCost > 0:
+			textLog.append("Self-inflicted damage: " + str(atk.healthCost))
+		elif atk.healthCost < 0:
+			textLog.append("Healing power: "+str(atk.healthCost * -1))
 		textLog.append("Damage done: "+str(damage)+"\n")
 		card.health  -= damage
 
