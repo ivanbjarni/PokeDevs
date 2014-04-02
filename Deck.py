@@ -15,7 +15,7 @@ class Deck(object):
 	def __str__(self):
 		s = ""
 		for c in self.cards:
-			s = s + c
+			s = s + str(c)
 		return s
 
 	# Usage: deck.shuffle()

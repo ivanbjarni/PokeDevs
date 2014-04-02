@@ -107,7 +107,7 @@ class Presets(object):
 		85	: Attack("Thunderbolt", 30, 50, 0, 0, "electric"),				
 		89	: Attack("Earthquake", 50, 80, 0, 0, "ground"),				
 		90	: Attack("Fissure", 40, 90, 0, 1, "ground"),				
-		91	: Attack("Dig", 0, -20, -20, 1, "ground"),							
+		91	: Attack("Dig", 0, 10, -20, 1, "ground"),							
 		93	: Attack("Confusion", 12, 30, 0, 1, "psychic"),							
 		94	: Attack("Hypnosis", 0, 34, 0, 2, "psychic"),				
 		95	: Attack("Psychic", 40, 20, 0, 0, "psychic"),				
@@ -513,12 +513,19 @@ class Presets(object):
 
 
 	#Short for get attack
+	# Usage: p.ga(attack)
+	# Before: attack is either a string or a number
+	# After: returns attack with name attack or id attack, where attack is string or 
+	#		 or number respectively. if attack is string and attack can't be found it returns -1
 	def ga(self, attack):
 		if isNumber(attack):
 			return self.attacks[attack]
 		else:
 			return self.getAttackByName(attack)
 
+	# Usage: p.getAttackByName(str)
+	# Before: str is string
+	# After: returns attack with name str, if such attack doesn't exist it returns -1
 	def getAttackByName(self, string):
 		for key, val in self.attacks.iteritems():
 			if val.name == string:
@@ -528,12 +535,19 @@ class Presets(object):
 
 
 	#Short for get Card
+	# Usage: p.gc(card)
+	# Before: card is either a string or a number
+	# After: returns card with name card or id card, where card is string or 
+	#		 or number respectively. if card is string and card can't be found it returns -1
 	def gc(self, card):
 		if isNumber(card):
 			return copy.deepcopy(self.cards[card])
 		else:
 			return self.getCardByName(card)
 
+	# Usage: p.getCardByName(str)
+	# Before: str is string
+	# After: returns card with name str, if such card doesn't exist it returns -1
 	def getCardByName(self, string):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
@@ -542,12 +556,19 @@ class Presets(object):
 		return -1
 
 	#Short for get invCard (short for inventory card)
+	# Usage: p.gic(card)
+	# Before: card is either a string or a number
+	# After: returns inventory card with name card or id card, where card is string or 
+	#		 or number respectively. if card is string and invcard can't be found it returns -1
 	def gic(self, invCard):
 		if isNumber(invCard):
 			return self.invCards[invCard]
 		else:
 			return self.getInvCardByName(invCard)
 
+	# Usage: p.getInvCardByName(str)
+	# Before: str is string
+	# After: returns invcard with name str, if such card doesn't exist it returns -1
 	def getInvCardByName(self, string):
 		for key, val in self.invCards.iteritems():
 			if val.name == string:
@@ -555,15 +576,36 @@ class Presets(object):
 		print "invcard not found: getCardByName"+string
 		return -1
 
+	# Usage: p.getRandomAttack()
+	# Before: nothing
+	# After: returns a random attack
 	def getRandomAttack(self):
 		return random.choice(self.attaks.values())
 
+	# Usage: p.getRandomDeck()
+	# Before: nothing
+	# After: returns a random deck
+	def getRandomDeck(self):
+		randDeck = Deck()
+		for i in xrange(0,10):
+			randDeck.add(self.getRandomCard())
+		return randDeck
+
+	# Usage: p.getRandomCard()
+	# Before: nothing
+	# After: returns a random card
 	def getRandomCard(self):
 		return copy.deepcopy(random.choice(self.cards.values()))
 
+	# Usage: p.getRandomInvCard()
+	# Before: nothing
+	# After: returns a random inv card
 	def getRandomInvCard(self):
 		return copy.deepcopy(random.choice(self.invCards.values()))
 
+	# Usage: p.getTypeOfName(str)
+	# Before: str is string
+	# After: returns the type of pokemon with name str or -1 if it doesn't exist
 	def getTypeOfName(self, string):
 		for key, val in self.cards.iteritems():
 			if val.name == string:
@@ -572,13 +614,22 @@ class Presets(object):
 		return -1
 
 	#Short for get Deck
+	# Usage: p.gd(deck)
+	# Before: deck is either a string or a number
+	# After: returns deck with name deck or id deck, where deck is string or 
+	#		 or number respectively. if deck is string and deck can't be found it returns -1
 	def gd(self, deck):
 		if isNumber(deck):
 			return copy.deepcopy(self.decks[deck])
 		else:
 			return self.getDeckByName(deck)
 
+	# Usage: p.getDeckByName(str)
+	# Before: str is string
+	# After: returns deck with name str, if such deck doesn't exist it returns -1
 	def getDeckByName(self, string):
+		if string == "Random":
+			return self.getRandomDeck()
 		for key, val in self.decks.iteritems():
 			if val.name == string:
 				return copy.deepcopy(val)
