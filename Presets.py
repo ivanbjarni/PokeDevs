@@ -408,7 +408,7 @@ class Presets(object):
 		#Ivan's favorite team
 		DreamTeamIvan = Deck()
 		DreamTeamIvan.name = "DreamTeamIvan"
-		DreamTeamIvan.setCards([self.gc("Sandslash"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
+		DreamTeamIvan.setCards([self.gc("Charizard"),self.gc("Pidgeot"),self.gc("Chansey"),self.gc("Lapras"),self.gc("Poliwhirl"),self.gc("Dragonite"),self.gc("Hypno"),self.gc("Tangela"),self.gc("Nidoqueen"),self.gc("Gyarados")])
 		
 		#Vilhelm's favorite team
 		DreamTeamVilhelm = Deck()
@@ -420,6 +420,10 @@ class Presets(object):
 		DreamTeamSaevar.name = "DreamTeamSaevar"
 		DreamTeamSaevar.setCards([self.gc("Alakazam"),self.gc("Gengar"),self.gc("Machamp"),self.gc("Charizard"),self.gc("Blastoise"),self.gc("Raichu"),self.gc("Victreebell"),self.gc("Gyarados"),self.gc("Pidgeotto"),self.gc("Hitmonchan")])
 
+		#Arni's favorite team
+		DreamTeamArni = Deck()
+		DreamTeamArni.name = "DreamTeamArni"
+		DreamTeamArni.setCards([self.gc("Charizard"),self.gc("Blastoise"),self.gc("Venusaur"),self.gc("Machamp"),self.gc("Alakazam"),self.gc("Butterfree"),self.gc("Arbok"),self.gc("Mewtwo"),self.gc("Dragonite"),self.gc("Kangaskhan")])
 
 		#The best according to 45 minutes of data collection on the 25/03/14
 		TheElite = Deck()
