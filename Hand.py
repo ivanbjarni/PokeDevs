@@ -87,3 +87,14 @@ class Hand(object):
 
 		return pokemon
 
+	# Usage: i=h.getNameOfHighestStats()
+	# Before: nothing
+	# After: i is the name of the card with the highest hp and stamina combined
+	def getNameOfHighestStats(self):
+		hpst = 0
+		res = "none"
+		for a in self.cards:
+			if a.stamina+a.health>=hpst:
+				hpst = a.stamina+a.health
+				res = a.name
+		return res

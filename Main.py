@@ -361,7 +361,7 @@ class Main(object):
 	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
 	def chooseCardAI(self, pYou, pEne):
-		 chosen = pYou.hand.findTheStrongest()
+		 chosen = pYou.hand.getNameOfHighestStat()
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
 		 if(pokemon!="none"):
 		 	chosen = pokemon
