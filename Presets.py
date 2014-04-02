@@ -512,7 +512,8 @@ class Presets(object):
 		14 	: TheElite,
 		27 	: DreamTeamIvan,
 		38  : DreamTeamVilhelm,
-		49 	: DreamTeamSaevar
+		49 	: DreamTeamSaevar,
+		60 	: DreamTeamArni
 		}
 
 
