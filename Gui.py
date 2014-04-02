@@ -1203,6 +1203,7 @@ class MainFrame(wx.Frame):
 		p1.hand = Hand()
 		p1.inv = Inventory()
 		p1.deck = presets.gd(self.hmnDeck)
+		p1.deck.shuffle()
 		p1.invdeck = InvDeck()
 		p1.mainCard = p1.deck.cards[0]
 		for i in xrange(0,100):
@@ -1213,6 +1214,7 @@ class MainFrame(wx.Frame):
 		p2.hand = Hand()
 		p2.inv = Inventory()
 		p2.deck = presets.gd(self.cpuDeck)
+		p2.deck.shuffle()
 		p2.invdeck = InvDeck()
 		p2.mainCard = p2.deck.cards[0]
 		for i in xrange(0,100):
