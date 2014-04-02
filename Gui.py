@@ -1136,8 +1136,10 @@ class MainFrame(wx.Frame):
 
 		# Sub menu to choose difficulty
 		m_difficulty = wx.Menu()
+		m_diffHard = m_difficulty.AppendRadioItem(-1, "Hard")
 		m_diffNormal = m_difficulty.AppendRadioItem(-1, "Normal")
 		m_diffEasy = m_difficulty.AppendRadioItem(-1, "Easy")
+		self.Bind(wx.EVT_MENU, self.OnChooseDifficulty, m_diffHard)
 		self.Bind(wx.EVT_MENU, self.OnChooseDifficulty, m_diffNormal)
 		self.Bind(wx.EVT_MENU, self.OnChooseDifficulty, m_diffEasy)
 
@@ -1224,8 +1226,10 @@ class MainFrame(wx.Frame):
 	#When difficulty radio button is pressed
 	def OnChooseDifficulty(self, event):
 		item = self.GetMenuBar().FindItemById(event.GetId())
-		if item.GetText() == "Normal":
+		if item.GetText() == "Hard":
 			self.difficulty = "computer"
+		elif item.GetText() == "Normal":
+			self.difficulty = "normalcomputer"
 		elif item.GetText() == "Easy":
 			self.difficulty = "easycomputer"
 

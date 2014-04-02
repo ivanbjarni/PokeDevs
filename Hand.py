@@ -73,3 +73,17 @@ class Hand(object):
 			if a.resistance == poketype:
 				return str(a)
 		return "none"
+
+	# Usage: a = b.findTheStrongest(self)
+	# Before: Nothing
+	# After: Returns the name of the strongest pokemon in hand
+	def findTheStrongest(self):
+		pokemon = str(self.cards[0])
+		hpandstamina = self.cards[0].health + self.cards[0].stamina
+		for x in self.cards:
+			if(x.health + x.stamina > hpandstamina):
+				pokemon = str(x)
+				hpandstamina = x.health + x.stamina
+
+		return pokemon
+
