@@ -67,6 +67,7 @@ class Main(object):
 		else:
 			return True
 
+	#AI decides if it will stun the opponent
 	def willstun(self, pYou, pEne, stun):
 		if pYou.mainCard.hasStun() and not pEne.mainCard.isStunned() and random.random() < AIChanceToStun and pYou.mainCard.attacks[stun].staminaCost < pYou.mainCard.stamina and self.HelpingHand(pYou, pEne, stun):
 			return True
@@ -360,15 +361,15 @@ class Main(object):
 	# Before: pYou is active player and pEne is enemy player
 	# After: p is the pokemon pYou chooses(automatic)
 	def chooseCardAI(self, pYou, pEne):
-		 chosen = str(pYou.hand.cards[0])
+		 chosen = pYou.hand.findTheStrongest()
 		 pokemon = pYou.hand.getNameOfNotWeakness(pEne.mainCard.poketype)
 		 if(pokemon!="none"):
 		 	chosen = pokemon
 		 pokemon = pYou.hand.getNameOfResistance(pEne.mainCard.poketype)
-		 if(pokemon!="none"):
+		 if(pokemon!="none" and pYou.mainCard.poketype != pEne.mainCard.resistance):
 		 	chosen = pokemon
 		 pokemon = pYou.hand.getNameOfType(pEne.mainCard.weakness)
-		 if(pokemon!="none"):
+		 if(pokemon!="none" and pYou.mainCard.weakness != pEne.mainCard.poketype):
 		 	chosen = pokemon
 		 
 		 ind = pYou.hand.getIndexOf(chosen)
