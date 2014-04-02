@@ -166,7 +166,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.playerStunnedID = -1 	 # ID for player stunned sign
 		self.CPUStunnedID = -1 		 # ID for CPU stunned sign
 		self.winId = -1 			 # ID for text that displays when you win
-		self.loosId = -1 			 # ID for text that displays when you loose
+		self.loseId = -1 			 # ID for text that displays when you loose
 		self.movable = {}			 # Dict of wheather or not a card can be moved by player, by id
 		self.origpos = {}			 # Dict of original position of bitmaps by id
 		self.cards = {}				 # Dict of cards by id
@@ -619,6 +619,13 @@ class GamePanel(wx.ScrolledWindow):
 			if id == bid[1]:
 				return bid[0]
 
+	# displays the Win sign when game is won
+	def setWinSign(self):
+		self.moveItem(self.winId, 510, 480)
+
+	def setLoseSign(self):
+		self.moveItem(self.loseId, 510, 480)
+
 	# for drawing a bitmap
 	def drawItem(self, dc, id, bitmap, x, y, w, h):
 		dc.DrawBitmap(bitmap, x, y, True)
@@ -692,6 +699,16 @@ class GamePanel(wx.ScrolledWindow):
 			stunned = wx.Bitmap("images/stunnedStatus2.png")
 		except:
 			print 'Failed to load stunned image'
+
+		try:
+			winSign = wx.Bitmap("images/youWinV1.png")
+		except:
+			print 'Failed to load stunned image'
+
+		try:
+			loseSign = wx.Bitmap("images/youLoseV1.png")
+		except:
+			print 'Failed to load stunned image'		
 
 		dc.DrawBitmap(background, 0, 0)
 
@@ -846,32 +863,21 @@ class GamePanel(wx.ScrolledWindow):
 		self.movable[id] = False
 		self.CPUStunnedID = id
 
-		# Text that appears when you win
+		w, h = winSign.GetSize()
+
+		# Sign that appears when you win
 		id = wx.NewId()
 		dc.SetId(id)
-		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
-		dc.SetFont(font)
-		dc.SetTextForeground('#FF00FF')
-		text = 'YOU WIN!'
-		dc.DrawText(text, -200, -200)
-		r = wx.Rect(-200, -200, 1000, 200)
-		r.Inflate(2,2)
-		dc.SetIdBounds(id, r)
+		self.drawItem(dc, id, winSign, -400, -400, w, h)
 		self.winId = id
 		self.movable[id] = False
 		self.objids.append(id)
 
-		# Text that appears when you loose
+		# Sign that appears when you loose
 		id = wx.NewId()
 		dc.SetId(id)
-		dc.SetFont(font)
-		dc.SetTextForeground('#0000FF')
-		text = 'YOU LOOSE!'
-		dc.DrawText(text, -200, -200)
-		r = wx.Rect(-200, -200, 1000, 200)
-		r.Inflate(2,2)
-		dc.SetIdBounds(id, r)
-		self.looseId = id
+		self.drawItem(dc, id, loseSign, -400, -400, w, h)
+		self.loseId = id
 		self.movable[id] = False
 		self.objids.append(id)
 
@@ -1372,13 +1378,13 @@ class MainFrame(wx.Frame):
 	def checkWin(self):
 		if self.game.players[0].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
-			self.gamePanel.moveItem(self.gamePanel.winId, 400, 400)
+			self.gamePanel.setWinSign()
 			self.gamePanel.Update()
 			self.updateStatus()
 			return True
 		elif self.game.players[1].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
-			self.gamePanel.moveItem(self.gamePanel.looseId, 400, 400)
+			self.gamePanel.setLoseSign()
 			self.gamePanel.Update()
 			self.updateStatus()
 			return True
