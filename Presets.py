@@ -107,7 +107,7 @@ class Presets(object):
 		85	: Attack("Thunderbolt", 30, 50, 0, 0, "electric"),				
 		89	: Attack("Earthquake", 50, 80, 0, 0, "ground"),				
 		90	: Attack("Fissure", 40, 90, 0, 1, "ground"),				
-		91	: Attack("Dig", 0, -20, -20, 1, "ground"),							
+		91	: Attack("Dig", 0, 10, -20, 1, "ground"),							
 		93	: Attack("Confusion", 12, 30, 0, 1, "psychic"),							
 		94	: Attack("Hypnosis", 0, 34, 0, 2, "psychic"),				
 		95	: Attack("Psychic", 40, 20, 0, 0, "psychic"),				
