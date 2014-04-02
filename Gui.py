@@ -17,12 +17,11 @@ from Inventory import *
 from InvDeck import *
 from Main import *
 
-# Define notification events for threads
+# Define notification event for threads
 EVT_ANIM_ID = wx.NewId()
 
 def EVT_ANIM(win, func):
 	win.Connect(-1, -1, EVT_ANIM_ID, func)
-
 
 class AnimEvent(wx.PyEvent):
     def __init__(self, id, dx, dy, moveY, done, barFinished):
@@ -47,6 +46,7 @@ class Worker(threading.Thread):
 		self.anim = []
 		self.start()
 
+	# run the thread
 	def run(self):
 		if self.animation == 'animation1':
 			self.animation1()
@@ -59,6 +59,7 @@ class Worker(threading.Thread):
 		elif self.animation == 'wait3':
 			self.wait(3)
 
+	# animates a pokemon attack movement
 	def animation1(self):
 		forward = True
 		while(self.i < self.j):
@@ -87,6 +88,7 @@ class Worker(threading.Thread):
 
 				self.i += 1
 
+	# Updates health/statusbars by animating it's movements
 	def bar(self):
 		if self.i < self.j:
 			while self.i < self.j:
@@ -111,6 +113,7 @@ class Worker(threading.Thread):
 			print 'Program exited'
 
 
+	#Waits a certain amount of time and then enables Player to perform actions
 	def wait(self, i):
 		if i == 1:
 			waitingTime = random.randint(1,3)
@@ -183,6 +186,7 @@ class GamePanel(wx.ScrolledWindow):
 
 		wx.Log.SetLogLevel(0) # remove this and fix images
 
+	# Loads the bitmaps for the players and CPUs cards, and initializes the playing area 
 	def setupPanel(self, player, CPU):
 		for card in player.deck.cards:
 			self.setImage(card)
@@ -204,7 +208,7 @@ class GamePanel(wx.ScrolledWindow):
 
 		EVT_ANIM(self, self.updateDisplay)
 
-	# Sets the bitmap for card
+	# Sets the bitmap for a pokemon card
 	def setImage(self, card):
 		name = card.name.replace(' ', '').replace('.', '')
 		try:
@@ -214,7 +218,7 @@ class GamePanel(wx.ScrolledWindow):
 		except:
 			print 'Failed to load card: ' + str(name)
 
-	# Sets the bitmap for card
+	# Sets the bitmap for and inventory card
 	def setInvImage(self, card):
 		name = card.name.replace(' ', '').replace('.', '')
 		try:
@@ -233,6 +237,7 @@ class GamePanel(wx.ScrolledWindow):
 		except:
 			print 'Failed to load backside card'
 
+	# Sets the bitmap for the backside of an inventory card
 	def setBacksideInvBmp(self):
 		try:
 			image = wx.Image('images/Inventorycards/invBackside.png', wx.BITMAP_TYPE_ANY)
@@ -254,7 +259,7 @@ class GamePanel(wx.ScrolledWindow):
 		xDelta, yDelta = self.GetScrollPixelsPerUnit()
 		r.OffsetXY(-(xView*xDelta),-(yView*yDelta))
 
-	#Handles mouse events
+	# Handles mouse events
 	def onMouse(self, event):
 		# If the left button is pressed, grab the object that the mouse was over and
 		# save the old coordinates where it was placed
@@ -279,7 +284,8 @@ class GamePanel(wx.ScrolledWindow):
 				self.moveItem(self.dragid, dx, dy)
 				self.lastpos = (event.GetX(), event.GetY())
 
-		# Move object back to original position if left button is realeased or the mouse leaves the panel
+		# If an object is released either move it back to it's original position or if it is in an allowed area
+		# do the corresponding action for the object
 		elif event.LeftUp() or event.Leaving():
 			if self.dragid != -1:
 				dx = event.GetX()
@@ -305,8 +311,8 @@ class GamePanel(wx.ScrolledWindow):
 						self.GetParent().game.players[0].mainCard = self.cards[self.dragid]
 						self.GetParent().updateStatus()
 						self.GetParent().game.textLog.append('You put out ' + self.GetParent().game.players[0].mainCard.name + '\n')
-						self.GetParent().attackPanel.disableAll()
-						worker = Worker(self, 0, 0, 1, 'wait3')
+						self.GetParent().attackPanel.disableAll() 
+						worker = Worker(self, 0, 0, 1, 'wait3') # Enables attack buttons again in 1.8 seconds so that the healthbar has time to finish animating
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
 						self.CPUselfdestruct = False
@@ -320,6 +326,7 @@ class GamePanel(wx.ScrolledWindow):
 				elif self.cardType[self.dragid] == 'Backside':
 					slot = self.findEmptySlot(self.slot)
 					if self.inPlayerHandArea(dx, dy) and slot != -1 and not self.hasDrawnPoke:
+						# Draw a new pokecard
 						id = self.backsides[self.dragid]
 						x = 213 + slot * 127
 						y = 584
@@ -339,6 +346,7 @@ class GamePanel(wx.ScrolledWindow):
 				elif self.cardType[self.dragid] == 'InvBackside':
 					slot = self.findEmptyInvSlot()
 					if self.inPlayerInvArea(dx, dy) and slot != -1 and self.canDrawInv and not self.hasDrawnInv:
+						# Draw a new inventory card
 						id = self.backsidesInv[self.dragid]
 						x = 991
 						y = 215 + slot * 180
@@ -357,6 +365,7 @@ class GamePanel(wx.ScrolledWindow):
 
 				elif self.cardType[self.dragid] == 'Inventory':
 					if self.inPlayerChosenArea(dx, dy):
+						# Use an inventory card
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
 						self.GetParent().game.players[0].use(self.cards[self.dragid], self.GetParent().game.textLog)
@@ -364,6 +373,7 @@ class GamePanel(wx.ScrolledWindow):
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
 					elif self.inCPUChosenArea(dx, dy):
+						# Use an inventory card on CPU
 						self.moveItem(self.dragid, 0, -1000)
 						self.invSlot[self.dragid] = -1
 						self.GetParent().game.players[1].use(self.cards[self.dragid], self.GetParent().game.textLog)
@@ -376,6 +386,7 @@ class GamePanel(wx.ScrolledWindow):
 				self.dragid = -1
 				self.GetParent().logPanel.updateLog()
 
+		# Update info panel if hovering over a card
 		elif event.Moving():
 			x,y = self.convertEventCoords(event)
 			l = self.pdc.FindObjects(x, y, self.hitradius)
@@ -387,23 +398,35 @@ class GamePanel(wx.ScrolledWindow):
 					else:
 						self.GetParent().infoPanel.setInventoryInfo(card)
 
+	# Returns True if (dx, dy) is in players chosen pokemon area, 
+	# otherwise False
 	def inPlayerChosenArea(self, dx, dy):
 		return  (110 < dx and dx < 245) and (376 > dy and dy > 182)
 
+	# Returns True if (dx, dy) is in CPU's chosen pokemon area, 
+	# otherwise False
 	def inCPUChosenArea(self, dx, dy):
 		return (535 < dx and dx < 717) and (376 > dy and dy > 182)
 	
+	# Returns True if (dx, dy) is in players pokepanel area, 
+	# otherwise False
 	def inPlayerHandArea(self, dx, dy):
 		return (3 < dx and dx < 778) and (555 > dy and dy > 308)
 
+	# Returns True if (dx, dy) is in players chosen inventory area, 
+	# otherwise False
 	def inPlayerInvArea(self, dx, dy):
 		return (782 < dx and dx < 917) and (552 > dy and dy > 3)
 
+	# Finds a card by its id
 	def findCard(self, id):
 		for card in self.cards.iteritems():
 			if id == card[0]:
 				return card[1]
 
+
+	# Finds an empty slot in Players/CPU's pokepanel
+	# if no slot is available -1 is returned
 	def findEmptySlot(self, slot):
 		i = {
 			'0': True,
@@ -432,6 +455,8 @@ class GamePanel(wx.ScrolledWindow):
 				return k
 		return -1		
 
+	# Finds an empty inventory slot on the players inventory panel
+	# if no slot is available it -1 is returned
 	def findEmptyInvSlot(self):
 		i = {
 			'0': True,
@@ -451,6 +476,7 @@ class GamePanel(wx.ScrolledWindow):
 				return k
 		return -1
 
+	# Moves item id by (x, y)
 	def moveItem(self, id, x, y):
 		r = self.pdc.GetIdBounds(id)
 		self.pdc.TranslateId(id, x, y)
@@ -460,32 +486,15 @@ class GamePanel(wx.ScrolledWindow):
 		self.offsetRect(r)
 		self.RefreshRect(r, False)
 
+	# Moves a card bitmap to the graveyard
 	def moveItemToGraveyard(self, id, x, y):
 		if self.graveyardID != -1:
 			self.moveItem(self.graveyardID, 0, -1000)
 		self.graveyardID = id
 		self.moveItem(self.graveyardID, x, y)
 
-	def updateDisplay(self, msg):
-		if msg.moveY != -1:
-			self.origpos[msg.id][1] = msg.moveY
-		
-		if not msg.done:
-			self.moveItem(msg.id, msg.dx, msg.dy)
-			self.Update()
-		elif msg.done and msg.dy != -1:
-			self.GetParent().CPUAction()
-		elif not msg.barFinished:
-			self.isMyTurn = True
-			self.GetParent().attackPanel.enableAll()
-			self.GetParent().game.turn += 1
-			self.GetParent().updateStatus()
-
-	# Usage: g.animation(self, isPlayer)
-	# Pre  : isPlayer is a boolean value that determines if the players or the
-	#		 CPU's pokemon should be "shaken"
-	# Post : if isPlayer == True player's currently chosen pokemon is "shaken"
-	#		 otherwise the CPU's currently chosen pokemon is "shaken"
+	# if isPlayer == True the players pokemon is "shaken" on the screen
+	# else the CPU's pokemon is "shaken"
 	def animation1(self, isPlayer):
 		if isPlayer:
 			id = self.playerChosenID
@@ -494,6 +503,7 @@ class GamePanel(wx.ScrolledWindow):
 
 		anim = Worker(self, id, 10, 11, 'animation1')
 
+	# Updates a health/stamina bar and returns the health/stamina that is left
 	def updateBar(self, bar, card, type):
 		if type == 'health':
 			hp = card.health
@@ -516,6 +526,8 @@ class GamePanel(wx.ScrolledWindow):
 
 		return hp
 
+	# Update the Players healthbar, if the players chosen pokemon is dead it is 
+	# moved to the graveyard and the CPU's score is increased by 1
 	def updatePlayerHp(self):
 		hp = self.updateBar(self.playerHealthID, self.cards[self.playerChosenID], 'health')
 		if hp == 0:
@@ -524,19 +536,24 @@ class GamePanel(wx.ScrolledWindow):
 			self.moveItemToGraveyard(self.playerChosenID, 812, 185)
 			self.slot[self.playerChosenID] = -1
 
+	# Update the Players stamina bar
 	def updatePlayerStamina(self):
 		stamina = self.updateBar(self.playerStaminaID, self.cards[self.playerChosenID], 'stamina')
 
+	# Add the Players stunned sign
 	def setPlayerStunned(self):
 		if not self.isPlayerStunned: 
 			self.moveItem(self.playerStunnedID, 450, 390)
 			self.isPlayerStunned = True
 
+	# Remove the Players stunned sign
 	def setPlayerNotStunned(self):
 		if self.isPlayerStunned:
 			self.moveItem(self.playerStunnedID, -450, -390)
 			self.isPlayerStunned = False
 
+	# Updates the CPU's healthbar, if its chosen pokemon is dead it is moved to 
+	# the graveyard and the Players score is increased by 1
 	def updateCPUHp(self, selfKill):
 		if not selfKill:
 			hp = self.updateBar(self.CPUHealthID, self.cards[self.CPUChosenID], 'health')
@@ -549,28 +566,23 @@ class GamePanel(wx.ScrolledWindow):
 			self.moveItemToGraveyard(self.CPUChosenID, 387, 185)
 			self.slotCPU[self.CPUChosenID] = -1
 
+	# Update the CPU's stamina bar
 	def updateCPUStamina(self):
 		stamina = self.updateBar(self.CPUStaminaID, self.cards[self.CPUChosenID], 'stamina')
 
+	# Add the CPU's stunned sign
 	def setCPUStunned(self):
 		if not self.isCPUStunned:
 			self.moveItem(self.CPUStunnedID, 705, 390)
 			self.isCPUStunned = True
 
+	# Remove the CPU's stunned sign
 	def setCPUNotStunned(self):
 		if self.isCPUStunned:
 			self.moveItem(self.CPUStunnedID, -705, -390)
 			self.isCPUStunned = False
 
-	# Updates the playing area
-	def onPaint(self, event):
-		dc = wx.BufferedPaintDC(self)
-		self.PrepareDC(dc)
-		dc.Clear()
-		rgn = self.GetUpdateRegion()
-		r = rgn.GetBox()
-		self.pdc.DrawToDCClipped(dc, r)
-
+	# For when the CPU draws a pokemon, adds the corresponding backside to its pokepanel
 	def addCPUpokemon(self):
 		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1 and self.countCPUpokemon < 10:
 			card = self.cardsCPU.pop()
@@ -583,6 +595,8 @@ class GamePanel(wx.ScrolledWindow):
 			self.origpos[bid] = [10 + slot * 127, 6]
 			self.moveItem(bid, 210 + slot * 127, 206)
 
+	# Switch out CPU's chosen pokemon, removes the backside from CPU's pokepanel and puts
+	# and puts the corresponding card in its chosen area
 	def switchCPUpokemon(self, card):
 		if self.cardsCPU:
 			id = self.findID(card)
@@ -593,26 +607,28 @@ class GamePanel(wx.ScrolledWindow):
 			self.moveItem(bid, 0, -1000)
 			self.Update()
 
+	# Find the id of a card
 	def findID(self, card):
 		for id in self.cards.iteritems():
 			if card == id[1]:
 				return id[0]
 
+	# find the backside of a CPU card
 	def findBacksideCPU(self, id):
 		for bid in self.backsidesCPU.iteritems():
 			if id == bid[1]:
 				return bid[0]
 
+	# for drawing a bitmap
 	def drawItem(self, dc, id, bitmap, x, y, w, h):
 		dc.DrawBitmap(bitmap, x, y, True)
 		dc.SetIdBounds(id, wx.Rect(x, y, w, h))
 		self.objids.append(id)
 
+	# for drawing health/stamina bars
 	def drawBar(self, dc, x, y, w, h, color):
 		# draw the bar outline
 		pen = wx.Pen('#000000', 1)
-		#brush = wx.Brush('#FFFF66')
-		#brush = wx.Brush('#FBF35F')
 		brush = wx.Brush('#F0D84E')
 		dc.SetPen(pen)
 		dc.SetBrush(brush)
@@ -639,6 +655,31 @@ class GamePanel(wx.ScrolledWindow):
 
 		return id
 
+	# Handles ANIM events
+	def updateDisplay(self, msg):
+		if msg.moveY != -1:
+			self.origpos[msg.id][1] = msg.moveY
+		
+		if not msg.done:
+			self.moveItem(msg.id, msg.dx, msg.dy)
+			self.Update()
+		elif msg.done and msg.dy != -1:
+			self.GetParent().CPUAction()
+		elif not msg.barFinished:
+			self.isMyTurn = True
+			self.GetParent().attackPanel.enableAll()
+			self.GetParent().game.turn += 1
+			self.GetParent().updateStatus()
+
+	# Updates the playing area
+	def onPaint(self, event):
+		dc = wx.BufferedPaintDC(self)
+		self.PrepareDC(dc)
+		dc.Clear()
+		rgn = self.GetUpdateRegion()
+		r = rgn.GetBox()
+		self.pdc.DrawToDCClipped(dc, r)
+
 	# Draws the inital playing area
 	def doDrawing(self, dc, player, CPU):
 		dc.BeginDrawing()
@@ -659,6 +700,7 @@ class GamePanel(wx.ScrolledWindow):
 		dc.SetPen(pen)
 		dc.SetBrush(brush)
 
+		# Make panels for cards
 		player1pokePanel = wx.Rect(3, 380, 775, 175)
 		player2pokePanel = wx.Rect(3, 3, 775, 175)
 		player1invPanel = wx.Rect(782, 3, 135, 552)
@@ -680,14 +722,13 @@ class GamePanel(wx.ScrolledWindow):
 		dc.DrawRoundedRectangleRect(cardDeckPanel, 10)
 		dc.DrawRoundedRectangleRect(graveyardPanel, 10)
 
+		# Make healthbars
 		self.playerHealthID = self.drawBar(dc, 90, 182, 10, 193, '#DB3340')
-
 		self.CPUHealthID = self.drawBar(dc, 680, 182, 10, 193, '#DB3340')
-
 		self.playerStaminaID = self.drawBar(dc, 70, 182, 10, 193, '#28ABE3')
-
 		self.CPUStaminaID = self.drawBar(dc, 700, 182, 10, 193, '#28ABE3')
 
+		# A yellow line to hide healthbars when they move
 		id = wx.NewId()
 		dc.SetId(id)
 		pen = wx.Pen('#FFFFFF', 1)
@@ -700,6 +741,7 @@ class GamePanel(wx.ScrolledWindow):
 		dc.SetIdBounds(id, yellowLine)
 		self.movable[id] = False
 
+		# Player pokemon panel, must be drawn after healthbars so they don't go over it
 		id = wx.NewId()
 		dc.SetId(id)
 		pen = wx.Pen('#435353', 2)
@@ -714,6 +756,7 @@ class GamePanel(wx.ScrolledWindow):
 
 		w, h = player.deck.cards[0].bitmap.GetSize()
 
+		# Players starting card
 		id = wx.NewId()
 		dc.SetId(id)
 		self.drawItem(dc, id, player.deck.cards[0].bitmap, 119, 195, w, h)
@@ -725,6 +768,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.playerChosenID = id
 		self.GetParent().attackPanel.setLabels(self.cards[id])
 
+		# CPU starting card
 		id = wx.NewId()
 		dc.SetId(id)
 		self.drawItem(dc, id, CPU.deck.cards[0].bitmap, 544, 195, w, h)
@@ -735,6 +779,7 @@ class GamePanel(wx.ScrolledWindow):
 
 
 		for i in range(1, 10):
+			# Players pokecards, put offscreen initially
 			id = wx.NewId()
 			dc.SetId(id)
 			self.drawItem(dc, id, player.deck.cards[i].bitmap, -200, -200, w, h)
@@ -743,6 +788,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.cards[id] = player.deck.cards[i]
 			self.slot[id] = -1
 
+			# Players deck, backsides of pokecards
 			bid = wx.NewId()
 			dc.SetId(bid)
 			self.drawItem(dc, bid, self.backsideBmp, 931, 195, w, h)
@@ -750,6 +796,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.cardType[bid] = 'Backside'
 			self.backsides[bid] = id
 
+			# Computers pokecards, put offscreen initially
 			id = wx.NewId()
 			dc.SetId(id)
 			self.drawItem(dc, id, CPU.deck.cards[i].bitmap, -200, -200, w, h)
@@ -758,6 +805,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.slotCPU[id] = -1
 			self.cardsCPU.append(CPU.deck.cards[i])
 
+			# Backsides of computers pokecards, put offscreen initially
 			bid = wx.NewId()
 			dc.SetId(bid)
 			self.drawItem(dc, bid, self.backsideBmp, -200, -200, w, h)
@@ -765,6 +813,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.backsidesCPU[bid] = id
 
 		for i in range(0, 100):
+			# Players inventory cards, put offscreen initially
 			id = wx.NewId()
 			dc.SetId(id)
 			self.drawItem(dc, id, player.invdeck.invCards[i].bitmap, -200, -200, w, h)
@@ -773,6 +822,7 @@ class GamePanel(wx.ScrolledWindow):
 			self.cards[id] = player.invdeck.invCards[i]
 			self.invSlot[id] = -1
 
+			# Backsides of players inventory cards
 			bid = wx.NewId()
 			dc.SetId(bid)
 			self.drawItem(dc, bid, self.backsideInvBmp, 931, 10, w, h)
@@ -782,18 +832,21 @@ class GamePanel(wx.ScrolledWindow):
 
 		w, h = stunned.GetSize()
 
+		# Stunned sign for player
 		id = wx.NewId()
 		dc.SetId(id)
 		self.drawItem(dc, id, stunned, -200, -200, w, h)
 		self.movable[id] = False
 		self.playerStunnedID = id
 
+		# Stunned sign for CPU
 		id = wx.NewId()
 		dc.SetId(id)
 		self.drawItem(dc, id, stunned, -200, -200, w, h)
 		self.movable[id] = False
 		self.CPUStunnedID = id
 
+		# Text that appears when you win
 		id = wx.NewId()
 		dc.SetId(id)
 		font = wx.Font(pointSize=100, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD)
@@ -808,6 +861,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.movable[id] = False
 		self.objids.append(id)
 
+		# Text that appears when you loose
 		id = wx.NewId()
 		dc.SetId(id)
 		dc.SetFont(font)
@@ -1012,6 +1066,7 @@ class infoPanel(wx.Panel):
 		self.Layout()
 		self.Thaw()
 
+# A panel that displays information about the events that are occurring during gameplay
 class LogPanel(scrolled.ScrolledPanel):
 	def __init__(self, parent):
 		wx.ScrolledWindow.__init__(self, parent, size=(220, 300), style=wx.RAISED_BORDER)
@@ -1028,6 +1083,7 @@ class LogPanel(scrolled.ScrolledPanel):
 		
 		self.SetSizer(self.vbox)
 
+	# Adds new information to the log
 	def updateLog(self):
 		self.Freeze()
 		length = len(self.GetParent().game.textLog)
@@ -1044,6 +1100,7 @@ class LogPanel(scrolled.ScrolledPanel):
 		self.Scroll(-1, self.GetVirtualSize()[1])
 		self.Thaw()
 
+# The main frame for the game
 class MainFrame(wx.Frame):
 	def __init__(self):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
@@ -1056,6 +1113,7 @@ class MainFrame(wx.Frame):
 		#Load presets so we can put presets decks in menu
 		presets = Presets()
 
+		#Determines the difficulty setting
 		self.difficulty = "computer"
 
 		#Decks that human(hmn) and computer (cpu) want to use
@@ -1201,7 +1259,7 @@ class MainFrame(wx.Frame):
 		helpw = HelpFrame()
 		helpw.Show()
 
-	# Updates the status bar and some game info
+	# Updates the status bar and some game information
 	def updateStatus(self):
 		self.logPanel.updateLog()
 		drawInv = self.game.drawInvQuest()
@@ -1229,8 +1287,10 @@ class MainFrame(wx.Frame):
 		else:
 			self.gamePanel.setCPUNotStunned()
 
+	# The player chooses an attack
 	def playerAction(self, attackNum, passTurn):
 		if self.game.players[0].mainCard.isDead():
+			# if the player tries to attack with a dead pokemon
 			self.game.textLog.append('You must choose a new pokemon!\n')
 			self.attackPanel.enableAll()
 			self.gamePanel.isMyTurn = True
@@ -1238,18 +1298,23 @@ class MainFrame(wx.Frame):
 			return
 		if not passTurn:
 			if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
+				# player attacks
 				self.gamePanel.animation1(True)
 				if not self.game.players[0].mainCard.isDead():
+					# if player doesn't die from it's own attack
 					self.gamePanel.updateCPUHp(False)
 					self.gamePanel.updateCPUStamina()
 				elif self.game.players[1].mainCard.isDead():
+					# if player dies from its own attackand also kills the CPU's pokemon
 					self.gamePanel.updateCPUHp(True)
 			else:
+				# if player doesn't have enough stamina for the chosen attack
 				self.attackPanel.enableAll()
 				self.gamePanel.isMyTurn = True
 				self.updateStatus()
 				return
 		else:
+			# the player passes its turn
 			self.game.textLog.append('You passed your turn\n')
 		self.game.turnCount += 1
 		self.gamePanel.hasDrawnInv = False
@@ -1261,23 +1326,29 @@ class MainFrame(wx.Frame):
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
+	# The CPU performs an action
 	def CPUAction(self):
 		self.game.turnCount += 1
 		self.game.draw(self.game.players[1])
 		self.gamePanel.addCPUpokemon()
 		if self.game.drawInvQuest():
+			# draws an inventory card if it can
 			self.game.drawInv(self.game.players[1])
 		if self.game.players[1].mainCard.isDead():
+			# choose a new pokemon to put out if the currently chosen one is dead
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
 			self.gamePanel.switchCPUpokemon(newCard)
 			time.sleep(1)
 		if not self.game.players[0].mainCard.isDead():
+			# If the player's currently chosen pokemon isn't dead the CPU tries to attack it
 			if self.game.chooseAttackAI(self.game.players[1], self.game.players[0]):
+				# CPU attacks
 				self.gamePanel.animation1(False)
 				self.gamePanel.updatePlayerHp()
 				if self.game.players[1].mainCard.isDead():
+					# if the CPU kills itself with its attack it choose a new pokemon to put out
 					newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 					self.gamePanel.updateCPUHp(True)
 					self.gamePanel.CPUselfdestruct = True
@@ -1290,6 +1361,7 @@ class MainFrame(wx.Frame):
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
 
+	# Returns True if the game is won or lost, otherwise False
 	def checkWin(self):
 		if self.game.players[0].points >= pointsToWin:
 			self.gamePanel.isMyTurn = False
@@ -1305,9 +1377,11 @@ class MainFrame(wx.Frame):
 			return True
 		return False
 
+	# Exit the program
 	def onQuit(self, event):
 		self.Close()
 
+# A window that displays game instructions
 class HelpFrame(wx.Frame):
 	def __init__(self):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(850, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
