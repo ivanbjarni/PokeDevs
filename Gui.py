@@ -1236,19 +1236,24 @@ class MainFrame(wx.Frame):
 			self.gamePanel.isMyTurn = True
 			self.updateStatus()
 			return
-		self.game.turnCount += 1
-		self.gamePanel.hasDrawnInv = False
-		self.gamePanel.hasDrawnPoke = False
 		if not passTurn:
 			if self.game.players[0].attack(attackNum, self.game.players[1], self.game.textLog):
 				self.gamePanel.animation1(True)
 				if not self.game.players[0].mainCard.isDead():
 					self.gamePanel.updateCPUHp(False)
 					self.gamePanel.updateCPUStamina()
-				else:
+				elif self.game.players[1].mainCard.isDead():
 					self.gamePanel.updateCPUHp(True)
+			else:
+				self.attackPanel.enableAll()
+				self.gamePanel.isMyTurn = True
+				self.updateStatus()
+				return
 		else:
 			self.game.textLog.append('You passed your turn\n')
+		self.game.turnCount += 1
+		self.gamePanel.hasDrawnInv = False
+		self.gamePanel.hasDrawnPoke = False
 		self.game.players[0].mainCard.applyEffects()
 		self.gamePanel.updatePlayerHp()
 		self.gamePanel.updatePlayerStamina()
