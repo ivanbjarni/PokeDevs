@@ -46,6 +46,12 @@ class Attack(object):
 	# Before: nothing
 	# After: s is a string that describes the attack
 	def getInfo(self):
+		if self.name == "Metronome":
+			return "Nobody knows\nwhat will\nhappen."
+		if self.name == "Transform":
+			return "Transform \ninto the\nopponent's\npokemon."
+		if self.name == "Empty":
+			return "Stand still,\nit usually has\nno effect."
 		res = ''
 		res += 'Damage: '+str(self.damage)+'\n'
 		if self.staminaCost>=0:
