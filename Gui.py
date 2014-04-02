@@ -835,6 +835,8 @@ class AttackPanel(wx.Panel):
 		# This button looks nicer than the generic button but I'm not 100% sure it's compatable with
 		# other operating systems than windows
 		# The label also doesn't center on this button if it is multiline
+
+		#Create the attack buttons and bind the events to them
 		for i in xrange(0,4):
 			element = GB.GradientButton(self, -1, label='---', size=(200, 100))
 			self.attackButtons.insert(i,element)
@@ -848,6 +850,7 @@ class AttackPanel(wx.Panel):
 			self.attackButtons[i].Bind(wx.EVT_MOUSE_EVENTS, lambda event, index=i: self.onMouseBtn(event,index))
 			self.hbox.Add(self.attackButtons[i], flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 
+		#Then we create the pass button a bit differently
 		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
 		self.passButton.SetTopEndColour(wx.Colour(70, 89, 89))
@@ -862,18 +865,21 @@ class AttackPanel(wx.Panel):
 		self.vbox.Add(self.hbox, flag=wx.ALL|wx.ALIGN_CENTER, border=10)
 		self.SetSizer(self.vbox)
 
+	#when you press one of the attack buttons
 	def attack(self, num, passTurn):
 		self.disableAll()
 		self.GetParent().gamePanel.isMyTurn = False
 		self.GetParent().playerAction(num, passTurn)
 		self.setLabels(self.GetParent().game.players[0].mainCard)
 
+	#When you hover over attack button with index btnNr
 	def onMouseBtn(self, event, btnNr):
 		if event.Moving():
 			attack = self.GetParent().game.players[0].mainCard.attacks[btnNr]
 			self.GetParent().infoPanel.setAttackInfo(attack)
 		event.Skip()
 
+	#When you hover over the pass button
 	def onMousePass(self, event):
 		if event.Moving():
 			self.GetParent().infoPanel.setPassInfo()
@@ -1036,17 +1042,20 @@ class MainFrame(wx.Frame):
 	def __init__(self, game):
 		wx.Frame.__init__(self, None, title="Pokemon", size=(1290, 725), style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER ^ wx.MAXIMIZE_BOX)
 		self.SetBackgroundColour('#435353')		
+		#Create sizers
 		self.vbox1 = wx.BoxSizer(wx.VERTICAL)
 		self.vbox2 = wx.BoxSizer(wx.VERTICAL)
 		self.hbox = wx.BoxSizer(wx.HORIZONTAL)
+		#Load presets so we can put presets decks in menu
 		presets = Presets()
 
+		#Decks that human(hmn) and computer (cpu) want to use
 		hmnDeck = "Random"
 		cpuDeck = "Random"
 
-
 		self.game = game
 
+		#Define menus and panels
 		self.menuBar = wx.MenuBar()
 		self.infoPanel = infoPanel(self)
 		#self.statusPanel = StatusPanel(self)
@@ -1055,33 +1064,39 @@ class MainFrame(wx.Frame):
 		self.logPanel = LogPanel(self)
 		self.statusBar = self.CreateStatusBar()
 
+		#Setup the menu
 		self.fileMenu = wx.Menu()
 		m_newGame = self.fileMenu.Append(wx.ID_EXIT, "&New Game\tAlt+N", "Start a new game!")
 
+		#Sub menu for decks that  you might want to use
 		m_yourDeck = wx.Menu()
 		m_yourDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
 			m_element = m_yourDeck.AppendRadioItem(-1, str(val.name))
 			self.Bind(wx.EVT_MENU, self.OnNewSelectedYourDeck, m_element)
 		
+		#Sub menu for decks that you might want the computer to use
 		m_enemDeck = wx.Menu()
 		m_enemDeck.AppendRadioItem(-1, "Random")
 		for key,val in presets.decks.iteritems():
 			m_element = m_enemDeck.AppendRadioItem(-1, str(val.name))
 			self.Bind(wx.EVT_MENU, self.OnNewSelectedEnemDeck, m_element)
 
-
+		#Add sub menus to the filemenu
 		self.fileMenu.AppendMenu(wx.ID_ANY, 'Y&our Deck', m_yourDeck)
 		self.fileMenu.AppendMenu(wx.ID_ANY, 'E&nemy Deck', m_enemDeck)
 
+		#We want to seperate newgame, yourdeck and enemy deck from help and exit 
 		self.fileMenu.AppendSeparator()
 
 		#Helpmenu:
 		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
 		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
 
+		#Exit button
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
 
+		#add filemenu to the menubar and bind events
 		self.menuBar.Append(self.fileMenu, "&File")
 		self.Bind(wx.EVT_MENU, self.onQuit, m_exit)
 		self.Bind(wx.EVT_MENU, self.OnNewGame, m_newGame)
@@ -1103,14 +1118,19 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
+	#When yourdeck radio button is pressed
 	def OnNewSelectedYourDeck(self, event):
+		#get id of button pressed and set hmn deck to the value of that button (string)
 		item = self.GetMenuBar().FindItemById(event.GetId())
 		hmnDeck = item.GetText()
 
+	#When enemy deck radio button is pressed
 	def OnNewSelectedEnemDeck(self, event):
+		#get id of button pressed and set cpu deck to the value of that button (string)
 		item = self.GetMenuBar().FindItemById(event.GetId())
 		cpuDeck = item.GetText()
 
+	#when player presses the new game button
 	def OnNewGame(self, event):	
 		print "get ekki of erfitt. gamla draslid er alltaf entha undir nyja dotinu"
 
