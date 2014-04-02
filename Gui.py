@@ -625,7 +625,7 @@ class GamePanel(wx.ScrolledWindow):
 		dc.SetIdBounds(id, wx.Rect(x, y, w, h))
 		self.objids.append(id)
 
-	# for drawing health/stamina bars
+	# for drawing health/stamina bars, returns the bars id
 	def drawBar(self, dc, x, y, w, h, color):
 		# draw the bar outline
 		pen = wx.Pen('#000000', 1)
@@ -722,7 +722,7 @@ class GamePanel(wx.ScrolledWindow):
 		dc.DrawRoundedRectangleRect(cardDeckPanel, 10)
 		dc.DrawRoundedRectangleRect(graveyardPanel, 10)
 
-		# Make healthbars
+		# Make health- and stamina bars
 		self.playerHealthID = self.drawBar(dc, 90, 182, 10, 193, '#DB3340')
 		self.CPUHealthID = self.drawBar(dc, 680, 182, 10, 193, '#DB3340')
 		self.playerStaminaID = self.drawBar(dc, 70, 182, 10, 193, '#28ABE3')
@@ -1339,6 +1339,7 @@ class MainFrame(wx.Frame):
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
+			self.updateStatus()
 			self.gamePanel.switchCPUpokemon(newCard)
 			time.sleep(1)
 		if not self.game.players[0].mainCard.isDead():
