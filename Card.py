@@ -126,7 +126,7 @@ class Card(object):
 		if atk.healthCost > 0:
 			textLog.append("Self-inflicted damage: " + str(atk.healthCost))
 		elif atk.healthCost < 0:
-			textLog.append("Healing power: "+str(atk.healthCost * -1))
+			textLog.append("Healing power: "+str(self.health-oldhp))
 		textLog.append("Damage done: "+str(damage)+"\n")
 		card.health  -= damage
 
