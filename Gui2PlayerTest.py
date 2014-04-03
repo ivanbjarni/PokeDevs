@@ -1526,8 +1526,8 @@ class MainFrame(wx.Frame):
 			canInv = 'No'
 
 		if self.difficulty == 'player2':
-			player1 = 'Player 1 '
-			player2 = ' Player 2'
+			player1 = 'Player 1 [ '
+			player2 = ' ] Player 2'
 		else:
 			player1 = 'Player '
 			player2 = ' CPU'
