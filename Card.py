@@ -55,9 +55,9 @@ class Card(object):
 	#		 Also prints out on console what happens.
 	def attack(self, atk, card, textLog):
 		if(atk.name == "Metronome"):
-			atk.staminaCost = round(random.random()*metronomeAmount+metronomeBase)
-			atk.damage 		= round(random.random()*metronomeAmount+metronomeBase)
-			atk.healthCost 	= round(random.random()*metronomeAmount+metronomeBase)
+			atk.staminaCost = round(random.random()*metronomeAmount+metronomeBaseSta)
+			atk.damage 		= round(random.random()*metronomeAmount+metronomeBaseDmg)
+			atk.healthCost 	= round(random.random()*metronomeAmount+metronomeBaseHp)
 		if(atk.name == "Transform"):
 			scard = self.transformTo(card)
 			print "ditto transformed to "+scard
