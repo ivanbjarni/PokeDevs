@@ -1446,6 +1446,8 @@ class MainFrame(wx.Frame):
 	def initGame(self):
 		presets = Presets()
 
+		self.attackingPlayer = 0
+		self.defensivePlayer = 1
 		#create player 1 give him a hand, random mainCard and a random 10card deck
 		p1 = Player("player1")
 		p1.hand = Hand()
@@ -1563,13 +1565,14 @@ class MainFrame(wx.Frame):
 			if self.game.players[self.attackingPlayer].attack(attackNum, self.game.players[self.defensivePlayer], self.game.textLog):
 				# player attacks
 				self.gamePanel.animation1(True)
-				if not self.game.players[self.attackingPlayer].mainCard.isDead():
-					# if player doesn't die from it's own attack
-					self.gamePanel.updateCPUHp(False)
-					self.gamePanel.updateCPUStamina()
-				elif self.game.players[self.defensivePlayer].mainCard.isDead():
-					# if player dies from its own attackand also kills the CPU's pokemon
-					self.gamePanel.updateCPUHp(True)
+				if not self.difficulty == 'player2':
+					if not self.game.players[self.attackingPlayer].mainCard.isDead():
+						# if player doesn't die from it's own attack
+						self.gamePanel.updateCPUHp(False)
+						self.gamePanel.updateCPUStamina()
+					elif self.game.players[self.defensivePlayer].mainCard.isDead():
+						# if player dies from its own attackand also kills the CPU's pokemon
+						self.gamePanel.updateCPUHp(True)
 			else:
 				# if player doesn't have enough stamina for the chosen attack
 				self.attackPanel.enableAll()
@@ -1585,6 +1588,9 @@ class MainFrame(wx.Frame):
 		self.game.players[self.attackingPlayer].mainCard.applyEffects()
 		self.gamePanel.updatePlayerHp()
 		self.gamePanel.updatePlayerStamina()
+		if self.difficulty == 'player2':
+			self.gamePanel.updateCPUHp(False)
+			self.gamePanel.updateCPUStamina()
 		self.updateStatus()
 		temp = self.attackingPlayer
 		self.attackingPlayer = self.defensivePlayer

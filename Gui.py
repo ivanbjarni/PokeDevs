@@ -1193,7 +1193,10 @@ class MainFrame(wx.Frame):
 		#PLayer for the music:
 
 		self.player = wx.media.MediaCtrl(parent = self, szBackend=wx.media.MEDIABACKEND_WMP10)
-		self.player.Load(r'PokemoanSong.wav')
+		try:
+			self.player.Load(r'PokemoanSong.wav')
+		except:
+			print "Could not load themesong"
 		self.Bind(wx.media.EVT_MEDIA_LOADED, self.playSong)
 
 		#loop the main song:
@@ -1240,7 +1243,10 @@ class MainFrame(wx.Frame):
 
 	def OnTimer(self, event):
 		if(self.isPlaying):
-			self.player.Load(r'PokemoanSong.wav')
+			try:
+				self.player.Load(r'PokemoanSong.wav')
+			except:
+				print "Could not load themesong"
 		
 	
 	# Initializes the game itself
