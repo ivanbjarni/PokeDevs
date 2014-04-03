@@ -415,6 +415,11 @@ class Presets(object):
 		DreamTeamVilhelm.name = "DreamTeamVilhelm"
 		DreamTeamVilhelm.setCards([self.gc("Pidgeot"),self.gc("Muk"),self.gc("Chansey"),self.gc("Mewtwo"),self.gc("Alakazam"),self.gc("Sandslash"),self.gc("Hypno"),self.gc("Machamp"),self.gc("Blastoise"),self.gc("Kangaskhan")])
 
+		#Agust's favorite team
+		DreamTeamAgust = Deck()
+		DreamTeamAgust.name = "DreamTeamAgust"
+		DreamTeamAgust.setCards([self.gc("Venusaur"),self.gc("Hunter"),self.gc("Alakazam"),self.gc("Gengar"),self.gc("Pidgeot"),self.gc("Hitmonlee"),self.gc("Wartortle"),self.gc("Muk"),self.gc("Kangaskhan"),self.gc("Gyarados")])
+
 		#Saevar's favorite team
 		DreamTeamSaevar = Deck()
 		DreamTeamSaevar.name = "DreamTeamSaevar"
@@ -513,7 +518,8 @@ class Presets(object):
 		27 	: DreamTeamIvan,
 		38  : DreamTeamVilhelm,
 		49 	: DreamTeamSaevar,
-		60 	: DreamTeamArni
+		60 	: DreamTeamArni,
+		71	: DreamTeamAgust
 		}
 
 
