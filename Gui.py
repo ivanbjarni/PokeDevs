@@ -1456,11 +1456,7 @@ class HelpFrame(wx.Frame):
 				data = myFile.read()
 		except:
 			data = 'Failed to load instructions'
-<<<<<<< HEAD
+
 		self.help.SetLabel(data)
 
 
-		
-=======
-		self.help.SetLabel(data)
->>>>>>> aad32dfad430cf9f6cca8b6e74e878a3f7fd5edc
