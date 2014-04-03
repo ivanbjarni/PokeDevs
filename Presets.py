@@ -226,7 +226,7 @@ class Presets(object):
 		487	: Attack("Soak", 5, 35, 0, 1, "water"),			
 		490	: Attack("LowSweep", 15, 10, 0, 0, "ground"),			
 		491	: Attack("AcidSpray", 25, 40, 0, 0, "grass"),			
-		495	: Attack("AfterYou", 0, 0, 0, 0, "normal"),			
+		495	: Attack("AfterYou", 0, -5, 0, 0, "normal"),			
 		498	: Attack("ChipAway", 30, 45, 0, 0, "normal"),			
 		505	: Attack("HealPulse", 0, 10, -25, 0, "psychic"),			
 		506	: Attack("Hex", 15, 35, -25, 1, "psychic"),			
