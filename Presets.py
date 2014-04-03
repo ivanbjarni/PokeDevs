@@ -418,7 +418,7 @@ class Presets(object):
 		#Agust's favorite team
 		DreamTeamAgust = Deck()
 		DreamTeamAgust.name = "DreamTeamAgust"
-		DreamTeamAgust.setCards([self.gc("Venusaur"),self.gc("Hunter"),self.gc("Alakazam"),self.gc("Gengar"),self.gc("Pidgeot"),self.gc("Hitmonlee"),self.gc("Wartortle"),self.gc("Muk"),self.gc("Kangaskhan"),self.gc("Gyarados")])
+		DreamTeamAgust.setCards([self.gc("Venusaur"),self.gc("Haunter"),self.gc("Alakazam"),self.gc("Gengar"),self.gc("Pidgeot"),self.gc("Hitmonlee"),self.gc("Wartortle"),self.gc("Muk"),self.gc("Kangaskhan"),self.gc("Gyarados")])
 
 		#Saevar's favorite team
 		DreamTeamSaevar = Deck()
