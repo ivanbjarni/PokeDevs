@@ -1,6 +1,7 @@
 import subprocess
 import tempfile
 import wx
+import wx.media
 import sys
 import os
 import time
@@ -1171,12 +1172,36 @@ class MainFrame(wx.Frame):
 		#We want to seperate newgame, yourdeck and enemy deck from help and exit 
 		self.fileMenu.AppendSeparator()
 
+		#Music options:
+		m_music = wx.Menu()
+		m_play = m_music.AppendRadioItem(-1, "Playing")
+		m_mute = m_music.AppendRadioItem(-1, "Muted")
+		self.Bind(wx.EVT_MENU, self.OnMuted, m_play)
+		self.Bind(wx.EVT_MENU, self.OnMuted, m_mute)
+
+		self.fileMenu.AppendMenu(wx.ID_ANY, "M&usic", m_music)
+
+
 		#Helpmenu:
 		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
 		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
 
 		#Exit button
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+
+		#PLayer for the music:
+
+		self.player = wx.media.MediaCtrl(parent = self, szBackend=wx.media.MEDIABACKEND_WMP10)
+		self.player.Load(r'PokemoanSong.wav')
+		self.Bind(wx.media.EVT_MEDIA_LOADED, self.playSong)
+
+		#loop the main song:
+		self.timer = wx.Timer(self)
+		self.Bind(wx.EVT_TIMER, self.OnTimer)
+		self.timer.Start(354000)
+
+		#is the music on?
+		self.isPlaying = True
 
 		#add filemenu to the menubar and bind events
 		self.menuBar.Append(self.fileMenu, "&File")
@@ -1199,7 +1224,24 @@ class MainFrame(wx.Frame):
 		self.SetSizer(self.hbox)
 		self.Layout()
 		self.Centre()
+	
+	def OnMuted(self, event):
+		item = self.GetMenuBar().FindItemById(event.GetId())
+		if item.GetText() == "Muted" :
+			self.player.Pause()
+			self.isPlaying = False
+		elif item.GetText() == "Playing" :
+			self.player.Play()
+			self.isPlaying = True
 
+	def playSong(self, event):
+		self.player.Play()
+
+	def OnTimer(self, event):
+		if(self.isPlaying):
+			self.player.Load(r'PokemoanSong.wav')
+		
+	
 	# Initializes the game itself
 	def initGame(self):
 		presets = Presets()
@@ -1338,6 +1380,8 @@ class MainFrame(wx.Frame):
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, -1, 0, 0, 'wait1')
 
+		
+
 	# The CPU performs an action
 	def CPUAction(self):
 		self.game.turnCount += 1
@@ -1373,6 +1417,7 @@ class MainFrame(wx.Frame):
 		self.gamePanel.updateCPUStamina()
 		if not self.checkWin():
 			worker = Worker(self.gamePanel, 0, 0, 1, 'wait2')
+
 
 	# Returns True if the game is won or lost, otherwise False
 	def checkWin(self):
@@ -1411,5 +1456,6 @@ class HelpFrame(wx.Frame):
 		except:
 			data = 'Failed to load instructions'
 		self.help.SetLabel(data)
-		
+
+
 		
