@@ -82,7 +82,6 @@ class Card(object):
 		self.stamina -= atk.staminaCost
 		self.health  -= atk.healthCost
 		self.health   = min(self.health , self.healthMax)
-		card.health   = min(card.health , card.healthMax)
 		self.stamina = min(self.stamina, self.staminaMax)
 		stun = atk.stun
 
@@ -127,9 +126,11 @@ class Card(object):
 		if atk.healthCost > 0:
 			textLog.append("Self-inflicted damage: " + str(atk.healthCost))
 		elif atk.healthCost < 0:
-			textLog.append("Healing power: "+str(atk.healthCost * -1))
+			textLog.append("Health restored: "+str(self.health-oldhp))
 		textLog.append("Damage done: "+str(damage)+"\n")
 		card.health  -= damage
+
+		card.health   = min(card.health , card.healthMax)
 
 		if(card.isDead() and isLogged):
 			pokemonCounterLog(self.name,"pokemonKillers.txt")
