@@ -285,7 +285,7 @@ class Presets(object):
 		33	: Card("Nidorino", 61, 105, [self.ga("PoisonSting"), self.ga("HelpingHand"), self.ga("Captivate"), self.ga("HornDrill")], "grass", "ground", "grass"),
 		34	: Card("Nidoking", 81, 120, [self.ga("Peck"), self.ga("PoisonSting"), self.ga("EarthPower"), self.ga("Megahorn")], "ground", "water", "grass"),
 		35	: Card("Clefairy", 70, 70, [self.ga("Sing"), self.ga("Metronome"), self.ga("Moonblast"), self.ga("AfterYou")], "normal", "grass", "ground"),
-		36	: Card("Clefable", 95, 80, [self.ga("Sing"), self.ga("Metronome"), self.ga("Minimize"), self.ga("AfterYou")], "normal", "grass", "ground"),
+		36	: Card("Clefable", 95, 80, [self.ga("Sing"), self.ga("Metronome"), self.ga("Moonblast"), self.ga("AfterYou")], "normal", "grass", "ground"),
 		37	: Card("Vulpix", 38, 90, [self.ga("Ember"), self.ga("FireSpin"), self.ga("Captivate"), self.ga("Inferno")], "fire", "water", "grass"),
 		38	: Card("Ninetales", 73, 105, [self.ga("QuickAttack"), self.ga("Flamethrower"), self.ga("Safeguard"), self.ga("Inferno")], "fire", "water", "grass"),
 		39	: Card("Jigglypuff", 115, 70, [self.ga("Sing"), self.ga("BodySlam"), self.ga("HyperVoice"), self.ga("DoubleEdge")], "normal", "ground", "psychic"),
