@@ -1,4 +1,5 @@
-from Gui import *
+#from Gui import *
+from Gui2PlayerTest import *
 
 #Runs the GUI version of the game
 if __name__=="__main__":
