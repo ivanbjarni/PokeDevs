@@ -133,7 +133,7 @@ class Main(object):
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card, self.textLog)
 						offset += 1
-				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned() and pYou.mainCard.health >  pYou.inv.invCards[i].health*(-2) and not self.willheal(pYou, heal) and not self.willstaminaboost(pYou, stamina):
+				elif not pYou.mainCard.hasDmgBoost() and pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned() and pYou.mainCard.health >  pYou.inv.invCards[i].health*(-2) and not self.willheal(pYou, heal) and not self.willstaminaboost(pYou, stamina):
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
@@ -141,7 +141,7 @@ class Main(object):
 						card = pYou.inv.remove(damage)
 						hasUsed = pYou.use(card, self.textLog)
 						offset += 1
-				elif pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.health < 15:
+				elif not pYou.mainCard.hasDefBoost() and pYou.inv.invCards[i].defenseBoost > 0 and pYou.inv.invCards[i].defenseBoost < 1 and not pYou.mainCard.health < 15:
 					print "I want to take less DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:
@@ -149,7 +149,7 @@ class Main(object):
 						card = pYou.inv.remove(damage)
 						hasUsed = pYou.use(card, self.textLog)
 						offset += 1
-				elif pYou.inv.invCards[i].weakExploit > 0 and pEne.mainCard.weakness == pYou.mainCard.poketype:
+				elif not pYou.mainCard.hasWeakExploit() and pYou.inv.invCards[i].weakExploit > 0 and pEne.mainCard.weakness == pYou.mainCard.poketype:
 					print "I want to exploit your WEAKNESS!!\n"
 					weaknessExploit = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if weaknessExploit != -1:
