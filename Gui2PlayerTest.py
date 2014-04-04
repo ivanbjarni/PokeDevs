@@ -720,7 +720,6 @@ class GamePanel(wx.ScrolledWindow):
 			slot = self.findEmptySlot(self.slotCPU)
 			self.slotCPU[bid] = slot
 			self.countCPUpokemon += 1
-			print self.countCPUpokemon
 			self.origpos[bid] = [10 + slot * 127, 6]
 			self.moveItem(bid, 210 + slot * 127, 206)
 
@@ -1706,14 +1705,15 @@ class MainFrame(wx.Frame):
 
 	# The CPU performs an action
 	def CPUAction(self):
+		print self.game.players[1].hand
 		self.game.turnCount += 1
 		self.game.draw(self.game.players[1])
 		self.gamePanel.addCPUpokemon()
 		if self.game.drawInvQuest():
-			# draws an inventory card if it can
+			# Draws an inventory card if it can
 			self.game.drawInv(self.game.players[1])
 		if self.game.players[1].mainCard.isDead():
-			# choose a new pokemon to put out if the currently chosen one is dead
+			# Choose a new pokemon to put out if the currently chosen one is dead
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
