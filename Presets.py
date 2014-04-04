@@ -395,7 +395,7 @@ class Presets(object):
 		143	: Card("Snorlax", 160, 80, [self.ga("Tackle"), self.ga("ChipAway"), self.ga("GigaImpact"), self.ga("Snore")], "normal", "ground", "psychic"),
 		144	: Card("Articuno", 90, 90, [self.ga("IceBeam"), self.ga("Blizzard"), self.ga("Gust"), self.ga("AncientPower")], "water", "grass", "ground"),
 		145	: Card("Zapdos", 90, 90, [self.ga("ThunderShock"), self.ga("DrillPeck"), self.ga("Discharge"), self.ga("ZapCannon")], "electric", "water", "ground"),
-		146	: Card("Moltres", 90, 100, [self.ga("Ember"), self.ga("Flamethrower"), self.ga("SkyAttack"), self.ga("AncientPower")], "electric", "water", "ground"),
+		146	: Card("Moltres", 90, 100, [self.ga("Ember"), self.ga("Flamethrower"), self.ga("SkyAttack"), self.ga("AncientPower")], "fire", "water", "ground"),
 		147	: Card("Dratini", 41, 85, [self.ga("Safeguard"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		148	: Card("Dragonair", 61, 95, [self.ga("Outrage"), self.ga("Leer"), self.ga("AquaTail"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
 		149	: Card("Dragonite", 91, 110, [self.ga("Outrage"), self.ga("Hurricane"), self.ga("DragonDance"), self.ga("HyperBeam")], "normal", "psychic", "fire"),
