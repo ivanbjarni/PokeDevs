@@ -381,6 +381,9 @@ class Card(object):
 	def setDefenseMultiplier(self, d):
 		self.defMulti = d-defEachTurn
 
+	def hasDmgBoost(self):
+		return (dmgMulti == 1)
+
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
 	# After: c has transformed to card but still retains his health percent

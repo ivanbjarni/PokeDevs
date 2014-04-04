@@ -241,7 +241,7 @@ class GamePanel(wx.ScrolledWindow):
 			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
 			card.bitmap = image.ConvertToBitmap()
 		except:
-			print 'Failed to load card: ' + str(name)
+			print 'setImage: Failed to load card: ' + str(name)
 
 	# Sets the bitmap for and inventory card
 	def setInvImage(self, card):
@@ -251,7 +251,7 @@ class GamePanel(wx.ScrolledWindow):
 			image = image.Scale(116, 165, wx.IMAGE_QUALITY_HIGH)
 			card.bitmap = image.ConvertToBitmap()
 		except:
-			print 'Failed to load card: ' + str(name)
+			print 'setInvImage: Failed to load card: ' + str(name)
 
 	# Sets the bitmap for the backside of a pokemon card
 	def setBacksideBmp(self):
