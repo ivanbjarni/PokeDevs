@@ -373,9 +373,7 @@ class Main(object):
 		 	chosen = pokemon
 		 
 		 ind = pYou.hand.getIndexOf(chosen)
-		 
-		 print "chose: "+str(ind)+"("+str(chosen)+")"
-		 
+
 		 return pYou.hand.remove(ind)
 
 	# Usage: p = main.chooseCardAI(pYou,pEne):
