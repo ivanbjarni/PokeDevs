@@ -133,7 +133,7 @@ class Main(object):
 						card = pYou.inv.remove(stun)
 						hasUsed = pYou.use(card, self.textLog)
 						offset += 1
-				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned() and not self.willheal(pYou, heal) and not self.willstaminaboost(pYou, stamina):
+				elif pYou.inv.invCards[i].damageBoost > 1 and not pYou.mainCard.isStunned() and pYou.mainCard.health >  pYou.inv.invCards[i].health*2 and not self.willheal(pYou, heal) and not self.willstaminaboost(pYou, stamina):
 					print "I want to deal more DAMAGE!!"
 					damage = pYou.inv.getIndexOf(pYou.inv.invCards[i].name)
 					if damage != -1:

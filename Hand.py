@@ -49,30 +49,45 @@ class Hand(object):
 	# After: i is the name of a card with type type if it exists in hand
 	#			"none" if that card doesn't exist
 	def getNameOfType(self, poketype):
+		pokemon = "none"
 		for a in self.cards:
-			if a.poketype == poketype:
-				return str(a)
-		return "none"
+			if a.poketype == poketype and pokemon == "none":
+				pokemon = str(a)
+			elif a.poketype == poketype and pokemon != "none":
+				i = self.getIndexOf(str(pokemon))
+				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+					pokemon = str(a)  	 
+		return pokemon
 
 	# Usage: i=h.getNameOfNotWeakness(type)
 	# Before: type is string
 	# After: i is the name of a card not with weakness type if it exists in hand
 	#			"none" if that card doesn't exist
 	def getNameOfNotWeakness(self, poketype):
+		pokemon = "none"
 		for a in self.cards:
-			if a.weakness != poketype:
-				return str(a)
-		return "none"
+			if a.weakness != poketype and pokemon == "none":
+				pokemon = str(a)
+			elif a.weakness != poketype and pokemon != "none":
+				i = self.getIndexOf(str(pokemon))
+				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+					pokemon = str(a)  	 
+		return pokemon
 
 	# Usage: i=h.getNameOfType(type)
 	# Before: type is string
 	# After: i is the name of a card with resistance type if it exists in hand
 	#			"none" if that card doesn't exist
 	def getNameOfResistance(self, poketype):
+		pokemon = "none"
 		for a in self.cards:
-			if a.resistance == poketype:
-				return str(a)
-		return "none"
+			if a.resistance == poketype and pokemon == "none":
+				pokemon = str(a)
+			elif a.resistance == poketype and pokemon != "none":
+				i = self.getIndexOf(str(pokemon))
+				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+					pokemon = str(a)  	 
+		return pokemon
 
 	# Usage: a = b.findTheStrongest(self)
 	# Before: Nothing

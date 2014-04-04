@@ -3,6 +3,7 @@ import random
 from constants import *
 import copy
 from util import *
+import time
 
 
 class Card(object):
@@ -60,8 +61,8 @@ class Card(object):
 			atk.healthCost 	= round(random.random()*metronomeAmount+metronomeBaseHp)
 		if(atk.name == "Transform"):
 			scard = self.transformTo(card)
-			print "ditto transformed to "+scard
-			textLog.append("ditto transformed to "+scard+"\n")
+			print "Ditto transformed to "+scard
+			textLog.append("Ditto transformed to "+scard+"\n")
 			return True
 		if(self.stamina < atk.staminaCost):
 			print "Not Enough Stamina "
@@ -69,8 +70,8 @@ class Card(object):
 			return False
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
+			time.sleep(2)
 			textLog.append("Uh-oh you are trying to attack with a dead pokemon\n")
-			return False
 			return False
 		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
