@@ -382,7 +382,13 @@ class Card(object):
 		self.defMulti = d-defEachTurn
 
 	def hasDmgBoost(self):
-		return (dmgMulti == 1)
+		return (self.dmgMulti == 1)
+
+	def hasWeakExploit(self):
+		return (self.weakExploit == 0)
+
+	def hasDefBoost(self):
+		return (self.defMulti == 1)
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
