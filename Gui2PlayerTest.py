@@ -996,7 +996,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.CPUChosenID = id
 
 
-		for i in range(0, 9):
+		for i in range(1, 10):
 			# Players pokecards, put offscreen initially
 			id = wx.NewId()
 			dc.SetId(id)
@@ -1374,6 +1374,9 @@ class MainFrame(wx.Frame):
 		#self.difficulty = "computer"
 		self.difficulty = "computer"
 
+		# Determines if this is the first game played
+		self.firstTurn = True
+
 		# mainly for 2 player purposes
 		self.attackingPlayer = 0
 		self.defensivePlayer = 1
@@ -1521,8 +1524,7 @@ class MainFrame(wx.Frame):
 		p1.deck = presets.gd(self.hmnDeck)
 		p1.deck.shuffle()
 		p1.invdeck = InvDeck()
-		p1.mainCard = p1.deck.remove(0)
-		#cards[0]
+		p1.mainCard = p1.deck.cards[0]
 		for i in xrange(0,100):
 			p1.invdeck.add(presets.getRandomInvCard())
 
@@ -1533,13 +1535,17 @@ class MainFrame(wx.Frame):
 		p2.deck = presets.gd(self.cpuDeck)
 		p2.deck.shuffle()
 		p2.invdeck = InvDeck()
-		p2.mainCard = p2.deck.remove(0)
-		#cards[0]
+		p2.mainCard = p2.deck.cards[0]
 		for i in xrange(0,100):
 			p2.invdeck.add(presets.getRandomInvCard())
 		
 		game = Main([p1, p2])
 		self.gamePanel.setupPanel(p1, p2)
+
+		if self.firstTurn:
+			game.players[0].deck.remove(0)
+			game.players[1].deck.remove(0)
+			self.firstTurn = False
 
 		return game
 
@@ -1576,6 +1582,8 @@ class MainFrame(wx.Frame):
 		self.gamePanel = GamePanel(self, wx.ID_ANY)
 		self.gamePanelBox.Add(self.gamePanel, 0, flag=wx.EXPAND)
 		self.gamePanel.setupPanel(self.game.players[0], self.game.players[1])
+		self.game.players[0].deck.remove(0)
+		self.game.players[1].deck.remove(0)
 		self.updateStatus()
 		self.attackPanel.enableAll()
 		self.Thaw()
