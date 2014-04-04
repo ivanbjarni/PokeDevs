@@ -371,8 +371,10 @@ class Main(object):
 		 pokemon = pYou.hand.getNameOfType(pEne.mainCard.weakness)
 		 if(pokemon!="none" and pYou.mainCard.weakness != pEne.mainCard.poketype):
 		 	chosen = pokemon
-		 print "chose: "+str(ind)+"("+str(chosen)+")"
+		 
 		 ind = pYou.hand.getIndexOf(chosen)
+		 
+		 print "chose: "+str(ind)+"("+str(chosen)+")"
 		 
 		 return pYou.hand.remove(ind)
 
