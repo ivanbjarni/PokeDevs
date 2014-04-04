@@ -120,7 +120,7 @@ class Presets(object):
 		108	: Attack("Smokescreen", 0, -10, -20, 0, "normal"),	
 		110 : Attack("Withdraw", 0, -18, 10, 0, "normal"),			
 		112 : Attack("Barrier", 0, 13, -10, 0, "psychic"),			
-		113 : Attack("LightScreen", -5, -10, -10, 1, "normal"),			
+		113 : Attack("LightScreen", -5, -5, -10, 1, "normal"),			
 		114 : Attack("Haze", 0, -18, 12, 0, "water"),			
 		116 : Attack("FocusEnergy", 0, -27, 0, 0, "normal"),	
 		118 : Attack("Metronome", 0, 0, 0, 0, "normal"),	
@@ -191,7 +191,7 @@ class Presets(object):
 		349 : Attack("DragonDance", 0, 20, -30, 0, "normal"),			
 		350 : Attack("RockBlast", 20, 18, 0, 0, "ground"),			
 		352 : Attack("WaterPulse", 28, 30, 0, 0, "water"),			
-		361 : Attack("HealingWish", -5, 5, -20, 0, "normal"),			
+		361 : Attack("HealingWish", -20, 10, -20, 0, "normal"),			
 		362 : Attack("Brine", 15, 8, 0, 0, "water"),			
 		364 : Attack("Feint", 0, -20, 10, 0, "normal"),			
 		370 : Attack("CloseCombat", 30, 40, 0, 0, "ground"),			
@@ -242,7 +242,7 @@ class Presets(object):
 		577	: Attack("DrainingKiss", 15, 10, -15, 0, "psychic"),
 		580	: Attack("GrassyTerrain", 0, 40, -30, 0, "grass"),
 		583	: Attack("PlayRough", 27, 45, 0, 0, "normal"),
-		585	: Attack("Moonblast", 25, 45, 0, 0, "normal"),
+		585	: Attack("Moonblast", 25, 34, 0, 0, "normal"),
 		678	: Attack("ElectroBall", 18, 20, -12, 0, "electric")
 		
 
