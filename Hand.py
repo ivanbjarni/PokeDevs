@@ -55,7 +55,7 @@ class Hand(object):
 				pokemon = str(a)
 			elif a.poketype == poketype and pokemon != "none":
 				i = self.getIndexOf(str(pokemon))
-				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+				if self.cards[i].health + self.cards[i].stamina < a.health + a.stamina:
 					pokemon = str(a)  	 
 		return pokemon
 
@@ -70,7 +70,7 @@ class Hand(object):
 				pokemon = str(a)
 			elif a.weakness != poketype and pokemon != "none":
 				i = self.getIndexOf(str(pokemon))
-				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+				if self.cards[i].health + self.cards[i].stamina < a.health + a.stamina:
 					pokemon = str(a)  	 
 		return pokemon
 
@@ -85,7 +85,7 @@ class Hand(object):
 				pokemon = str(a)
 			elif a.resistance == poketype and pokemon != "none":
 				i = self.getIndexOf(str(pokemon))
-				if self.cards[i].health + self.cards[i].stamina > a.health + a.stamina:
+				if self.cards[i].health + self.cards[i].stamina < a.health + a.stamina:
 					pokemon = str(a)  	 
 		return pokemon
 

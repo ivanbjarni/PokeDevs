@@ -1714,7 +1714,6 @@ class MainFrame(wx.Frame):
 
 	# The CPU performs an action
 	def CPUAction(self):
-		print self.game.players[1].hand
 		self.game.turnCount += 1
 		self.game.draw(self.game.players[1])
 		self.gamePanel.addCPUpokemon()
@@ -1723,10 +1722,8 @@ class MainFrame(wx.Frame):
 			self.game.drawInv(self.game.players[1])
 		if self.game.players[1].mainCard.isDead():
 			# Choose a new pokemon to put out if the currently chosen one is dead
-			print self.game.players[1].mainCard
 			newCard = self.game.chooseCardAI(self.game.players[1], self.game.players[0])
 			self.game.players[1].mainCard = newCard
-			print self.game.players[1].mainCard
 			self.game.textLog.append('Opponent put out ' + newCard.name + '\n')
 			self.updateStatus()
 			self.gamePanel.switchCPUpokemon(newCard)
