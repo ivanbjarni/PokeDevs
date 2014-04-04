@@ -385,19 +385,19 @@ class Card(object):
 	# Before: nothing
 	# After: b is true if c has damage boost
 	def hasDmgBoost(self):
-		return (self.dmgMulti == 1)
+		return (self.dmgMulti != 1)
 
 	# Usage: b = c.hasWeakExploit()
 	# Before: nothing
 	# After: b is true if c has weakness exploit
 	def hasWeakExploit(self):
-		return (self.weakExploit == 0)
+		return (self.weakExploit != 0)
 
 	# Usage: b = c.hasDefBoost()
 	# Before: nothing
 	# After: b is true if c has defense boost
 	def hasDefBoost(self):
-		return (self.defMulti == 1)
+		return (self.defMulti != 1)
 
 	# Usage: string = c.transformTo(card)
 	# Before: card is card
