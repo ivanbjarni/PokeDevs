@@ -1,6 +1,7 @@
 import subprocess
 import tempfile
 import wx
+import wx.media
 import sys
 import os
 import time
@@ -116,7 +117,7 @@ class Worker(threading.Thread):
 	#Waits a certain amount of time and then enables Player to perform actions
 	def wait(self, i):
 		if i == 1:
-			waitingTime = random.randint(1,3)
+			waitingTime = random.randint(2,3)
 			time.sleep(waitingTime)
 			try:
 				wx.PostEvent(self.wxObject, AnimEvent(self.id, 0, 0, -1, True, False))
@@ -177,7 +178,7 @@ class GamePanel(wx.ScrolledWindow):
 		self.backsidesInv = {} 		 # Dict of inventory backside ids to link to inventory cards
 		self.backsidesCPU = {} 		 # Dict of CPU backsides
 		self.slot = {} 				 # Dict of slot number for cards by id 
-		self.invSlot = {} 			 # Dict of slot number for inventory cards by
+		self.invSlot = {} 			 # Dict of slot number for inventory cards by id
 		self.slotCPU = {}			 # Dict of slot number for CPU cards by id
 		self.anim = []				 # List of moves for animations
 		self.lastpos = (0,0)		 # Latest position of the mouse while dragging
@@ -185,24 +186,23 @@ class GamePanel(wx.ScrolledWindow):
 		self.backsideBmp = None		 # Bitmap of the backside of a pokemon card
 		self.backsideInvBmp = None 	 # Bitmap of the backside of an inventory card
 
-		#For two player games:
-		self.player1turn = True
-		self.invSlotCPU = {}
-	#	self.invCardDeckCPU = {}
-		self.invCardsOutCPU = {}
-		self.handCardsCPU = {}
-		self.showBacksidesCPU = {}
-		self.showBacksidesPlayer = {}
-		self.handCardsPlayer = {}
-	#	self.invCardDeckPlayer = {}
-		self.invCardsOutPlayer = {}
-		self.CPUdeck = []
-		self.CPUinvDeck = []
-		self.playerDeck = []
-		self.playerInvDeck = []
+		# For two player games:
+		self.player1turn = True       # Determines wheater it is player 1's turn or not
+		self.invSlotCPU = {}          # Dict of CPU/player 2 slot numbers for inventory cards by id
+		self.invCardsOutCPU = {}      # Dict of CPU/player 2 inventory cards on the field by id
+		self.handCardsCPU = {}        # Dict of CPU/player 2 pokecards on hand by id
+		self.showBacksidesCPU = {}    # Dict of wheather or not the backsides of CPU/player 2 pokecards should be shown by id
+		self.showBacksidesPlayer = {} # Dict of wheather or not the backsides of player 1 pokecards should be shown by id 
+		self.handCardsPlayer = {}     # Dict of player 1 pokecards on hand by id 
+		self.invCardsOutPlayer = {}   # Dict of player 1 inventory cards on the field by id
+		self.CPUdeck = []             # List of cards that are in the CPU/player 2 pokedeck
+		self.CPUinvDeck = []          # List of inventory cards that are in the CPU/player 2 inventory deck
+		self.playerDeck = []          # List of cards that are in player 1 pokedeck
+		self.playerInvDeck = []       # List of inventory cards that are in player 1 inventory deck
 
 
-		wx.Log.SetLogLevel(0) # remove this and fix images
+		wx.Log.SetLogLevel(0) # Some PNG images are using a sRGB profile that triggers a warning because of recent
+		                      # changes to libpng, it now follows stricter rules about iCCP, these warnings can be ignored
 
 	# Loads the bitmaps for the players and CPUs cards, and initializes the playing area 
 	def setupPanel(self, player, CPU):
@@ -317,8 +317,8 @@ class GamePanel(wx.ScrolledWindow):
 				dy = event.GetY()
 
 				if self.cardType[self.dragid] == 'Pokemon': 
-					if self.inPlayerChosenArea(dx, dy) and self.playerChosenID != self.dragid and (self.playerChosenID == self.graveyardID or self.CPUselfdestruct):
-						# Switch currently chosen pokemon out for a new one 
+					if self.inPlayerChosenArea(dx, dy) and self.playerChosenID != self.dragid and (self.playerChosenID == self.graveyardID or self.CPUselfdestruct) and self.dragid != self.CPUChosenID:
+						# Put out a new pokemon when the old one is dead
 						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 119
 						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
 						self.GetParent().attackPanel.setLabels(self.cards[self.dragid])
@@ -342,14 +342,14 @@ class GamePanel(wx.ScrolledWindow):
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
 						self.CPUselfdestruct = False
-					elif self.twoPlayer and self.inCPUChosenArea(dx, dy) and self.CPUChosenID != self.dragid and (self.CPUChosenID == self.graveyardID):
+					elif self.twoPlayer and self.inCPUChosenArea(dx, dy) and self.CPUChosenID != self.dragid and (self.CPUChosenID == self.graveyardID) and self.dragid != self.playerChosenID:
+						# Put out a new pokemon for player 2 when the old one is dead, only applies in 2 player mode
 						x = self.startpos[0] - self.lastpos[0] - self.origpos[self.dragid][0] + 543
 						y = self.startpos[1] - self.lastpos[1] - self.origpos[self.dragid][1] + 195
 						self.GetParent().attackPanel.setLabels(self.cards[self.dragid])
 						slot = self.slotCPU[self.dragid]
 						tx = -106 + slot * 127
-						ty = 189 #189
-						print 'what'
+						ty = 189
 						if self.CPUChosenID != self.graveyardID:
 							self.moveItem(self.CPUChosenID, tx, ty)
 							self.slot[self.CPUChosenID] = slot
@@ -366,8 +366,9 @@ class GamePanel(wx.ScrolledWindow):
 						worker = Worker(self, 0, 0, 1, 'wait3') # Enables attack buttons again in 1.8 seconds so that the healthbar has time to finish animating
 						self.updateCPUHp(False)
 						self.updateCPUStamina()
-						#self.CPUselfdestruct = False
+						self.CPUselfdestruct = False
 					else:
+						# Move card back to original position if it was not moved to an allowed position
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
@@ -393,7 +394,7 @@ class GamePanel(wx.ScrolledWindow):
 							abid = self.showBacksidesPlayer[id]
 							self.moveItem(abid, x, y+200)
 					elif self.twoPlayer and self.inCPUHandArea(dx, dy) and CPUslot != -1 and not self.hasDrawnPoke and not self.player1turn:
-						# Draw a new pokecard
+						# Draw a new pokecard for player 2 in two player mode
 						id = self.backsidesCPU[self.dragid]
 						x = 213 + CPUslot * 127
 						y = 206
@@ -407,6 +408,7 @@ class GamePanel(wx.ScrolledWindow):
 						abid = self.showBacksidesCPU[id]
 						self.moveItem(abid, x, y-200)
 					else:
+						# Move card back to original position if it was not moved to an allowed position
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
@@ -415,23 +417,26 @@ class GamePanel(wx.ScrolledWindow):
 
 				elif self.cardType[self.dragid] == 'InvBackside':
 					if self.twoPlayer:
+						# Two player mode
 						if self.player1turn:
 							slot = self.findEmptyInvSlot(self.invSlot)
 						else:
 							slot = self.findEmptyInvSlot(self.invSlotCPU)
 					else:
+						# One player mode
 						slot = self.findEmptyInvSlot(self.invSlot)
+
 					if self.inPlayerInvArea(dx, dy) and slot != -1 and self.canDrawInv and not self.hasDrawnInv:
 						# Draw a new inventory card
 						id = self.backsidesInv[self.dragid]
 						x = 991
 						y = 215 + slot * 180
 						self.moveItem(id, x, y)
-						#self.invSlot[id] = slot
 						self.moveItem(self.dragid, 0, -1000)
 						self.hasDrawnInv = True
 						self.GetParent().game.drawInv(self.GetParent().game.players[self.GetParent().attackingPlayer])
 						if self.twoPlayer:
+							# Two player mode
 							if self.player1turn:
 								self.invSlot[id] = slot
 								self.invCardsOutPlayer[id] = True
@@ -439,9 +444,10 @@ class GamePanel(wx.ScrolledWindow):
 								self.invSlotCPU[id] = slot
 								self.invCardsOutCPU[id] = True
 						else:
+							# One player mode
 							self.invSlot[id] = slot
-						#	self.invCardDeckCPU[id]
 					else:
+						# Move card back to original position if it was not moved to an allowed position
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
@@ -451,13 +457,14 @@ class GamePanel(wx.ScrolledWindow):
 
 				elif self.cardType[self.dragid] == 'Inventory':
 					if self.inPlayerChosenArea(dx, dy):
-						# Use an inventory card
+						# Use an inventory card on player 1
 						self.moveItem(self.dragid, 0, -1000)
 						self.GetParent().game.players[0].use(self.cards[self.dragid], self.GetParent().game.textLog)
 						self.GetParent().updateStatus()
 						self.updatePlayerHp()
 						self.updatePlayerStamina()
 						if self.twoPlayer:
+							# 2 player mode
 							if self.player1turn:
 								self.invSlot[self.dragid] = -1
 								self.invCardsOutPlayer[self.dragid] = False
@@ -465,15 +472,16 @@ class GamePanel(wx.ScrolledWindow):
 								self.invSlotCPU[self.dragid] = -1
 								self.invCardsOutCPU[self.dragid] = False
 						else:
+							# 1 player mode
 							self.invSlot[self.dragid] = -1
 					elif self.inCPUChosenArea(dx, dy):
-						# Use an inventory card on CPU
+						# Use an inventory card on CPU/player 2
 						self.moveItem(self.dragid, 0, -1000)
-						#self.invSlot[self.dragid] = -1
 						self.GetParent().game.players[1].use(self.cards[self.dragid], self.GetParent().game.textLog)
 						self.updateCPUHp(False)
 						self.updateCPUStamina()
 						if self.twoPlayer:
+							# 2 player mode
 							if self.player1turn:
 								self.invSlot[self.dragid] = -1
 								self.invCardsOutPlayer[self.dragid] = False
@@ -481,8 +489,10 @@ class GamePanel(wx.ScrolledWindow):
 								self.invSlotCPU[self.dragid] = -1
 								self.invCardsOutCPU[self.dragid] = False
 						else:
+							# 1 player mode
 							self.invSlot[self.dragid] = -1
 					else:
+						# Move card back to original position if it was not moved to an allowed position
 						x = self.startpos[0] - self.lastpos[0]
 						y = self.startpos[1] - self.lastpos[1]
 						self.moveItem(self.dragid, x, y)
@@ -698,14 +708,19 @@ class GamePanel(wx.ScrolledWindow):
 
 	# For when the CPU draws a pokemon, adds the corresponding backside to its pokepanel
 	def addCPUpokemon(self):
-		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1 and self.countCPUpokemon < 10:
+		if self.cardsCPU and self.findEmptySlot(self.slotCPU) != -1 and self.countCPUpokemon < 9:
 			card = self.cardsCPU.pop()
 			self.cardsCPU.insert(0, card)
 			id = self.findID(card)
 			bid = self.findBacksideCPU(id)
+			if id == -1 or bid == -1:
+				print 'Could not add pokemon'
+				print 'Error: ' + str(self.countCPUpokemon)
+				return
 			slot = self.findEmptySlot(self.slotCPU)
 			self.slotCPU[bid] = slot
 			self.countCPUpokemon += 1
+			print self.countCPUpokemon
 			self.origpos[bid] = [10 + slot * 127, 6]
 			self.moveItem(bid, 210 + slot * 127, 206)
 
@@ -715,13 +730,17 @@ class GamePanel(wx.ScrolledWindow):
 		if self.cardsCPU:
 			id = self.findID(card)
 			bid = self.findBacksideCPU(id)
+			if id == -1 or bid == -1:
+				print 'Could not switch pokemon'
+				print 'id: ' + str(id) + ' bid: ' + str(bid)
+				return
 			self.slotCPU[bid] = -1
 			self.CPUChosenID = id
 			self.moveItem(id, 744, 395)
 			self.moveItem(bid, 0, -1000)
 			self.Update()
 
-	# Switches the player
+	# Switches the active player on the field (only for 2 player mode)
 	def switchPlayer(self, player):
 		for id in self.handCardsPlayer.iteritems():
 			if id[1]:
@@ -787,12 +806,14 @@ class GamePanel(wx.ScrolledWindow):
 		for id in self.cards.iteritems():
 			if card == id[1]:
 				return id[0]
+		return -1
 
 	# find the backside of a CPU card
 	def findBacksideCPU(self, id):
 		for bid in self.backsidesCPU.iteritems():
 			if id == bid[1]:
 				return bid[0]
+		return -1
 
 	# displays the Win sign 
 	def setWinSign(self):
@@ -995,8 +1016,8 @@ class GamePanel(wx.ScrolledWindow):
 			self.cardType[bid] = 'Backside'
 			self.backsides[bid] = id
 
-			# This is for two player games, backsides of player1 pokemon cards in hand
 			if self.twoPlayer:
+				# This is for two player games, backsides of player1 pokemon cards in hand
 				abid = wx.NewId()
 				dc.SetId(abid)
 				self.drawItem(dc, abid, self.backsideBmp, -200, -200, w, h)
@@ -1016,8 +1037,8 @@ class GamePanel(wx.ScrolledWindow):
 			self.slotCPU[id] = -1
 			self.cardsCPU.append(CPU.deck.cards[i])
 
-			# Backsides of computers pokecards, put offscreen initially
 			if self.twoPlayer:
+				# This is for two player games, backsides of CPU/player 2 pokemon cards in deck
 				bid = wx.NewId()
 				dc.SetId(bid)
 				self.drawItem(dc, bid, self.backsideBmp, 1231, 195, w, h)
@@ -1026,12 +1047,15 @@ class GamePanel(wx.ScrolledWindow):
 				self.cardType[bid] = 'Backside'
 				self.backsidesCPU[bid] = id
 
+				# Backsides of CPU/player 2 pokemon cards in hand
 				abid = wx.NewId()
 				dc.SetId(abid)
 				self.drawItem(dc, abid, self.backsideBmp, -200, -200, w, h)
 				self.movable[abid] = False
 				self.showBacksidesCPU[id] = abid
 			else:
+				# only 1 player mode
+				# Backsides of CPUs pokecards
 				bid = wx.NewId()
 				dc.SetId(bid)
 				self.drawItem(dc, bid, self.backsideBmp, -200, -200, w, h)
@@ -1140,16 +1164,11 @@ class AttackPanel(wx.Panel):
 		#Then we create the pass button a bit differently
 		self.passButton = GB.GradientButton(self, -1, label='Pass', size=(120, 100))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
-		#self.passButton.SetTopStartColour(wx.Colour(212, 0, 0)) #
-		#self.passButton.SetTopEndColour(wx.Colour(70, 89, 89))
-		self.passButton.SetTopEndColour(wx.Colour(120, 0, 0)) #
-		#self.passButton.SetBottomStartColour(wx.Colour(66, 82, 82))
-		self.passButton.SetBottomStartColour(wx.Colour(112, 0, 0)) #
-		self.passButton.SetBottomEndColour(wx.Colour(80, 0, 0)) #
-		#self.passButton.SetPressedTopColour(wx.Colour(88, 110, 110))
-		self.passButton.SetPressedTopColour(wx.Colour(120, 10, 10)) #
-		#self.passButton.SetPressedBottomColour(wx.Colour(54, 43, 43))
-		self.passButton.SetPressedBottomColour(wx.Colour(100, 0, 0)) #
+		self.passButton.SetTopEndColour(wx.Colour(120, 0, 0))
+		self.passButton.SetBottomStartColour(wx.Colour(112, 0, 0))
+		self.passButton.SetBottomEndColour(wx.Colour(80, 0, 0))
+		self.passButton.SetPressedTopColour(wx.Colour(120, 10, 10))
+		self.passButton.SetPressedBottomColour(wx.Colour(100, 0, 0))
 		self.passButton.SetFont(wx.Font(pointSize=18, family=wx.MODERN, style=wx.NORMAL, weight=wx.BOLD))
 		self.hbox.Add(self.passButton, flag=wx.LEFT|wx.RIGHT|wx.BOTTOM|wx.TOP, border=10)
 		self.passButton.Bind(wx.EVT_BUTTON, lambda event: self.attack(-1, True))
@@ -1210,7 +1229,6 @@ class AttackPanel(wx.Panel):
 		self.attackButtons[1].SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButtons[2].SetTopStartColour(wx.Colour(66, 82, 82))
 		self.attackButtons[3].SetTopStartColour(wx.Colour(66, 82, 82))
-		#self.passButton.SetTopStartColour(wx.Colour(66, 82, 82))
 		self.passButton.SetTopStartColour(wx.Colour(112, 0, 0))
 		self.Thaw()
 
@@ -1228,7 +1246,6 @@ class AttackPanel(wx.Panel):
 		self.attackButtons[2].SetTopStartColour(wx.Colour(168, 184, 184))
 		self.attackButtons[3].SetTopStartColour(wx.Colour(168, 184, 184))
 		self.passButton.SetTopStartColour(wx.Colour(168, 184, 184))
-#		self.passButton.SetTopStartColour(wx.Colour(112, 0, 0))
 		self.Thaw()
 
 # Displays info
@@ -1361,6 +1378,7 @@ class MainFrame(wx.Frame):
 		# mainly for 2 player purposes
 		self.attackingPlayer = 0
 		self.defensivePlayer = 1
+		self.selfDestruct = False
 
 		#Decks that human(hmn) and computer (cpu) want to use
 		self.hmnDeck = "Random"
@@ -1413,12 +1431,38 @@ class MainFrame(wx.Frame):
 		#We want to seperate newgame, yourdeck and enemy deck from help and exit 
 		self.fileMenu.AppendSeparator()
 
+		#Music options:
+		m_music = wx.Menu()
+		m_play = m_music.AppendRadioItem(-1, "Playing")
+		m_mute = m_music.AppendRadioItem(-1, "Muted")
+		self.Bind(wx.EVT_MENU, self.OnMuted, m_play)
+		self.Bind(wx.EVT_MENU, self.OnMuted, m_mute)
+
+		self.fileMenu.AppendMenu(wx.ID_ANY, "M&usic", m_music)
+
 		#Helpmenu:
 		m_help = self.fileMenu.Append(wx.ID_HELP, "&Help\tAlt+H", "Read instructions for this awesome pokemon game!")
 		self.Bind(wx.EVT_MENU, self.OnHelp, m_help)
 
 		#Exit button
 		m_exit = self.fileMenu.Append(wx.ID_EXIT, "&Exit\tAlt+X", "Close window and exit program.")
+
+		#PLayer for the music:
+
+		self.player = wx.media.MediaCtrl(parent = self, szBackend=wx.media.MEDIABACKEND_WMP10)
+		try:
+			self.player.Load(r'PokemoanSong.wav')
+		except:
+			print "Could not load themesong"
+		self.Bind(wx.media.EVT_MEDIA_LOADED, self.playSong)
+
+		#loop the main song:
+		self.timer = wx.Timer(self)
+		self.Bind(wx.EVT_TIMER, self.OnTimer)
+		self.timer.Start(354000)
+
+		#is the music on?
+		self.isPlaying = True
 
 		#add filemenu to the menubar and bind events
 		self.menuBar.Append(self.fileMenu, "&File")
@@ -1442,13 +1486,36 @@ class MainFrame(wx.Frame):
 		self.Layout()
 		self.Centre()
 
+
+
+	def OnMuted(self, event):
+		item = self.GetMenuBar().FindItemById(event.GetId())
+		if item.GetText() == "Muted" :
+			self.player.Pause()
+			self.isPlaying = False
+		elif item.GetText() == "Playing" :
+			self.player.Play()
+			self.isPlaying = True
+
+	def playSong(self, event):
+		self.player.Play()
+
+	def OnTimer(self, event):
+		if(self.isPlaying):
+			try:
+				self.player.Load(r'PokemoanSong.wav')
+			except:
+				print "Could not load themesong"
+		
+	
+
 	# Initializes the game itself
 	def initGame(self):
 		presets = Presets()
 
 		self.attackingPlayer = 0
 		self.defensivePlayer = 1
-		#create player 1 give him a hand, random mainCard and a random 10card deck
+		#create player 1 give him a hand
 		p1 = Player("player1")
 		p1.hand = Hand()
 		p1.inv = Inventory()
@@ -1459,7 +1526,7 @@ class MainFrame(wx.Frame):
 		for i in xrange(0,100):
 			p1.invdeck.add(presets.getRandomInvCard())
 
-		#create player 1 give him a hand, random mainCard and a random 10card deck
+		#create CPU/player 2 give him a hand
 		p2 = Player(self.difficulty)
 		p2.hand = Hand()
 		p2.inv = Inventory()
@@ -1554,6 +1621,31 @@ class MainFrame(wx.Frame):
 
 	# The player chooses an attack
 	def playerAction(self, attackNum, passTurn):
+		if self.selfDestruct:
+			# This is for handling self destruction in 2 player games
+			self.attackPanel.enableAll()
+			self.gamePanel.isMyTurn = True
+			self.selfDestruct = False
+			self.game.turnCount += 1
+			self.gamePanel.hasDrawnInv = False
+			self.gamePanel.hasDrawnPoke = False
+			self.game.players[self.attackingPlayer].mainCard.applyEffects()
+			if self.attackingPlayer == 0:
+				self.gamePanel.updatePlayerHp()
+				self.gamePanel.updatePlayerStamina()
+			else:
+				self.gamePanel.updateCPUHp(False)
+				self.gamePanel.updateCPUStamina()
+			temp = self.attackingPlayer
+			self.attackingPlayer = self.defensivePlayer
+			self.defensivePlayer = temp
+			self.updateStatus()
+			if self.gamePanel.player1turn:
+				self.game.turn += 1
+			self.gamePanel.player1turn = not self.gamePanel.player1turn
+			self.gamePanel.switchPlayer(self.attackingPlayer)
+			return
+
 		if self.game.players[self.attackingPlayer].mainCard.isDead():
 			# if the player tries to attack with a dead pokemon
 			self.game.textLog.append('You must choose a new pokemon!\n')
@@ -1573,6 +1665,14 @@ class MainFrame(wx.Frame):
 					elif self.game.players[self.defensivePlayer].mainCard.isDead():
 						# if player dies from its own attackand also kills the CPU's pokemon
 						self.gamePanel.updateCPUHp(True)
+				else:
+					# 2 player mode
+					if self.game.players[self.attackingPlayer].mainCard.isDead():
+						# Attacking player kills himself
+						self.gamePanel.CPUselfdestruct = True
+						self.selfDestruct = True
+					else:
+						self.gamePanel.CPUselfdestruct = False
 			else:
 				# if player doesn't have enough stamina for the chosen attack
 				self.attackPanel.enableAll()
@@ -1598,9 +1698,6 @@ class MainFrame(wx.Frame):
 		if self.difficulty == 'player2':
 			if self.gamePanel.player1turn:
 				self.game.turn += 1
-		#	temp = self.attackingPlayer
-		#	self.attackingPlayer = self.defensivePlayer
-		#	self.defensivePlayer = temp
 			self.gamePanel.player1turn = not self.gamePanel.player1turn
 			self.gamePanel.switchPlayer(self.attackingPlayer)
 			self.checkWin() #### skoda mogulega
@@ -1678,7 +1775,7 @@ class HelpFrame(wx.Frame):
 		fc = '#CCCCCC'
 		self.help.SetForegroundColour(fc)
 		try:
-			with open("instructions.txt") as myFile:
+			with open("instructions.file") as myFile:
 				data = myFile.read()
 		except:
 			data = 'Failed to load instructions'
