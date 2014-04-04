@@ -70,6 +70,7 @@ class Card(object):
 			return False
 		if(self.isDead()):
 			print "Uh-oh you are trying to attack with a dead pokemon"
+			time.sleep(1)
 			textLog.append("Uh-oh you are trying to attack with a dead pokemon\n")
 			return False
 

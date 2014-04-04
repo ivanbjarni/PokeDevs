@@ -118,7 +118,7 @@ class Presets(object):
 		106	: Attack("Harden", 0, 20, -18, 0, "normal"),	
 		107	: Attack("Minimize", 0, 20, -30, 0, "normal"),	
 		108	: Attack("Smokescreen", 0, -10, -20, 0, "normal"),	
-		110 : Attack("Withdraw", 0, -18, 10, 0, "normal"),			
+		110 : Attack("Withdraw", 0, -18, 0, 0, "normal"),			
 		112 : Attack("Barrier", 0, 13, -10, 0, "psychic"),			
 		113 : Attack("LightScreen", -5, -5, -10, 1, "normal"),			
 		114 : Attack("Haze", 0, -18, 12, 0, "water"),			
