@@ -1,0 +1,28 @@
+Cards: 
+In the game there are two different types of cards:
+	- Pokemon cards
+	- Inventory cards
+Turns:
+The game is turn-based. When it's started each player has one active Pokemon card.
+The player on the light playground starts the game by choosing an action to take.
+Each turn consists of 4 actions:
+	-Drawing Pokemon cards
+		-To draw a Pokemon card clickand hold on the Pokemon deck and draw 
+		 it to your Pokemon hand.
+	-Drawing Inventory cards
+		-Each three turns you can draw an Inventory card. To draw one you
+		 click and hold on the Inventory deck and draw it to your Inventory 
+		 hand(left)
+	-Using Inventory cards
+		-In each turn, a player can use 0 to 3 inventory cards. To use an 
+		 Inventory cards, click and hold on it in your Inventory hand and 
+		 draw it over the Pokemon on which to use it on, then let go.
+	-Attacking
+		-To end a turn choose an attack to apply, or press Pass.
+When a turn ends the turn of the opponent begins. It's the player's responsibility
+to draw all cards in turn. If a player forgets to draw a card before a turn ends
+he does NOT get to draw a card in the opponents turn nor does he get to draw two 
+cards in his next turn.
+
+The point of the game is to beat 6 opponent Pokemon.
+Good night, and good luck.

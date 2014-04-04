@@ -1458,7 +1458,7 @@ class HelpFrame(wx.Frame):
 		fc = '#CCCCCC'
 		self.help.SetForegroundColour(fc)
 		try:
-			with open("instructions.txt") as myFile:
+			with open("instructions.file") as myFile:
 				data = myFile.read()
 		except:
 			data = 'Failed to load instructions'
