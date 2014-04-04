@@ -71,7 +71,7 @@ class Card(object):
 			print "Uh-oh you are trying to attack with a dead pokemon"
 			textLog.append("Uh-oh you are trying to attack with a dead pokemon\n")
 			return False
-			return False
+#			return False
 		if(self.isStunned() and random.random() > stunSuccessRate):
 			print str(self)+" tried to use "+str(atk)+" but he is stunned."
 			textLog.append(str(self)+" tried to use "+str(atk)+" but he is stunned.\n")
