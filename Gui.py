@@ -1260,7 +1260,7 @@ class MainFrame(wx.Frame):
 		p1.deck = presets.gd(self.hmnDeck)
 		p1.deck.shuffle()
 		p1.invdeck = InvDeck()
-		p1.mainCard = p1.deck.cards[0]
+		p1.mainCard = p1.deck.remove(0)
 		for i in xrange(0,100):
 			p1.invdeck.add(presets.getRandomInvCard())
 
@@ -1271,7 +1271,7 @@ class MainFrame(wx.Frame):
 		p2.deck = presets.gd(self.cpuDeck)
 		p2.deck.shuffle()
 		p2.invdeck = InvDeck()
-		p2.mainCard = p2.deck.cards[0]
+		p2.mainCard = remove(0)
 		for i in xrange(0,100):
 			p2.invdeck.add(presets.getRandomInvCard())
 		
