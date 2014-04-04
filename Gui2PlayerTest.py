@@ -1371,7 +1371,6 @@ class MainFrame(wx.Frame):
 		presets = Presets()
 
 		#Determines the difficulty setting
-		#self.difficulty = "computer"
 		self.difficulty = "computer"
 
 		# Determines if this is the first game played
