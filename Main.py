@@ -1,7 +1,6 @@
 from Card import *
 from Player import *
 from Attack import *
-from AI import *
 import random
 from Presets import *
 import time 
